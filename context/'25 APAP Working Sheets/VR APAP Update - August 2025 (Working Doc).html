@@ -1,0 +1,2744 @@
+<!doctype html>
+<html><head><title>VR APAP Update - August 2025 (Working Doc)</title><meta charset="UTF-8"><link href="http://fonts.googleapis.com/css?family=Crimson+Text:400,400italic,700,700italic|Roboto:400,700,700italic,400italic" rel="stylesheet" type="text/css"><style>/*
+ * Copyright 2014 Quip
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+body {
+    font-size: 15px;
+    color: #333;
+    background: white;
+    padding: 60px 95px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern";
+    font-kerning: normal;
+    -moz-font-feature-settings: "kern";
+    -webkit-font-feature-settings: "kern";
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th {
+    font-family: Roboto, sans-serif;
+    font-weight: 700;
+    margin: 0;
+    margin-top: 1.25em;
+    margin-bottom: 0.75em;
+}
+
+h1 {
+    font-size: 35px;
+    line-height: 42px;
+}
+
+h1:first-child {
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 22px;
+    line-height: 22px;
+}
+
+h3 {
+    font-size: 18px;
+    line-height: 16px;
+}
+
+h4,
+h5,
+h6 {
+    font-size: 15px;
+    line-height: 14px;
+}
+h5 {
+    font-style: italic;
+}
+
+h6 {
+    font-weight: unset;
+    text-decoration: underline;
+}
+
+.capitalize-h3 h3 {
+    text-transform: uppercase;
+}
+
+/* Body text */
+body,
+p,
+ul,
+ol,
+td {
+    font-family: "Crimson Text", serif;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+blockquote,
+q {
+    display: block;
+    margin: 1em 0;
+    font-style: italic;
+}
+
+blockquote a,
+q a {
+    text-decoration: underline;
+}
+
+blockquote {
+    padding-left: 10px;
+    border-left: 4px solid #a6a6a6;
+}
+
+q {
+    color: #a6a6a6;
+    line-height: 40px;
+    font-size: 24px;
+    text-align: center;
+    quotes: none;
+}
+
+q a {
+    color: #a6a6a6;
+}
+
+code,
+pre {
+    font-family: Consolas, "Liberation Mono", Menlo, "Courier Prime Web",
+        Courier, monospace;
+    background: #f2f2f2;
+}
+
+code {
+    padding: 1px;
+    margin: 0 -1px;
+    border-radius: 3px;
+}
+
+pre {
+    display: block;
+    line-height: 20px;
+    text-shadow: 0 1px white;
+    padding: 5px 5px 5px 30px;
+    white-space: nowrap;
+    position: relative;
+    margin: 1em 0;
+}
+
+pre:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 15px;
+    border-left: solid 1px #dadada;
+}
+
+/* Text Alignment */
+.line {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-right {
+    text-align: end;
+}
+
+/* Lists */
+div[data-section-style="5"],
+div[data-section-style="6"],
+div[data-section-style="7"] {
+    margin: 12px 0;
+}
+
+ul {
+    padding: 0 0 0 40px;
+}
+
+ul li {
+    margin-bottom: 0.4em;
+}
+
+/* Bulleted list */
+div[data-section-style="5"] ul {
+    list-style-type: disc;
+}
+div[data-section-style="5"] ul ul {
+    list-style-type: circle;
+}
+div[data-section-style="5"] ul ul ul {
+    list-style-type: square;
+}
+div[data-section-style="5"] ul ul ul ul {
+    list-style-type: disc;
+}
+div[data-section-style="5"] ul ul ul ul ul {
+    list-style-type: circle;
+}
+div[data-section-style="5"] ul ul ul ul ul ul {
+    list-style-type: square;
+}
+
+/* Numbered list */
+div[data-section-style="6"] ul {
+    list-style-type: decimal;
+}
+div[data-section-style="6"] ul ul {
+    list-style-type: lower-alpha;
+}
+div[data-section-style="6"] ul ul ul {
+    list-style-type: lower-roman;
+}
+div[data-section-style="6"] ul ul ul ul {
+    list-style-type: decimal;
+}
+div[data-section-style="6"] ul ul ul ul ul {
+    list-style-type: lower-alpha;
+}
+div[data-section-style="6"] ul ul ul ul ul ul {
+    list-style-type: lower-roman;
+}
+
+/* Checklist */
+div[data-section-style="7"] ul {
+    list-style-type: none;
+}
+
+div[data-section-style="7"] ul li:before {
+    content: "\2610";
+    position: absolute;
+    display: inline;
+    margin-right: 1.2em;
+    margin-left: -1.2em;
+}
+
+div[data-section-style="7"] ul li.checked {
+    text-decoration: line-through;
+}
+
+div[data-section-style="7"] ul li.checked:before {
+    content: "\2611";
+    text-decoration: none;
+}
+
+/* Tables */
+div[data-section-style="8"] {
+    margin: 12px 0;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: separate;
+    border: solid 1px #bbb;
+    table-layout: fixed;
+    position: relative;
+}
+
+table th,
+table td {
+    padding: 2px 2px 0;
+    min-width: 1.5em;
+    word-wrap: break-word;
+}
+
+table th {
+    border-bottom: 1px solid #c7cbd1;
+    background: #f2f2f2;
+    font-weight: bold;
+    vertical-align: bottom;
+    color: #3a4449;
+    text-align: center;
+}
+
+table td {
+    padding-top: 0;
+    border-left: 1px solid #c7cbd1;
+    border-top: 1px solid #c7cbd1;
+    vertical-align: top;
+}
+
+table td.bold {
+    font-weight: bold;
+}
+
+table td.italic {
+    font-style: italic;
+}
+
+table td.underline {
+    text-decoration: underline;
+}
+
+table td.strikethrough {
+    text-decoration: line-through;
+}
+
+table td.underline.strikethrough {
+    text-decoration: underline line-through;
+}
+
+table td:first-child {
+    border-left: hidden;
+}
+
+table tr:first-child td {
+    border-top: hidden;
+}
+
+/* Images */
+div[data-section-style="11"] {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div[data-section-style="11"][data-section-float="0"] {
+    clear: both;
+    text-align: center;
+}
+
+div[data-section-style="11"][data-section-float="1"] {
+    float: left;
+    clear: left;
+    margin-right: 20px;
+}
+
+div[data-section-style="11"][data-section-float="2"] {
+    float: right;
+    clear: right;
+    margin-left: 20px;
+}
+
+div[data-section-style="11"] img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+}
+
+div[data-section-style="11"].show-border {
+    outline: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.05);
+}
+
+hr {
+    width: 70px;
+    margin: 20px auto;
+}
+
+/* Apps */
+div[data-section-style="19"].placeholder {
+    margin: 0.8em auto;
+    padding: 4px 0;
+    display: block;
+    color: #3d87f5;
+    text-align: center;
+    border: 1px solid rgba(41, 182, 242, 0.2);
+    border-radius: 3px;
+    background: #e9f8fe;
+    font-family: Roboto, sans-serif;
+}
+
+div[data-section-style="19"].first-party-element {
+    margin-bottom: 10px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+div[data-section-style="19"].first-party-element.kanban {
+    background-image: url("https://quip-cdn.com/nK0hSyhsb4jrLIL2s5Ma-g");
+    height: 166px;
+}
+
+div[data-section-style="19"].first-party-element.calendar {
+    background-image: url("https://quip-cdn.com/OYujqLny03RILxcLIiyERg");
+    height: 244px;
+}
+
+div[data-section-style="19"].first-party-element.poll {
+    background-image: url("https://quip-cdn.com/fbIiFrcKGv__4NB7CBfxoA");
+    height: 116px;
+}
+
+div[data-section-style="19"].first-party-element.countdown {
+    background-image: url("https://quip-cdn.com/3bPhykD2dBei9sSjCWteTQ");
+    height: 96px;
+}
+
+div[data-section-style="19"].first-party-element.process_bar {
+    background-image: url("https://quip-cdn.com/ybQlHnHEIIBLog5rZmYs_w");
+    height: 36px;
+}
+
+div[data-section-style="19"].first-party-element.project_tracker {
+    background-image: url("https://quip-cdn.com/OFQU087b4Mxzz1ZaHwtjXA");
+    height: 164px;
+}
+
+div[data-section-style="19"] img {
+    margin: 0.5em;
+}
+
+div[data-section-style="19"] img.masked-image {
+    margin: 0;
+    transform-origin: top left;
+}
+
+div[data-section-style="19"] .image-mask {
+    position: relative;
+    overflow: hidden;
+}
+/*
+ * Copyright 2019 Quip
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+body {
+    counter-reset: indent0 indent1 indent2 indent3 indent4 indent5 indent6
+        indent7 indent8;
+}
+
+/* Numbered list */
+div[data-section-style="6"] {
+    counter-reset: indent0 indent1 indent2 indent3 indent4 indent5 indent6
+        indent7 indent8;
+}
+div[data-section-style="6"].list-numbering-continue {
+    counter-reset: none;
+}
+div[data-section-style="6"].list-numbering-restart-at {
+    counter-reset: indent0 var(--indent0) indent1 indent2 indent3 indent4
+        indent5 indent6 indent7 indent8;
+}
+div[data-section-style="6"] ul {
+    /* indent0 is not reset since it is shared across the div elements */
+    list-style-type: none !important;
+}
+div[data-section-style="6"] ul ul {
+    counter-reset: indent1;
+}
+div[data-section-style="6"] ul ul ul {
+    counter-reset: indent2;
+}
+div[data-section-style="6"] ul ul ul ul {
+    counter-reset: indent3;
+}
+div[data-section-style="6"] ul ul ul ul ul {
+    counter-reset: indent4;
+}
+div[data-section-style="6"] ul ul ul ul ul ul {
+    counter-reset: indent5;
+}
+div[data-section-style="6"] ul li {
+    counter-increment: indent0;
+}
+div[data-section-style="6"] ul ul li {
+    counter-increment: indent1;
+}
+div[data-section-style="6"] ul ul ul li {
+    counter-increment: indent2;
+}
+div[data-section-style="6"] ul ul ul ul li {
+    counter-increment: indent3;
+}
+div[data-section-style="6"] ul ul ul ul ul li {
+    counter-increment: indent4;
+}
+div[data-section-style="6"] ul ul ul ul ul ul li {
+    counter-increment: indent5;
+}
+div[data-section-style="6"] ul li:before {
+    content: counter(indent0, decimal) ". ";
+}
+div[data-section-style="6"] ul ul li:before {
+    content: counter(indent1, lower-alpha) ". ";
+}
+div[data-section-style="6"] ul ul ul li:before {
+    content: counter(indent2, lower-roman) ". ";
+}
+div[data-section-style="6"] ul ul ul ul li:before {
+    content: counter(indent3, decimal) ". ";
+}
+div[data-section-style="6"] ul ul ul ul ul li:before {
+    content: counter(indent4, lower-alpha) ". ";
+}
+div[data-section-style="6"] ul ul ul ul ul ul li:before {
+    content: counter(indent5, lower-roman) ". ";
+}
+</style></head><body><h1 id='temp:C:QYUc6679007af2b4ef9b6423ea97'>VR APAP Update - August 2025 (Working Doc) </h1>
+
+<i>Last Month’s Report - <control data-remapped="true" id="temp:C:QYUd9c1bd1d134e4be18371e2a6b"><a href="https://quip.com/FH22AZC9ktl3">VR APAP Update - June 2025 (Working Doc)</a></control></i><br/>
+
+<br/>
+
+<h2 id='temp:C:QYU116f230882e14206aa7238e45'>Goals</h2>
+
+<h3 id='temp:C:QYUed3c9f6f096a4471ae597d8c5'>High Confidence - 31.7%</h3>
+
+<h3 id='temp:C:QYU5bc6750989e141d8b171dc042'>Hard Climb - 43.1%</h3>
+
+<h2 id='temp:C:QYUf2f139bd113442bc9e9ad90f7'>APAP Snapshot</h2>
+
+<div data-section-style='11' style='max-width:100%' class=''><img src='https://quip.com/blob/QYUAAALQ7ob/b1mGIqhuhmuG4zvxAU98sQ?a=hIW7dBptN1UcwqPcEsYankQhVyuNjteacpsBN6AUXzUa' id='temp:C:QYU91f6492d9d584ca58e173a412' width='800' height='530'></img></div><a href="https://10ay.online.tableau.com/#/site/axontableauonline/views/ProductAdoption/Summary?:iid=1">https://10ay.online.tableau.com/#/site/axontableauonline/views/ProductAdoption/Summary?:iid=1</a><br/>
+
+<br/>
+
+<div data-section-style='13'><table id='temp:C:QYUd0954c5634cf491db4639091e' title='Sheet1' style='width: 88.8em'><thead><tr><th class='empty' style='width: 2em'/><th id='temp:C:QYU948773174ef04c02a1e05a6fc' class='empty' style='width: 10.8em'>A<br/></th><th id='temp:C:QYU5dfcd283de044eba81af7ea1a' class='empty' style='width: 6em'>B<br/></th><th id='temp:C:QYU6d7229a6b1fe429cb9c9578a6' class='empty' style='width: 6em'>C<br/></th><th id='temp:C:QYUfdda931da1414daf8047b0914' class='empty' style='width: 6em'>D<br/></th><th id='temp:C:QYUf5892da678ad44c0b303fe080' class='empty' style='width: 6em'>E<br/></th><th id='temp:C:QYUcf04554d13c8470193215bad6' class='empty' style='width: 6em'>F<br/></th><th id='temp:C:QYUa531dbfe7874483896e79249c' class='empty' style='width: 6em'>G<br/></th><th id='temp:C:QYUb0f45daae1644497b3fc8047e' class='empty' style='width: 6em'>H<br/></th><th id='temp:C:QYUc0a384d080074df1a4a1deace' class='empty' style='width: 6em'>I<br/></th><th id='temp:C:QYUcabb7840c72649f282eebc2da' class='empty' style='width: 6em'>J<br/></th><th id='temp:C:QYU9c6adb59e2a241efa635f0c98' class='empty' style='width: 6em'>K<br/></th><th id='temp:C:QYUf0813e657bf84067aee7e8ee6' class='empty' style='width: 6em'>L<br/></th><th id='temp:C:QYU2369151f33ff4a72ae6f6c43c' class='empty' style='width: 6em'>M<br/></th><th id='temp:C:QYU36235067e0234ef38ff87f0ea' class='empty' style='width: 6em'>N<br/></th></tr></thead><tbody><tr id='temp:C:QYU94d7a1fcc3134205941f9d46f'><td style='background-color:#f0f0f0'>1</td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYU2a5175459def4359bb0b18232' style='background-color:#333333;' class='bold'>T10 &amp; T7
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYUb02ef7d2256c4c58958c00a8d' style='background-color:#333333;' class='bold'>Aug
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYUc20d4082ac964fcf9785518ff' style='background-color:#333333;' class='bold'>Sep
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYUb1e93ebbcd064edf85ff83f91' style='background-color:#333333;' class='bold'>Oct
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYU07b3979b283847e0824ce499f' style='background-color:#333333;' class='bold'>Nov
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYUa68312437d0241f584bfe7a98' style='background-color:#333333;' class='bold'>Dec
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYU6bd7eb14acd343cca620faa95' style='background-color:#333333;' class='bold'>January
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style='background-color:#333333;' class='bold'>February
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style='background-color:#333333;' class='bold'>March
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYUc26fafb1b2d049c5a772894c5' style='background-color:#333333;' class='bold'>April
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYU937dff40807d4e24a839c3d91' style='background-color:#333333;' class='bold'>May
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYUb2910fc17f574ce8af6ab9900' style='background-color:#333333;' class='bold'>June
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYU266caea6a80f407eb676652c2' style='background-color:#333333;' class='bold'>July
+
+<br/></td><td id='temp:s:temp:C:QYU94d7a1fcc3134205941f9d46f;temp:C:QYUd39ef63206264f55999867d99' style='background-color:#333333;' class='bold'>August
+
+<br/></td></tr><tr id='temp:C:QYUf79ca4324a9e4e04a837b33ed'><td style='background-color:#f0f0f0'>2</td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYU2a5175459def4359bb0b18232' style='' class='underline'>Cumulative Points
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYU937dff40807d4e24a839c3d91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYU266caea6a80f407eb676652c2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf79ca4324a9e4e04a837b33ed;temp:C:QYUd39ef63206264f55999867d99' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU12c1dce21ecc44369ba65a8d6'><td style='background-color:#f0f0f0'>3</td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYU2a5175459def4359bb0b18232' style=''>Eligible
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>86,595
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>107,869
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>115,886
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYU07b3979b283847e0824ce499f' style=''>126,499
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYUa68312437d0241f584bfe7a98' style=''>128,025
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>135,520
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>136,480
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>137,974
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>140,716
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYU937dff40807d4e24a839c3d91' style=''>148,265
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>156,912
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYU266caea6a80f407eb676652c2' style=''>175,888
+
+<br/></td><td id='temp:s:temp:C:QYU12c1dce21ecc44369ba65a8d6;temp:C:QYUd39ef63206264f55999867d99' style=''>183,391
+
+<br/></td></tr><tr id='temp:C:QYU1cc4fe77f46a41cda74520290'><td style='background-color:#f0f0f0'>4</td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYU2a5175459def4359bb0b18232' style=''>Adopted
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>5,931
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>28,871
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>49,017
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYU07b3979b283847e0824ce499f' style=''>54,648
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYUa68312437d0241f584bfe7a98' style=''>54,623
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>4,053
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>4,294
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>4,914
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>5,601
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYU937dff40807d4e24a839c3d91' style=''>6,265
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>6,737
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYU266caea6a80f407eb676652c2' style=''>14,798
+
+<br/></td><td id='temp:s:temp:C:QYU1cc4fe77f46a41cda74520290;temp:C:QYUd39ef63206264f55999867d99' style=''>18,516
+
+<br/></td></tr><tr id='temp:C:QYU6a9ba0fe19814aad8d754e769'><td style='background-color:#f0f0f0'>5</td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYU2a5175459def4359bb0b18232' style='' class='bold'>% Adopted
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYUb02ef7d2256c4c58958c00a8d' style='background-color:#914108;' class='bold'>6.8%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYUc20d4082ac964fcf9785518ff' style='background-color:#914108;' class='bold'>26.8%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYUb1e93ebbcd064edf85ff83f91' style='background-color:#914108;'>42.3%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYU07b3979b283847e0824ce499f' style='background-color:#914108;'>43.2%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYUa68312437d0241f584bfe7a98' style='background-color:#914108;'>42.7%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYU6bd7eb14acd343cca620faa95' style='background-color:#914108;'>3.0%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style='background-color:#914108;'>3.1%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style='background-color:#914108;'>3.6%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYUc26fafb1b2d049c5a772894c5' style='background-color:#914108;'>4.0%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYU937dff40807d4e24a839c3d91' style='background-color:#914108;'>4.2%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYUb2910fc17f574ce8af6ab9900' style='background-color:#914108;'>4.3%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYU266caea6a80f407eb676652c2' style='background-color:#914108;'>8.3%
+
+<br/></td><td id='temp:s:temp:C:QYU6a9ba0fe19814aad8d754e769;temp:C:QYUd39ef63206264f55999867d99' style='background-color:#914108;'>10.1%
+
+<br/></td></tr><tr id='temp:C:QYU7fa3c58c2d1547b197d6c39bc'><td style='background-color:#f0f0f0'>6</td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYU2a5175459def4359bb0b18232' style=''>Change MoM (bps)
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYUc20d4082ac964fcf9785518ff' style='background-color:#914108;'>1,992
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYUb1e93ebbcd064edf85ff83f91' style='background-color:#914108;'>1,553
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYU07b3979b283847e0824ce499f' style='background-color:#914108;'>90
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYUa68312437d0241f584bfe7a98' style='background-color:#914108;'>-53
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYU6bd7eb14acd343cca620faa95' style='background-color:#914108;'>-3,968
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style='background-color:#914108;'>16
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style='background-color:#914108;'>42
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYUc26fafb1b2d049c5a772894c5' style='background-color:#914108;'>42
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYU937dff40807d4e24a839c3d91' style='background-color:#914108;'>25
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYUb2910fc17f574ce8af6ab9900' style='background-color:#914108;'>7
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYU266caea6a80f407eb676652c2' style='background-color:#914108;'>401
+
+<br/></td><td id='temp:s:temp:C:QYU7fa3c58c2d1547b197d6c39bc;temp:C:QYUd39ef63206264f55999867d99' style='background-color:#914108;'>180
+
+<br/></td></tr><tr id='temp:C:QYUf43e154145e54e91bba355239'><td style='background-color:#f0f0f0'>7</td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYU2a5175459def4359bb0b18232' style=''>Total from High Conf. (bps)
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>-2,871
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>-2,855
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>-2,814
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>-2,772
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYU937dff40807d4e24a839c3d91' style=''>-2,747
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>-2,741
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYU266caea6a80f407eb676652c2' style=''>-2,340
+
+<br/></td><td id='temp:s:temp:C:QYUf43e154145e54e91bba355239;temp:C:QYUd39ef63206264f55999867d99' style=''>-2,160
+
+<br/></td></tr><tr id='temp:C:QYU8663d74421fa440d983805793'><td style='background-color:#f0f0f0'>8</td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYU2a5175459def4359bb0b18232' style=''>Total from Hard Climb (bps)
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>-4,011
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>-3,995
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>-3,954
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>-3,912
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYU937dff40807d4e24a839c3d91' style=''>-3,887
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>-3,881
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYU266caea6a80f407eb676652c2' style=''>-3,480
+
+<br/></td><td id='temp:s:temp:C:QYU8663d74421fa440d983805793;temp:C:QYUd39ef63206264f55999867d99' style=''>-3,300
+
+<br/></td></tr><tr id='temp:C:QYU527c7eaa1835495584ca0077c'><td style='background-color:#f0f0f0'>9</td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYU2a5175459def4359bb0b18232' style='' class='underline'>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYU937dff40807d4e24a839c3d91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYU266caea6a80f407eb676652c2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU527c7eaa1835495584ca0077c;temp:C:QYUd39ef63206264f55999867d99' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU84a714ef94fa4d298b8795e52'><td style='background-color:#f0f0f0'>10</td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYU2a5175459def4359bb0b18232' style='' class='underline'>Cumulative Agencies
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYU937dff40807d4e24a839c3d91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYU266caea6a80f407eb676652c2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84a714ef94fa4d298b8795e52;temp:C:QYUd39ef63206264f55999867d99' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUeedbf7a56c0e495aa52c4fc8a'><td style='background-color:#f0f0f0'>11</td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYU2a5175459def4359bb0b18232' style=''>Eligible
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>374
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>556
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>577
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYU07b3979b283847e0824ce499f' style=''>594
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYUa68312437d0241f584bfe7a98' style=''>604
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>618
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>630
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>650
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>681
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYU937dff40807d4e24a839c3d91' style=''>720
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>761
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYU266caea6a80f407eb676652c2' style=''>818
+
+<br/></td><td id='temp:s:temp:C:QYUeedbf7a56c0e495aa52c4fc8a;temp:C:QYUd39ef63206264f55999867d99' style=''>895
+
+<br/></td></tr><tr id='temp:C:QYU7df134f15ebd41469cae5f64a'><td style='background-color:#f0f0f0'>12</td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYU2a5175459def4359bb0b18232' style=''>Adopted
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>27
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>68
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>94
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYU07b3979b283847e0824ce499f' style=''>128
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYUa68312437d0241f584bfe7a98' style=''>126
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>20
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>21
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>26
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>34
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYU937dff40807d4e24a839c3d91' style=''>42
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>49
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYU266caea6a80f407eb676652c2' style=''>69
+
+<br/></td><td id='temp:s:temp:C:QYU7df134f15ebd41469cae5f64a;temp:C:QYUd39ef63206264f55999867d99' style=''>95
+
+<br/></td></tr><tr id='temp:C:QYU576bcd9f580140bc9a97a00a1'><td style='background-color:#f0f0f0'>13</td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYU2a5175459def4359bb0b18232' style=''>% Adopted
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYUb02ef7d2256c4c58958c00a8d' style='background-color:#914108;'>7.2%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYUc20d4082ac964fcf9785518ff' style='background-color:#914108;'>12.2%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYUb1e93ebbcd064edf85ff83f91' style='background-color:#914108;'>16.3%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYU07b3979b283847e0824ce499f' style='background-color:#914108;'>21.5%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYUa68312437d0241f584bfe7a98' style='background-color:#914108;'>20.9%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYU6bd7eb14acd343cca620faa95' style='background-color:#914108;'>3.2%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style='background-color:#914108;'>3.3%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style='background-color:#914108;'>4.0%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYUc26fafb1b2d049c5a772894c5' style='background-color:#914108;'>5.0%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYU937dff40807d4e24a839c3d91' style='background-color:#914108;'>5.8%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYUb2910fc17f574ce8af6ab9900' style='background-color:#914108;'>6.4%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYU266caea6a80f407eb676652c2' style='background-color:#914108;'>8.4%
+
+<br/></td><td id='temp:s:temp:C:QYU576bcd9f580140bc9a97a00a1;temp:C:QYUd39ef63206264f55999867d99' style='background-color:#914108;'>10.6%
+
+<br/></td></tr><tr id='temp:C:QYUebae435051344cca91777f7bb'><td style='background-color:#f0f0f0'>14</td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYU2a5175459def4359bb0b18232' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYU937dff40807d4e24a839c3d91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYU266caea6a80f407eb676652c2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUebae435051344cca91777f7bb;temp:C:QYUd39ef63206264f55999867d99' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU384a8f98e70547f5ada5c9c4d'><td style='background-color:#f0f0f0'>15</td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYU2a5175459def4359bb0b18232' style='background-color:#333333;' class='bold'>T10 Only
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYUb02ef7d2256c4c58958c00a8d' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYUc20d4082ac964fcf9785518ff' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYUb1e93ebbcd064edf85ff83f91' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYU07b3979b283847e0824ce499f' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYUa68312437d0241f584bfe7a98' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYU6bd7eb14acd343cca620faa95' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYUc26fafb1b2d049c5a772894c5' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYU937dff40807d4e24a839c3d91' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYUb2910fc17f574ce8af6ab9900' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYU266caea6a80f407eb676652c2' style='background-color:#333333;'>
+
+<br/></td><td id='temp:s:temp:C:QYU384a8f98e70547f5ada5c9c4d;temp:C:QYUd39ef63206264f55999867d99' style='background-color:#333333;'>
+
+<br/></td></tr><tr id='temp:C:QYU1861892fce9d4fbea82fb0a0b'><td style='background-color:#f0f0f0'>16</td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYU2a5175459def4359bb0b18232' style='' class='underline'>Cumulative Points
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYU937dff40807d4e24a839c3d91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYU266caea6a80f407eb676652c2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1861892fce9d4fbea82fb0a0b;temp:C:QYUd39ef63206264f55999867d99' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUed5c47b480fd40878d86674f2'><td style='background-color:#f0f0f0'>17</td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYU2a5175459def4359bb0b18232' style=''>Eligible pts
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>40,074
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>44,058
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>56,171
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYU07b3979b283847e0824ce499f' style=''>57,406
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYUa68312437d0241f584bfe7a98' style=''>58,320
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>66,758
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>66,991
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>68,063
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>70,961
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYU937dff40807d4e24a839c3d91' style=''>78,177
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>87,143
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYU266caea6a80f407eb676652c2' style=''>107,525
+
+<br/></td><td id='temp:s:temp:C:QYUed5c47b480fd40878d86674f2;temp:C:QYUd39ef63206264f55999867d99' style=''>113,716
+
+<br/></td></tr><tr id='temp:C:QYU14f99a7fa71c4dcf81e82472a'><td style='background-color:#f0f0f0'>18</td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYU2a5175459def4359bb0b18232' style=''>Adopted pts
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>3,798
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>12,365
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>30,663
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYU07b3979b283847e0824ce499f' style=''>33,904
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYUa68312437d0241f584bfe7a98' style=''>33,880
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>3,739
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>4,121
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>364
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>3,739
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYU937dff40807d4e24a839c3d91' style=''>7,905
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>10,032
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYU266caea6a80f407eb676652c2' style=''>16,502
+
+<br/></td><td id='temp:s:temp:C:QYU14f99a7fa71c4dcf81e82472a;temp:C:QYUd39ef63206264f55999867d99' style=''>19,844
+
+<br/></td></tr><tr id='temp:C:QYU2335aece7e8b49eaa90d75e01'><td style='background-color:#f0f0f0'>19</td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYU2a5175459def4359bb0b18232' style='' class='bold'>% Adopted
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYUb02ef7d2256c4c58958c00a8d' style='background-color:#914108;' class='bold'>9.5%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYUc20d4082ac964fcf9785518ff' style='background-color:#914108;' class='bold'>28.1%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYUb1e93ebbcd064edf85ff83f91' style='background-color:#914108;' class='bold'>54.6%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYU07b3979b283847e0824ce499f' style='background-color:#914108;' class='bold'>59.1%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYUa68312437d0241f584bfe7a98' style='background-color:#914108;' class='bold'>58.1%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYU6bd7eb14acd343cca620faa95' style='background-color:#914108;' class='bold'>5.6%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style='background-color:#914108;' class='bold'>6.2%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style='background-color:#914108;' class='bold'>0.5%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYUc26fafb1b2d049c5a772894c5' style='background-color:#914108;' class='bold'>5.3%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYU937dff40807d4e24a839c3d91' style='background-color:#914108;' class='bold'>10.1%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYUb2910fc17f574ce8af6ab9900' style='background-color:#914108;' class='bold'>11.5%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYU266caea6a80f407eb676652c2' style='background-color:#914108;' class='bold'>15.3%
+
+<br/></td><td id='temp:s:temp:C:QYU2335aece7e8b49eaa90d75e01;temp:C:QYUd39ef63206264f55999867d99' style='background-color:#914108;' class='bold'>17.5%
+
+<br/></td></tr><tr id='temp:C:QYUaa993a42cad84170b95d42f56'><td style='background-color:#f0f0f0'>20</td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYU2a5175459def4359bb0b18232' style=''>Change MoM (bps)
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYUc20d4082ac964fcf9785518ff' style='background-color:#914108;'>1,859
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYUb1e93ebbcd064edf85ff83f91' style='background-color:#914108;'>2,652
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYU07b3979b283847e0824ce499f' style='background-color:#914108;'>447
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYUa68312437d0241f584bfe7a98' style='background-color:#914108;'>-97
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYU6bd7eb14acd343cca620faa95' style='background-color:#914108;'>-5,249
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style='background-color:#914108;'>55
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style='background-color:#914108;'>-562
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYUc26fafb1b2d049c5a772894c5' style='background-color:#914108;'>473
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYU937dff40807d4e24a839c3d91' style='background-color:#914108;'>484
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYUb2910fc17f574ce8af6ab9900' style='background-color:#914108;'>140
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYU266caea6a80f407eb676652c2' style='background-color:#914108;'>384
+
+<br/></td><td id='temp:s:temp:C:QYUaa993a42cad84170b95d42f56;temp:C:QYUd39ef63206264f55999867d99' style='background-color:#914108;'>210
+
+<br/></td></tr><tr id='temp:C:QYU2d09a265e5f242c5b0729abc6'><td style='background-color:#f0f0f0'>21</td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYU2a5175459def4359bb0b18232' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYUc20d4082ac964fcf9785518ff' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYUb1e93ebbcd064edf85ff83f91' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYU07b3979b283847e0824ce499f' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYUa68312437d0241f584bfe7a98' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYU6bd7eb14acd343cca620faa95' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYUc26fafb1b2d049c5a772894c5' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYU937dff40807d4e24a839c3d91' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYUb2910fc17f574ce8af6ab9900' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYU266caea6a80f407eb676652c2' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU2d09a265e5f242c5b0729abc6;temp:C:QYUd39ef63206264f55999867d99' style='background-color:#914108;'>
+
+<br/></td></tr><tr id='temp:C:QYU23d330b8a0ad4c20ab475d000'><td style='background-color:#f0f0f0'>22</td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYU2a5175459def4359bb0b18232' style=''>T10 Shadow Goal pts
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYUc20d4082ac964fcf9785518ff' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYUb1e93ebbcd064edf85ff83f91' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYU07b3979b283847e0824ce499f' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYUa68312437d0241f584bfe7a98' style='background-color:#914108;'>
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYU937dff40807d4e24a839c3d91' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYU266caea6a80f407eb676652c2' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU23d330b8a0ad4c20ab475d000;temp:C:QYUd39ef63206264f55999867d99' style=''>25,540
+
+<br/></td></tr><tr id='temp:C:QYU1314d12f75ca4889a04430058'><td style='background-color:#f0f0f0'>23</td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYU2a5175459def4359bb0b18232' style='' class='bold'>% Shadow Goal
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYU937dff40807d4e24a839c3d91' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYU266caea6a80f407eb676652c2' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYU1314d12f75ca4889a04430058;temp:C:QYUd39ef63206264f55999867d99' style=''>22.5%
+
+<br/></td></tr><tr id='temp:C:QYUa1e1e8b59ae94da3b1162163c'><td style='background-color:#f0f0f0'>24</td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYU2a5175459def4359bb0b18232' style=''>Change MoM (bps)
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYU937dff40807d4e24a839c3d91' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYU266caea6a80f407eb676652c2' style=''>--
+
+<br/></td><td id='temp:s:temp:C:QYUa1e1e8b59ae94da3b1162163c;temp:C:QYUd39ef63206264f55999867d99' style=''>-
+
+<br/></td></tr><tr id='temp:C:QYUdf6dc307516e46dda413023b1'><td style='background-color:#f0f0f0'>25</td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYU2a5175459def4359bb0b18232' style='' class='underline'>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYU937dff40807d4e24a839c3d91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYU266caea6a80f407eb676652c2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUdf6dc307516e46dda413023b1;temp:C:QYUd39ef63206264f55999867d99' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU3d9b7dbe35334a76b3180080c'><td style='background-color:#f0f0f0'>26</td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYU2a5175459def4359bb0b18232' style='' class='underline'>Cumulative Agencies
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYU07b3979b283847e0824ce499f' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYUa68312437d0241f584bfe7a98' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYU937dff40807d4e24a839c3d91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYU266caea6a80f407eb676652c2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU3d9b7dbe35334a76b3180080c;temp:C:QYUd39ef63206264f55999867d99' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUee49b858455247b8bf99e95d6'><td style='background-color:#f0f0f0'>27</td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYU2a5175459def4359bb0b18232' style=''>Eligible
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>117
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>141
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>155
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYU07b3979b283847e0824ce499f' style=''>164
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYUa68312437d0241f584bfe7a98' style=''>170
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYU6bd7eb14acd343cca620faa95' style='background-color:#F2EF90;'>Need to convert PowerBI dashboard to Sigma and clean up this data
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYU937dff40807d4e24a839c3d91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYU266caea6a80f407eb676652c2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUee49b858455247b8bf99e95d6;temp:C:QYUd39ef63206264f55999867d99' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU15c50df9baab49ba993998bb3'><td style='background-color:#f0f0f0'>28</td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYU2a5175459def4359bb0b18232' style=''>Adopted
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYUb02ef7d2256c4c58958c00a8d' style=''>18
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYUc20d4082ac964fcf9785518ff' style=''>31
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYUb1e93ebbcd064edf85ff83f91' style=''>47
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYU07b3979b283847e0824ce499f' style=''>64
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYUa68312437d0241f584bfe7a98' style=''>63
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYU6bd7eb14acd343cca620faa95' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYUe41a228fbbdf4f8796fcae4c8' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYU1fe1cd926fce45c68c0e6af5d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYUc26fafb1b2d049c5a772894c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYU937dff40807d4e24a839c3d91' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYUb2910fc17f574ce8af6ab9900' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYU266caea6a80f407eb676652c2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU15c50df9baab49ba993998bb3;temp:C:QYUd39ef63206264f55999867d99' style=''>
+
+<br/></td></tr></tbody></table></div><h3 id='temp:C:QYU1e6e520ebf334ff79e1454db9'>Product Adoption</h3>
+
+<a href="https://mixpanel.com/s/182n9">https://mixpanel.com/s/182n9</a><br/>
+
+<div data-section-style='13'><table id='temp:C:QYU9c3e4f67a89e45ec917eb8772' title='Sheet3' style='width: 76.8667em'><thead><tr><th class='empty' style='width: 2em'/><th id='temp:C:QYU38a8077f963d4b8cb8a4de484' class='empty' style='width: 17.6em'>A<br/></th><th id='temp:C:QYUab0ec3e92a464e20accb645b9' class='empty' style='width: 6em'>B<br/></th><th id='temp:C:QYU261360d0ca7445c48e4450a54' class='empty' style='width: 6em'>C<br/></th><th id='temp:C:QYU6319c6f8ceba458a8ae343ed7' class='empty' style='width: 6em'>D<br/></th><th id='temp:C:QYU6614a1828055409d8b273f3c5' class='empty' style='width: 6em'>E<br/></th><th id='temp:C:QYU5b9ef01666a742d4a5d47a16a' class='empty' style='width: 6em'>F<br/></th><th id='temp:C:QYU320ca07d04024718b6f51f46e' class='empty' style='width: 6em'>G<br/></th><th id='temp:C:QYU6621ee6b404e4070b32d79bb1' class='empty' style='width: 6em'>H<br/></th><th id='temp:C:QYU045e37f15e894a4e914c89c46' class='empty' style='width: 6em'>I<br/></th><th id='temp:C:QYUfddfa283d5324cd6a92586077' class='empty' style='width: 5.26667em'>J<br/></th><th id='temp:C:QYUe3f61af31eac430197ff40652' class='empty' style='width: 6em'>K<br/></th></tr></thead><tbody><tr id='temp:C:QYU902088ede11a4ea99a0214f50'><td style='background-color:#f0f0f0'>1</td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYU64d15b25d3614d528cb81fe77' style='background-color:#333333;' class='bold'>T10 &amp; T7
+
+<br/></td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYUad6cbeb980444d349a590c530' style='background-color:#333333;text-align: center;' class='bold'>January
+
+<br/></td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYU5ec8345f239a4593ac35f3d28' style='background-color:#333333;text-align: center;' class='bold'>February
+
+<br/></td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='background-color:#333333;text-align: center;' class='bold'>March
+
+<br/></td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYUb8e7485de20c41f0a9c03f715' style='background-color:#333333;text-align: center;' class='bold'>April
+
+<br/></td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='background-color:#333333;text-align: center;' class='bold'>May
+
+<br/></td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYU5aff689596d54c51b584e5e5a' style='background-color:#333333;text-align: center;' class='bold'>June
+
+<br/></td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYU160c3c3b4e1243e097e357d2a' style='background-color:#333333;text-align: center;' class='bold'>July
+
+<br/></td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='background-color:#333333;text-align: center;' class='bold'>August
+
+<br/></td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#333333;text-align: center;' class='bold'> MoM Change
+
+<br/></td><td id='temp:s:temp:C:QYU902088ede11a4ea99a0214f50;temp:C:QYU73babb9842c34511963fb916d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU2df051598ab64ba6b79da1d4f'><td style='background-color:#f0f0f0'>2</td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>SIM Modules Started
+
+<br/></td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>12,663
+
+<br/></td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>15,331
+
+<br/></td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>17,364
+
+<br/></td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>21,516
+
+<br/></td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>19,833
+
+<br/></td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>21,124
+
+<br/></td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>24,952
+
+<br/></td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='background-color:#FFE600;text-align: center;' class='bold'>21,179
+
+<br/></td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#dd5d5d;text-align: center;'>-3,773
+
+<br/></td><td id='temp:s:temp:C:QYU2df051598ab64ba6b79da1d4f;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#dd5d5d;text-align: center;'>-15.1%
+
+<br/></td></tr><tr id='temp:C:QYUd57b30c010224688a10183d86'><td style='background-color:#f0f0f0'>3</td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>SIM Modules Completed
+
+<br/></td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>10,923
+
+<br/></td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>13,025
+
+<br/></td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>15,096
+
+<br/></td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>17,931
+
+<br/></td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>16,042
+
+<br/></td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>17,483
+
+<br/></td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>20,302
+
+<br/></td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='background-color:#FFE600;text-align: center;' class='bold'>18,147
+
+<br/></td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#dd5d5d;text-align: center;'>-2,155
+
+<br/></td><td id='temp:s:temp:C:QYUd57b30c010224688a10183d86;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#dd5d5d;text-align: center;'>-10.6%
+
+<br/></td></tr><tr id='temp:C:QYU3ee0c97da39045ea9c7ac47d9'><td style='background-color:#f0f0f0'>4</td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>SIM 90 Day Completions Avg.
+
+<br/></td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>13,015
+
+<br/></td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>15,351
+
+<br/></td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>16,356
+
+<br/></td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>17,152
+
+<br/></td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>17,942
+
+<br/></td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='text-align: center;'>18,644
+
+<br/></td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#2e8526;text-align: center;'>702
+
+<br/></td><td id='temp:s:temp:C:QYU3ee0c97da39045ea9c7ac47d9;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#2e8526;text-align: center;'>3.9%
+
+<br/></td></tr><tr id='temp:C:QYU5286af631f3e439db64b29804'><td style='background-color:#f0f0f0'>5</td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>SIM Completion Rate
+
+<br/></td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>86%
+
+<br/></td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>85%
+
+<br/></td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>87%
+
+<br/></td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>85%
+
+<br/></td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>81%
+
+<br/></td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>83%
+
+<br/></td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>81%
+
+<br/></td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='text-align: center;'>85%
+
+<br/></td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#2e8526;text-align: center;'>4%
+
+<br/></td><td id='temp:s:temp:C:QYU5286af631f3e439db64b29804;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#2e8526;text-align: center;'>4.5%
+
+<br/></td></tr><tr id='temp:C:QYU5f4b9a607f714fe99240575eb'><td style='background-color:#f0f0f0'>6</td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>Unique Agencies
+
+<br/></td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>268
+
+<br/></td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>281
+
+<br/></td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>304
+
+<br/></td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>341
+
+<br/></td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>358
+
+<br/></td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>358
+
+<br/></td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>439
+
+<br/></td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='text-align: center;'>437
+
+<br/></td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#dd5d5d;text-align: center;'>-2
+
+<br/></td><td id='temp:s:temp:C:QYU5f4b9a607f714fe99240575eb;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#dd5d5d;text-align: center;'>-0.5%
+
+<br/></td></tr><tr id='temp:C:QYUb5e7b122a90746d685b7c0c17'><td style='background-color:#f0f0f0'>7</td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>% of Eligible Agencies Using Sim
+
+<br/></td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>43.4%
+
+<br/></td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>44.6%
+
+<br/></td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>46.8%
+
+<br/></td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>50.1%
+
+<br/></td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>49.7%
+
+<br/></td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>47.0%
+
+<br/></td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>53.7%
+
+<br/></td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='text-align: center;'>48.8%
+
+<br/></td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#dd5d5d;text-align: center;'>-4.8%
+
+<br/></td><td id='temp:s:temp:C:QYUb5e7b122a90746d685b7c0c17;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#dd5d5d;text-align: center;'>-9.0%
+
+<br/></td></tr><tr id='temp:C:QYU25bc76955e2e47e1a5aa0628e'><td style='background-color:#f0f0f0'>8</td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>Trainings per Agency
+
+<br/></td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>40.8
+
+<br/></td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>46.4
+
+<br/></td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>49.7
+
+<br/></td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>52.6
+
+<br/></td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>44.8
+
+<br/></td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>48.8
+
+<br/></td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>46.2
+
+<br/></td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='text-align: center;'>41.5
+
+<br/></td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#dd5d5d;text-align: center;'>-4.7
+
+<br/></td><td id='temp:s:temp:C:QYU25bc76955e2e47e1a5aa0628e;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#dd5d5d;text-align: center;'>-10.2%
+
+<br/></td></tr><tr id='temp:C:QYU892bf3441eb9404e8926f2c23'><td style='background-color:#f0f0f0'>9</td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYU64d15b25d3614d528cb81fe77' style='text-align: center;'>
+
+<br/></td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYUad6cbeb980444d349a590c530' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYU5ec8345f239a4593ac35f3d28' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYUb8e7485de20c41f0a9c03f715' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYU94250a5c5a144b5396fa0d4ad' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYU5aff689596d54c51b584e5e5a' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>
+
+<br/></td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='text-align: center;'>
+
+<br/></td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYUfe6b2a853f3645efb5331d4e9' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU892bf3441eb9404e8926f2c23;temp:C:QYU73babb9842c34511963fb916d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU3f0d838d5066491c9f522d8e6'><td style='background-color:#f0f0f0'>10</td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>Non-SIM Modules Started
+
+<br/></td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>3,574
+
+<br/></td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>3,581
+
+<br/></td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>8,251
+
+<br/></td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>12,053
+
+<br/></td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>12,872
+
+<br/></td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>12,409
+
+<br/></td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>14,140
+
+<br/></td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='text-align: center;'>11,709
+
+<br/></td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#dd5d5d;text-align: center;'>-2,431
+
+<br/></td><td id='temp:s:temp:C:QYU3f0d838d5066491c9f522d8e6;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#dd5d5d;text-align: center;'>-17.2%
+
+<br/></td></tr><tr id='temp:C:QYUe58615de7bc8439aa93331542'><td style='background-color:#f0f0f0'>11</td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>Non-SIM Modules Completed
+
+<br/></td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>3,211
+
+<br/></td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>3,143
+
+<br/></td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>7,483
+
+<br/></td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>10,966
+
+<br/></td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>11,887
+
+<br/></td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>11,347
+
+<br/></td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>12,930
+
+<br/></td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='text-align: center;'>10,739
+
+<br/></td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#dd5d5d;text-align: center;'>-2,191
+
+<br/></td><td id='temp:s:temp:C:QYUe58615de7bc8439aa93331542;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#dd5d5d;text-align: center;'>-16.9%
+
+<br/></td></tr><tr id='temp:C:QYU5c5edfb3024d4277a921857f3'><td style='background-color:#f0f0f0'>12</td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>Non-SIM 90 Day Completions Avg.
+
+<br/></td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>4,612
+
+<br/></td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>7,197
+
+<br/></td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>10,112
+
+<br/></td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>11,400
+
+<br/></td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>12,055
+
+<br/></td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='text-align: center;'>11,672
+
+<br/></td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#dd5d5d;text-align: center;'>-383
+
+<br/></td><td id='temp:s:temp:C:QYU5c5edfb3024d4277a921857f3;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#dd5d5d;text-align: center;'>-3.2%
+
+<br/></td></tr><tr id='temp:C:QYU5064834ae1a94adeb240dfc5e'><td style='background-color:#f0f0f0'>13</td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYU64d15b25d3614d528cb81fe77' style=''>Non-SIM Completion Rate
+
+<br/></td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYUad6cbeb980444d349a590c530' style='text-align: center;'>90%
+
+<br/></td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYU5ec8345f239a4593ac35f3d28' style='text-align: center;'>88%
+
+<br/></td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYU11a37b3bab8f4dc596cdd3cc8' style='text-align: center;'>91%
+
+<br/></td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYUb8e7485de20c41f0a9c03f715' style='text-align: center;'>91%
+
+<br/></td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYU94250a5c5a144b5396fa0d4ad' style='text-align: center;'>91%
+
+<br/></td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYU5aff689596d54c51b584e5e5a' style='text-align: center;'>91%
+
+<br/></td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYU160c3c3b4e1243e097e357d2a' style='text-align: center;'>91%
+
+<br/></td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYU3900d6edeb2e4f29a321c2d71' style='text-align: center;'>92%
+
+<br/></td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYUfe6b2a853f3645efb5331d4e9' style='background-color:#2e8526;text-align: center;'>1%
+
+<br/></td><td id='temp:s:temp:C:QYU5064834ae1a94adeb240dfc5e;temp:C:QYU73babb9842c34511963fb916d' style='background-color:#2e8526;text-align: center;'>0.6%
+
+<br/></td></tr></tbody></table></div><hr style='width:100%'><h2 id='temp:C:QYUa482ee98a52244fbadaff24b7'>APAP Deep Dive</h2>
+
+<i>Note these dashboards do not account for the 6mo Eligibility hold. It also relies on Mixpanel data, meaning if an agency has not logged any telemetry over the last 12 months, they will not appear in our calculations as an eligible agency.</i><br/>
+
+<h3 id='temp:C:QYUcce3162acd634d0e990213d8c'>SIM Only Adoption (SHADOW GOAL)</h3>
+
+<div data-section-style='13'><table id='temp:C:QYUc1ead4aa3a7944c595a886b21' title='Sheet2' style='width: 76.8667em'><thead><tr><th class='empty' style='width: 2em'/><th id='temp:C:QYUb5bfa1839dbd414399b978fb5' class='empty' style='width: 17.6em'>A<br/></th><th id='temp:C:QYU7b22d37e71754d3692f7be154' class='empty' style='width: 6em'>B<br/></th><th id='temp:C:QYU6684ff168b3d49fca5e4f6d0f' class='empty' style='width: 6em'>C<br/></th><th id='temp:C:QYU947e8515194d4b7889a80a7a1' class='empty' style='width: 6em'>D<br/></th><th id='temp:C:QYU2788473540ce4c99987c87808' class='empty' style='width: 6em'>E<br/></th><th id='temp:C:QYU51408e1e39514ac7b2b745d41' class='empty' style='width: 6em'>F<br/></th><th id='temp:C:QYU323450fa324e491fb3255fe71' class='empty' style='width: 6em'>G<br/></th><th id='temp:C:QYUdb1814f0eba14bd7902c4e365' class='empty' style='width: 6em'>H<br/></th><th id='temp:C:QYUd40d0de9575249bb8db1967ee' class='empty' style='width: 6em'>I<br/></th><th id='temp:C:QYU52f656fb6bca4925bab6e329f' class='empty' style='width: 5.26667em'>J<br/></th><th id='temp:C:QYU769dd3907a21496b9671273ff' class='empty' style='width: 6em'>K<br/></th></tr></thead><tbody><tr id='temp:C:QYU08a6d6091b944f63a91a5b5cd'><td style='background-color:#f0f0f0'>1</td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYU3313541164b54444bfe42f8da' style='background-color:#333333;' class='bold'>T10 &amp; T7
+
+<br/></td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='background-color:#333333;text-align: center;' class='bold'>January
+
+<br/></td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYU0346148e514c4c06927fc3f47' style='background-color:#333333;text-align: center;' class='bold'>February
+
+<br/></td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='background-color:#333333;text-align: center;' class='bold'>March
+
+<br/></td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='background-color:#333333;text-align: center;' class='bold'>April
+
+<br/></td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYU3e41e95563064083af57e6f79' style='background-color:#333333;text-align: center;' class='bold'>May
+
+<br/></td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYU226894b436444b498a625f4ff' style='background-color:#333333;text-align: center;' class='bold'>June
+
+<br/></td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='background-color:#333333;text-align: center;' class='bold'>July
+
+<br/></td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYU0b4da95dddba440a9104acfca' style='background-color:#333333;text-align: center;' class='bold'>August
+
+<br/></td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#333333;text-align: center;' class='bold'> MoM Change
+
+<br/></td><td id='temp:s:temp:C:QYU08a6d6091b944f63a91a5b5cd;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU501c2eb3e9bf48589f7ce3701'><td style='background-color:#f0f0f0'>2</td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYU3313541164b54444bfe42f8da' style=''><b>Shadow Goal Agencies </b><i>(Agencies who would be in APAP currently without T6 Non-SIM Threshold)</i>
+
+<br/></td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYU1e617e2e7ba24d2db31ecda41' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYU0346148e514c4c06927fc3f47' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYU3e41e95563064083af57e6f79' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYU226894b436444b498a625f4ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYU0b4da95dddba440a9104acfca' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYUbe59ba1980504c498d22bf9a2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU501c2eb3e9bf48589f7ce3701;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU754e65a2547045309d3809ddd'><td style='background-color:#f0f0f0'>3</td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYU3313541164b54444bfe42f8da' style='' class='bold'>POINTS - Over SIM Threshold
+
+<br/></td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;' class='bold'>-
+
+<br/></td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>15,051
+
+<br/></td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>17,787
+
+<br/></td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>18,635
+
+<br/></td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>20,935
+
+<br/></td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>23,806
+
+<br/></td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>27,258
+
+<br/></td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYU0b4da95dddba440a9104acfca' style='background-color:#FFE600;text-align: center;' class='bold'>32,327
+
+<br/></td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>5,069
+
+<br/></td><td id='temp:s:temp:C:QYU754e65a2547045309d3809ddd;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>18.6%
+
+<br/></td></tr><tr id='temp:C:QYUe0e184fe00b14cff9e5c5ac10'><td style='background-color:#f0f0f0'>4</td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYU3313541164b54444bfe42f8da' style='' class='bold'>AGENCIES - Over SIM Threshold
+
+<br/></td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;' class='bold'>-
+
+<br/></td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>132
+
+<br/></td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>148
+
+<br/></td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>159
+
+<br/></td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>293
+
+<br/></td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>229
+
+<br/></td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>252
+
+<br/></td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYU0b4da95dddba440a9104acfca' style='background-color:#FFE600;text-align: center;' class='bold'>330
+
+<br/></td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>78
+
+<br/></td><td id='temp:s:temp:C:QYUe0e184fe00b14cff9e5c5ac10;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>31.0%
+
+<br/></td></tr><tr id='temp:C:QYU3316c04984d245559a410dbb3'><td style='background-color:#f0f0f0'>5</td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYU3313541164b54444bfe42f8da' style='' class='bold'>% POINTS - Over SIM Threshold
+
+<br/></td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;' class='bold'>
+
+<br/></td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>11.0%
+
+<br/></td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>12.9%
+
+<br/></td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>13.2%
+
+<br/></td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>14.1%
+
+<br/></td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>15.2%
+
+<br/></td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>15.5%
+
+<br/></td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYU0b4da95dddba440a9104acfca' style='text-align: center;'>17.6%
+
+<br/></td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>2.1%
+
+<br/></td><td id='temp:s:temp:C:QYU3316c04984d245559a410dbb3;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>13.7%
+
+<br/></td></tr><tr id='temp:C:QYU38f9d58507164ce19d7336ff6'><td style='background-color:#f0f0f0'>6</td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYU3313541164b54444bfe42f8da' style=''>Points Lost from Non-SIM Use
+
+<br/></td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>10,757
+
+<br/></td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>12,873
+
+<br/></td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>13,034
+
+<br/></td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>14,670
+
+<br/></td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>17,069
+
+<br/></td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>12,460
+
+<br/></td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYU0b4da95dddba440a9104acfca' style='text-align: center;'>13,811
+
+<br/></td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>1,351
+
+<br/></td><td id='temp:s:temp:C:QYU38f9d58507164ce19d7336ff6;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>10.8%
+
+<br/></td></tr><tr id='temp:C:QYUceef3c2435664412a13dee2c9'><td style='background-color:#f0f0f0'>7</td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYU3313541164b54444bfe42f8da' style=''>Agencies Lost from Non-SIM Use
+
+<br/></td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>111
+
+<br/></td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>122
+
+<br/></td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>125
+
+<br/></td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>251
+
+<br/></td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>180
+
+<br/></td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>183
+
+<br/></td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYU0b4da95dddba440a9104acfca' style='text-align: center;'>235
+
+<br/></td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>52
+
+<br/></td><td id='temp:s:temp:C:QYUceef3c2435664412a13dee2c9;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>28.4%
+
+<br/></td></tr><tr id='temp:C:QYU9510dcd00b0f41988e64c6ef5'><td style='background-color:#f0f0f0'>8</td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYU3313541164b54444bfe42f8da' style=''>% Points Lost from Non-SIM Use
+
+<br/></td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>7.9%
+
+<br/></td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>9.3%
+
+<br/></td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>9.3%
+
+<br/></td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>9.9%
+
+<br/></td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>10.9%
+
+<br/></td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>7.2%
+
+<br/></td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYU0b4da95dddba440a9104acfca' style='text-align: center;'>7.5%
+
+<br/></td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>0.3%
+
+<br/></td><td id='temp:s:temp:C:QYU9510dcd00b0f41988e64c6ef5;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>4.6%
+
+<br/></td></tr><tr id='temp:C:QYUb6a5fc3280c74df5af2fe752b'><td style='background-color:#f0f0f0'>9</td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYU3313541164b54444bfe42f8da' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYU1e617e2e7ba24d2db31ecda41' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYU0346148e514c4c06927fc3f47' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYU3e41e95563064083af57e6f79' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYU226894b436444b498a625f4ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYU0b4da95dddba440a9104acfca' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYUbe59ba1980504c498d22bf9a2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb6a5fc3280c74df5af2fe752b;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU8c9acc4c1e674a3b83715671c'><td style='background-color:#f0f0f0'>10</td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYU3313541164b54444bfe42f8da' style=''><b>Close to SIM Threshold</b><i> (Other agencies who are close to meeting SIM (&gt; 1 SIM Training per person); may also need more Non-SIM use too)</i>
+
+<br/></td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYU1e617e2e7ba24d2db31ecda41' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYU0346148e514c4c06927fc3f47' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYU3e41e95563064083af57e6f79' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYU226894b436444b498a625f4ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYU0b4da95dddba440a9104acfca' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYUbe59ba1980504c498d22bf9a2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8c9acc4c1e674a3b83715671c;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUbae47d7f61194982a61e2991b'><td style='background-color:#f0f0f0'>11</td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYU3313541164b54444bfe42f8da' style=''>POINTS - Near SIM Threshold
+
+<br/></td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>4,139
+
+<br/></td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>4,931
+
+<br/></td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>7,956
+
+<br/></td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>8,676
+
+<br/></td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>12,112
+
+<br/></td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>16,241
+
+<br/></td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYU0b4da95dddba440a9104acfca' style='text-align: center;'>17,908
+
+<br/></td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>1,667
+
+<br/></td><td id='temp:s:temp:C:QYUbae47d7f61194982a61e2991b;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>10.3%
+
+<br/></td></tr><tr id='temp:C:QYU2d2501ad8e0147a9a397f16c1'><td style='background-color:#f0f0f0'>12</td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYU3313541164b54444bfe42f8da' style=''>AGENCIES - Near SIM Threshold
+
+<br/></td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>44
+
+<br/></td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>45
+
+<br/></td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>53
+
+<br/></td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>65
+
+<br/></td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>67
+
+<br/></td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>73
+
+<br/></td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYU0b4da95dddba440a9104acfca' style='text-align: center;'>94
+
+<br/></td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>21
+
+<br/></td><td id='temp:s:temp:C:QYU2d2501ad8e0147a9a397f16c1;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>28.8%
+
+<br/></td></tr><tr id='temp:C:QYU3d10c380934d46e9a8ba2a003'><td style='background-color:#f0f0f0'>13</td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYU3313541164b54444bfe42f8da' style=''>% POINTS - Near SIM Threshold
+
+<br/></td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>3.0%
+
+<br/></td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>3.6%
+
+<br/></td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>5.7%
+
+<br/></td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>5.9%
+
+<br/></td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>7.7%
+
+<br/></td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>9.2%
+
+<br/></td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYU0b4da95dddba440a9104acfca' style='text-align: center;'>9.8%
+
+<br/></td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>0.5%
+
+<br/></td><td id='temp:s:temp:C:QYU3d10c380934d46e9a8ba2a003;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>5.8%
+
+<br/></td></tr><tr id='temp:C:QYU1b5d8c89e6d64679b86082ebb'><td style='background-color:#f0f0f0'>14</td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYU3313541164b54444bfe42f8da' style='background-color:#E6E6E6;'>
+
+<br/></td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='background-color:#E6E6E6;'>
+
+<br/></td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYU0346148e514c4c06927fc3f47' style='background-color:#E6E6E6;'>
+
+<br/></td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='background-color:#E6E6E6;'>
+
+<br/></td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='background-color:#E6E6E6;'>
+
+<br/></td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYU3e41e95563064083af57e6f79' style='background-color:#E6E6E6;'>
+
+<br/></td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYU226894b436444b498a625f4ff' style='background-color:#E6E6E6;'>
+
+<br/></td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='background-color:#E6E6E6;'>
+
+<br/></td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYU0b4da95dddba440a9104acfca' style='background-color:#E6E6E6;'>
+
+<br/></td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#E6E6E6;'>
+
+<br/></td><td id='temp:s:temp:C:QYU1b5d8c89e6d64679b86082ebb;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#E6E6E6;'>
+
+<br/></td></tr><tr id='temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf'><td style='background-color:#f0f0f0'>15</td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYU3313541164b54444bfe42f8da' style=''><b>Additional APAP Opportunities </b><i>(Additional APAP points that could be attained with relatively low-lift CSM touch)</i>
+
+<br/></td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYU1e617e2e7ba24d2db31ecda41' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYU0346148e514c4c06927fc3f47' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYU3e41e95563064083af57e6f79' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYU226894b436444b498a625f4ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYU0b4da95dddba440a9104acfca' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYUbe59ba1980504c498d22bf9a2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU4d0a8e6cb96a4dc39ef2b9baf;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUcfc75127a11a4bd59fb29ec85'><td style='background-color:#f0f0f0'>16</td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYU3313541164b54444bfe42f8da' style=''>Additional Points
+
+<br/></td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>14,896
+
+<br/></td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>17,804
+
+<br/></td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>20,990
+
+<br/></td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>23,346
+
+<br/></td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>29,181
+
+<br/></td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>28,701
+
+<br/></td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYU0b4da95dddba440a9104acfca' style='text-align: center;'>31,719
+
+<br/></td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>3,018
+
+<br/></td><td id='temp:s:temp:C:QYUcfc75127a11a4bd59fb29ec85;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>10.5%
+
+<br/></td></tr><tr id='temp:C:QYU5eee4e3d3f2541d6a64cc6a6a'><td style='background-color:#f0f0f0'>17</td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYU3313541164b54444bfe42f8da' style=''>Additional Agencies
+
+<br/></td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>155
+
+<br/></td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>167
+
+<br/></td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>178
+
+<br/></td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>316
+
+<br/></td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>247
+
+<br/></td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>256
+
+<br/></td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYU0b4da95dddba440a9104acfca' style='text-align: center;'>329
+
+<br/></td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>73
+
+<br/></td><td id='temp:s:temp:C:QYU5eee4e3d3f2541d6a64cc6a6a;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>28.5%
+
+<br/></td></tr><tr id='temp:C:QYU996aabd5584e459882742ef75'><td style='background-color:#f0f0f0'>18</td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYU3313541164b54444bfe42f8da' style=''>Additional APAP %
+
+<br/></td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='text-align: center;'>-
+
+<br/></td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYU0346148e514c4c06927fc3f47' style='text-align: center;'>10.9%
+
+<br/></td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='text-align: center;'>12.9%
+
+<br/></td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='text-align: center;'>14.9%
+
+<br/></td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYU3e41e95563064083af57e6f79' style='text-align: center;'>15.7%
+
+<br/></td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYU226894b436444b498a625f4ff' style='text-align: center;'>18.6%
+
+<br/></td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='text-align: center;'>16.3%
+
+<br/></td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYU0b4da95dddba440a9104acfca' style='text-align: center;'>17.3%
+
+<br/></td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>1.0%
+
+<br/></td><td id='temp:s:temp:C:QYU996aabd5584e459882742ef75;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>6.0%
+
+<br/></td></tr><tr id='temp:C:QYU0b99c04b864c42db9498f87d7'><td style='background-color:#f0f0f0'>19</td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYU3313541164b54444bfe42f8da' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYU1e617e2e7ba24d2db31ecda41' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYU0346148e514c4c06927fc3f47' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYU3e41e95563064083af57e6f79' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYU226894b436444b498a625f4ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYU0b4da95dddba440a9104acfca' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYUbe59ba1980504c498d22bf9a2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0b99c04b864c42db9498f87d7;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU721637af066949b2aa15c99a2'><td style='background-color:#f0f0f0'>20</td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYU3313541164b54444bfe42f8da' style=''><b>Total Outlook</b> <i>(If all CSM Opportunities were realized, what would our APAP numbers be)</i>
+
+<br/></td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYU1e617e2e7ba24d2db31ecda41' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYU0346148e514c4c06927fc3f47' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYU3e41e95563064083af57e6f79' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYU226894b436444b498a625f4ff' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYU0b4da95dddba440a9104acfca' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYUbe59ba1980504c498d22bf9a2' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU721637af066949b2aa15c99a2;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUeaf7d2e0b590444f8bcfd5861'><td style='background-color:#f0f0f0'>21</td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYU3313541164b54444bfe42f8da' style='background-color:#FEFCCB;' class='bold'>Total Points
+
+<br/></td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='background-color:#FEFCCB;text-align: center;' class='bold'>-
+
+<br/></td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYU0346148e514c4c06927fc3f47' style='background-color:#FEFCCB;text-align: center;' class='bold'>19,190
+
+<br/></td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='background-color:#FEFCCB;text-align: center;' class='bold'>22,718
+
+<br/></td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='background-color:#FEFCCB;text-align: center;' class='bold'>26,591
+
+<br/></td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYU3e41e95563064083af57e6f79' style='background-color:#FEFCCB;text-align: center;' class='bold'>29,611
+
+<br/></td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYU226894b436444b498a625f4ff' style='background-color:#FEFCCB;text-align: center;' class='bold'>35,918
+
+<br/></td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='background-color:#FEFCCB;text-align: center;' class='bold'>43,499
+
+<br/></td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYU0b4da95dddba440a9104acfca' style='background-color:#FEFCCB;text-align: center;' class='bold'>50,235
+
+<br/></td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>6,736
+
+<br/></td><td id='temp:s:temp:C:QYUeaf7d2e0b590444f8bcfd5861;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>15.5%
+
+<br/></td></tr><tr id='temp:C:QYU958a004a43a94fbd83580f808'><td style='background-color:#f0f0f0'>22</td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYU3313541164b54444bfe42f8da' style='background-color:#FEFCCB;' class='bold'>Total Agencies
+
+<br/></td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='background-color:#FEFCCB;text-align: center;' class='bold'>-
+
+<br/></td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYU0346148e514c4c06927fc3f47' style='background-color:#FEFCCB;text-align: center;' class='bold'>176
+
+<br/></td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='background-color:#FEFCCB;text-align: center;' class='bold'>193
+
+<br/></td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='background-color:#FEFCCB;text-align: center;' class='bold'>212
+
+<br/></td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYU3e41e95563064083af57e6f79' style='background-color:#FEFCCB;text-align: center;' class='bold'>358
+
+<br/></td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYU226894b436444b498a625f4ff' style='background-color:#FEFCCB;text-align: center;' class='bold'>296
+
+<br/></td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='background-color:#FEFCCB;text-align: center;' class='bold'>325
+
+<br/></td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYU0b4da95dddba440a9104acfca' style='background-color:#FEFCCB;text-align: center;' class='bold'>424
+
+<br/></td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>99
+
+<br/></td><td id='temp:s:temp:C:QYU958a004a43a94fbd83580f808;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>30.5%
+
+<br/></td></tr><tr id='temp:C:QYU8c3f793e0db740c7979fe1d92'><td style='background-color:#f0f0f0'>23</td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYU3313541164b54444bfe42f8da' style='background-color:#FEFCCB;' class='bold'>Total APAP %
+
+<br/></td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYU1e617e2e7ba24d2db31ecda41' style='background-color:#FEFCCB;text-align: center;' class='bold'>-
+
+<br/></td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYU0346148e514c4c06927fc3f47' style='background-color:#FEFCCB;text-align: center;' class='bold'>14.1%
+
+<br/></td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYU71f92b8b07f54f01b4f33d2c5' style='background-color:#FEFCCB;text-align: center;' class='bold'>16.5%
+
+<br/></td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYU934b0e8ad72346e4b4ba87a6a' style='background-color:#FEFCCB;text-align: center;' class='bold'>18.9%
+
+<br/></td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYU3e41e95563064083af57e6f79' style='background-color:#FEFCCB;text-align: center;' class='bold'>20.0%
+
+<br/></td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYU226894b436444b498a625f4ff' style='background-color:#FEFCCB;text-align: center;' class='bold'>22.9%
+
+<br/></td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYUe22e6194e05f4a8c9bc1f3859' style='background-color:#FEFCCB;text-align: center;' class='bold'>24.7%
+
+<br/></td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYU0b4da95dddba440a9104acfca' style='background-color:#FEFCCB;text-align: center;' class='bold'>27.4%
+
+<br/></td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYUbe59ba1980504c498d22bf9a2' style='background-color:#2e8526;text-align: center;'>2.7%
+
+<br/></td><td id='temp:s:temp:C:QYU8c3f793e0db740c7979fe1d92;temp:C:QYUfcb4ae1f5f5b440cbb191ac8f' style='background-color:#2e8526;text-align: center;'>10.8%
+
+<br/></td></tr></tbody></table></div><h3 id='temp:C:QYU9cf4977d03ad436dbfb68fdfe'>Major Accounts</h3>
+
+<div data-section-style='13'><table id='temp:C:QYU50e3bfb672014336ac3d5698c' title='Sheet5' style='width: 62.8em'><thead><tr><th class='empty' style='width: 2em'/><th id='temp:C:QYU97b678943ee340bfa6afdddf6' class='empty' style='width: 20.8em'>A<br/></th><th id='temp:C:QYU146135f97c3c412283eb2866e' class='empty' style='width: 6em'>B<br/></th><th id='temp:C:QYUa24422cf02de4b8a949f7ecaf' class='empty' style='width: 6em'>C<br/></th><th id='temp:C:QYU3c0d5bc029bf49ab80cf8e6b6' class='empty' style='width: 6em'>D<br/></th><th id='temp:C:QYUb8a5369cb1af4cdc840e1ceac' class='empty' style='width: 6em'>E<br/></th><th id='temp:C:QYUde8d570138f6438eae4ec6fb8' class='empty' style='width: 6em'>F<br/></th><th id='temp:C:QYU3a3584d5099f473c90fb3411b' class='empty' style='width: 6em'>G<br/></th><th id='temp:C:QYUdf55ef777d184588b4797e341' class='empty' style='width: 6em'>H<br/></th></tr></thead><tbody><tr id='temp:C:QYUa3c67027b4284156b14bc5eda'><td style='background-color:#f0f0f0'>1</td><td id='temp:s:temp:C:QYUa3c67027b4284156b14bc5eda;temp:C:QYUc318b6f2b86f4803a458224d5' style='background-color:#333333;' class='bold'>T10 &amp; T7
+
+<br/></td><td id='temp:s:temp:C:QYUa3c67027b4284156b14bc5eda;temp:C:QYUb07a771316e147889ace964be' style='background-color:#333333;text-align: center;' class='bold'>April
+
+<br/></td><td id='temp:s:temp:C:QYUa3c67027b4284156b14bc5eda;temp:C:QYUdc37cf5907cf4a678ea320081' style='background-color:#333333;text-align: center;' class='bold'>May
+
+<br/></td><td id='temp:s:temp:C:QYUa3c67027b4284156b14bc5eda;temp:C:QYU189bd647eb994023b9d86622d' style='background-color:#333333;text-align: center;' class='bold'>June
+
+<br/></td><td id='temp:s:temp:C:QYUa3c67027b4284156b14bc5eda;temp:C:QYU21a17cf2070541d7afee8f12e' style='background-color:#333333;text-align: center;' class='bold'>July
+
+<br/></td><td id='temp:s:temp:C:QYUa3c67027b4284156b14bc5eda;temp:C:QYU813d25645466440f85370e6fa' style='background-color:#333333;text-align: center;' class='bold'>August
+
+<br/></td><td id='temp:s:temp:C:QYUa3c67027b4284156b14bc5eda;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#333333;text-align: center;' class='bold'> MoM Change
+
+<br/></td><td id='temp:s:temp:C:QYUa3c67027b4284156b14bc5eda;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU8e228f8546d942bc9d714b571'><td style='background-color:#f0f0f0'>2</td><td id='temp:s:temp:C:QYU8e228f8546d942bc9d714b571;temp:C:QYUc318b6f2b86f4803a458224d5' style=''><b>Current Majors APAP </b><i>(Does not account for 6mo eligibility)</i>
+
+<br/></td><td id='temp:s:temp:C:QYU8e228f8546d942bc9d714b571;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8e228f8546d942bc9d714b571;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8e228f8546d942bc9d714b571;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8e228f8546d942bc9d714b571;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8e228f8546d942bc9d714b571;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8e228f8546d942bc9d714b571;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU8e228f8546d942bc9d714b571;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUa96745410d974e4f905eb0e1a'><td style='background-color:#f0f0f0'>3</td><td id='temp:s:temp:C:QYUa96745410d974e4f905eb0e1a;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>Number of Majors Agencies
+
+<br/></td><td id='temp:s:temp:C:QYUa96745410d974e4f905eb0e1a;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>73
+
+<br/></td><td id='temp:s:temp:C:QYUa96745410d974e4f905eb0e1a;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>76
+
+<br/></td><td id='temp:s:temp:C:QYUa96745410d974e4f905eb0e1a;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>80
+
+<br/></td><td id='temp:s:temp:C:QYUa96745410d974e4f905eb0e1a;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>89
+
+<br/></td><td id='temp:s:temp:C:QYUa96745410d974e4f905eb0e1a;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>89
+
+<br/></td><td id='temp:s:temp:C:QYUa96745410d974e4f905eb0e1a;temp:C:QYUf2053b099d364a68817b83ac3' style='text-align: center;'>0
+
+<br/></td><td id='temp:s:temp:C:QYUa96745410d974e4f905eb0e1a;temp:C:QYU49ae8a0d06b246a795d09d63d' style='text-align: center;'>0.0%
+
+<br/></td></tr><tr id='temp:C:QYU41aef59d131d46b8bfac4df9d'><td style='background-color:#f0f0f0'>4</td><td id='temp:s:temp:C:QYU41aef59d131d46b8bfac4df9d;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>Possible Majors APAP Points
+
+<br/></td><td id='temp:s:temp:C:QYU41aef59d131d46b8bfac4df9d;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>112,727
+
+<br/></td><td id='temp:s:temp:C:QYU41aef59d131d46b8bfac4df9d;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>120,244
+
+<br/></td><td id='temp:s:temp:C:QYU41aef59d131d46b8bfac4df9d;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>124,945
+
+<br/></td><td id='temp:s:temp:C:QYU41aef59d131d46b8bfac4df9d;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>126,920
+
+<br/></td><td id='temp:s:temp:C:QYU41aef59d131d46b8bfac4df9d;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>130,052
+
+<br/></td><td id='temp:s:temp:C:QYU41aef59d131d46b8bfac4df9d;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>3,132
+
+<br/></td><td id='temp:s:temp:C:QYU41aef59d131d46b8bfac4df9d;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>2.5%
+
+<br/></td></tr><tr id='temp:C:QYU4e5fe40c342e4442b83bf3df8'><td style='background-color:#f0f0f0'>5</td><td id='temp:s:temp:C:QYU4e5fe40c342e4442b83bf3df8;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>% of Overall Possible APAP Points
+
+<br/></td><td id='temp:s:temp:C:QYU4e5fe40c342e4442b83bf3df8;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>80.11%
+
+<br/></td><td id='temp:s:temp:C:QYU4e5fe40c342e4442b83bf3df8;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>81.10%
+
+<br/></td><td id='temp:s:temp:C:QYU4e5fe40c342e4442b83bf3df8;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>79.63%
+
+<br/></td><td id='temp:s:temp:C:QYU4e5fe40c342e4442b83bf3df8;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>72.16%
+
+<br/></td><td id='temp:s:temp:C:QYU4e5fe40c342e4442b83bf3df8;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>70.92%
+
+<br/></td><td id='temp:s:temp:C:QYU4e5fe40c342e4442b83bf3df8;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#dd5d5d;text-align: center;'>-1.24%
+
+<br/></td><td id='temp:s:temp:C:QYU4e5fe40c342e4442b83bf3df8;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#dd5d5d;text-align: center;'>-1.7%
+
+<br/></td></tr><tr id='temp:C:QYU2cfd936750c545648d88ed563'><td style='background-color:#f0f0f0'>6</td><td id='temp:s:temp:C:QYU2cfd936750c545648d88ed563;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2cfd936750c545648d88ed563;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2cfd936750c545648d88ed563;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2cfd936750c545648d88ed563;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2cfd936750c545648d88ed563;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2cfd936750c545648d88ed563;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2cfd936750c545648d88ed563;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2cfd936750c545648d88ed563;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU0081d84311384bb8af793b915'><td style='background-color:#f0f0f0'>7</td><td id='temp:s:temp:C:QYU0081d84311384bb8af793b915;temp:C:QYUc318b6f2b86f4803a458224d5' style=''><b>Meeting APAP </b><i>(Does not account for 6mo eligibility)</i>
+
+<br/></td><td id='temp:s:temp:C:QYU0081d84311384bb8af793b915;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0081d84311384bb8af793b915;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0081d84311384bb8af793b915;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0081d84311384bb8af793b915;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0081d84311384bb8af793b915;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0081d84311384bb8af793b915;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU0081d84311384bb8af793b915;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUfd92ad0cde4742f083f80882f'><td style='background-color:#f0f0f0'>8</td><td id='temp:s:temp:C:QYUfd92ad0cde4742f083f80882f;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>POINTS - Meeting APAP Thresholds
+
+<br/></td><td id='temp:s:temp:C:QYUfd92ad0cde4742f083f80882f;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>3,847
+
+<br/></td><td id='temp:s:temp:C:QYUfd92ad0cde4742f083f80882f;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>3,847
+
+<br/></td><td id='temp:s:temp:C:QYUfd92ad0cde4742f083f80882f;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>5,032
+
+<br/></td><td id='temp:s:temp:C:QYUfd92ad0cde4742f083f80882f;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>6,367
+
+<br/></td><td id='temp:s:temp:C:QYUfd92ad0cde4742f083f80882f;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;' class='bold'>8,716
+
+<br/></td><td id='temp:s:temp:C:QYUfd92ad0cde4742f083f80882f;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>2,349
+
+<br/></td><td id='temp:s:temp:C:QYUfd92ad0cde4742f083f80882f;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>36.9%
+
+<br/></td></tr><tr id='temp:C:QYU39df6d09431949958f32842eb'><td style='background-color:#f0f0f0'>9</td><td id='temp:s:temp:C:QYU39df6d09431949958f32842eb;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>AGENCIES - Meeting APAP Thresholds
+
+<br/></td><td id='temp:s:temp:C:QYU39df6d09431949958f32842eb;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>4
+
+<br/></td><td id='temp:s:temp:C:QYU39df6d09431949958f32842eb;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>4
+
+<br/></td><td id='temp:s:temp:C:QYU39df6d09431949958f32842eb;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>6
+
+<br/></td><td id='temp:s:temp:C:QYU39df6d09431949958f32842eb;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>7
+
+<br/></td><td id='temp:s:temp:C:QYU39df6d09431949958f32842eb;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;' class='bold'>8
+
+<br/></td><td id='temp:s:temp:C:QYU39df6d09431949958f32842eb;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>1
+
+<br/></td><td id='temp:s:temp:C:QYU39df6d09431949958f32842eb;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>14.3%
+
+<br/></td></tr><tr id='temp:C:QYU01fce8a777d1489ca27be3041'><td style='background-color:#f0f0f0'>10</td><td id='temp:s:temp:C:QYU01fce8a777d1489ca27be3041;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>Current Adopting Majors %
+
+<br/></td><td id='temp:s:temp:C:QYU01fce8a777d1489ca27be3041;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>2.7%
+
+<br/></td><td id='temp:s:temp:C:QYU01fce8a777d1489ca27be3041;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>2.6%
+
+<br/></td><td id='temp:s:temp:C:QYU01fce8a777d1489ca27be3041;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>3.2%
+
+<br/></td><td id='temp:s:temp:C:QYU01fce8a777d1489ca27be3041;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>3.6%
+
+<br/></td><td id='temp:s:temp:C:QYU01fce8a777d1489ca27be3041;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>4.8%
+
+<br/></td><td id='temp:s:temp:C:QYU01fce8a777d1489ca27be3041;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>1.13%
+
+<br/></td><td id='temp:s:temp:C:QYU01fce8a777d1489ca27be3041;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>31.3%
+
+<br/></td></tr><tr id='temp:C:QYU3bcf66b8ef2b4b1bbba8776fd'><td style='background-color:#f0f0f0'>11</td><td id='temp:s:temp:C:QYU3bcf66b8ef2b4b1bbba8776fd;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>Composition of Current Adopting APAP Points
+
+<br/></td><td id='temp:s:temp:C:QYU3bcf66b8ef2b4b1bbba8776fd;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>68.7%
+
+<br/></td><td id='temp:s:temp:C:QYU3bcf66b8ef2b4b1bbba8776fd;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>61.4%
+
+<br/></td><td id='temp:s:temp:C:QYU3bcf66b8ef2b4b1bbba8776fd;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>74.7%
+
+<br/></td><td id='temp:s:temp:C:QYU3bcf66b8ef2b4b1bbba8776fd;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>43.0%
+
+<br/></td><td id='temp:s:temp:C:QYU3bcf66b8ef2b4b1bbba8776fd;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>47.1%
+
+<br/></td><td id='temp:s:temp:C:QYU3bcf66b8ef2b4b1bbba8776fd;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#dd5d5d;text-align: center;'>-31.67%
+
+<br/></td><td id='temp:s:temp:C:QYU3bcf66b8ef2b4b1bbba8776fd;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#dd5d5d;text-align: center;'>-42.4%
+
+<br/></td></tr><tr id='temp:C:QYUc522fcb80104468fa97c4bb22'><td style='background-color:#f0f0f0'>12</td><td id='temp:s:temp:C:QYUc522fcb80104468fa97c4bb22;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUc522fcb80104468fa97c4bb22;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUc522fcb80104468fa97c4bb22;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUc522fcb80104468fa97c4bb22;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUc522fcb80104468fa97c4bb22;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUc522fcb80104468fa97c4bb22;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUc522fcb80104468fa97c4bb22;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUc522fcb80104468fa97c4bb22;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU1e5b61865ca245aaa5fe80827'><td style='background-color:#f0f0f0'>13</td><td id='temp:s:temp:C:QYU1e5b61865ca245aaa5fe80827;temp:C:QYUc318b6f2b86f4803a458224d5' style=''><b>Shadow Goal Agencies </b><i>(Agencies who would be in APAP currently without T6 Non-SIM Threshold)</i>
+
+<br/></td><td id='temp:s:temp:C:QYU1e5b61865ca245aaa5fe80827;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1e5b61865ca245aaa5fe80827;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1e5b61865ca245aaa5fe80827;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1e5b61865ca245aaa5fe80827;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1e5b61865ca245aaa5fe80827;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1e5b61865ca245aaa5fe80827;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU1e5b61865ca245aaa5fe80827;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUfdab649cd54e4d1d904219637'><td style='background-color:#f0f0f0'>14</td><td id='temp:s:temp:C:QYUfdab649cd54e4d1d904219637;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>POINTS - Meeting SIM-Only Threshold
+
+<br/></td><td id='temp:s:temp:C:QYUfdab649cd54e4d1d904219637;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>6,512
+
+<br/></td><td id='temp:s:temp:C:QYUfdab649cd54e4d1d904219637;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>6,512
+
+<br/></td><td id='temp:s:temp:C:QYUfdab649cd54e4d1d904219637;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>7,697
+
+<br/></td><td id='temp:s:temp:C:QYUfdab649cd54e4d1d904219637;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>9,602
+
+<br/></td><td id='temp:s:temp:C:QYUfdab649cd54e4d1d904219637;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>11,951
+
+<br/></td><td id='temp:s:temp:C:QYUfdab649cd54e4d1d904219637;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>2,349
+
+<br/></td><td id='temp:s:temp:C:QYUfdab649cd54e4d1d904219637;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>24.5%
+
+<br/></td></tr><tr id='temp:C:QYU642675d4cbd1402fb4c2b35b0'><td style='background-color:#f0f0f0'>15</td><td id='temp:s:temp:C:QYU642675d4cbd1402fb4c2b35b0;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>AGENCIES - Meeting SIM-Only Threshold
+
+<br/></td><td id='temp:s:temp:C:QYU642675d4cbd1402fb4c2b35b0;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>7
+
+<br/></td><td id='temp:s:temp:C:QYU642675d4cbd1402fb4c2b35b0;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>7
+
+<br/></td><td id='temp:s:temp:C:QYU642675d4cbd1402fb4c2b35b0;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>9
+
+<br/></td><td id='temp:s:temp:C:QYU642675d4cbd1402fb4c2b35b0;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>11
+
+<br/></td><td id='temp:s:temp:C:QYU642675d4cbd1402fb4c2b35b0;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>12
+
+<br/></td><td id='temp:s:temp:C:QYU642675d4cbd1402fb4c2b35b0;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>1
+
+<br/></td><td id='temp:s:temp:C:QYU642675d4cbd1402fb4c2b35b0;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>9.1%
+
+<br/></td></tr><tr id='temp:C:QYU92f67a63c27049e4a24b0f7bd'><td style='background-color:#f0f0f0'>16</td><td id='temp:s:temp:C:QYU92f67a63c27049e4a24b0f7bd;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>% APAP - Meeting SIM-Only Threshold
+
+<br/></td><td id='temp:s:temp:C:QYU92f67a63c27049e4a24b0f7bd;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>4.6%
+
+<br/></td><td id='temp:s:temp:C:QYU92f67a63c27049e4a24b0f7bd;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>4.4%
+
+<br/></td><td id='temp:s:temp:C:QYU92f67a63c27049e4a24b0f7bd;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>4.9%
+
+<br/></td><td id='temp:s:temp:C:QYU92f67a63c27049e4a24b0f7bd;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>5.5%
+
+<br/></td><td id='temp:s:temp:C:QYU92f67a63c27049e4a24b0f7bd;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>6.5%
+
+<br/></td><td id='temp:s:temp:C:QYU92f67a63c27049e4a24b0f7bd;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>1.06%
+
+<br/></td><td id='temp:s:temp:C:QYU92f67a63c27049e4a24b0f7bd;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>19.4%
+
+<br/></td></tr><tr id='temp:C:QYUb449aa67021b4c28964bd7b1a'><td style='background-color:#f0f0f0'>17</td><td id='temp:s:temp:C:QYUb449aa67021b4c28964bd7b1a;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb449aa67021b4c28964bd7b1a;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb449aa67021b4c28964bd7b1a;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb449aa67021b4c28964bd7b1a;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb449aa67021b4c28964bd7b1a;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb449aa67021b4c28964bd7b1a;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb449aa67021b4c28964bd7b1a;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUb449aa67021b4c28964bd7b1a;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU2c9a6042a043405f80ccd00db'><td style='background-color:#f0f0f0'>18</td><td id='temp:s:temp:C:QYU2c9a6042a043405f80ccd00db;temp:C:QYUc318b6f2b86f4803a458224d5' style=''><b>Close to SIM Threshold</b><i> (Addtl. agencies close to meeting SIM-Only Threshold: 1 - 1.49 SIM Trainings pp)</i>
+
+<br/></td><td id='temp:s:temp:C:QYU2c9a6042a043405f80ccd00db;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2c9a6042a043405f80ccd00db;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2c9a6042a043405f80ccd00db;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2c9a6042a043405f80ccd00db;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2c9a6042a043405f80ccd00db;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2c9a6042a043405f80ccd00db;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU2c9a6042a043405f80ccd00db;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUecf6fcb6cfba4d12b15978d21'><td style='background-color:#f0f0f0'>19</td><td id='temp:s:temp:C:QYUecf6fcb6cfba4d12b15978d21;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>POINTS - Close to SIM-Only Threshold
+
+<br/></td><td id='temp:s:temp:C:QYUecf6fcb6cfba4d12b15978d21;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>2,904
+
+<br/></td><td id='temp:s:temp:C:QYUecf6fcb6cfba4d12b15978d21;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>3,439
+
+<br/></td><td id='temp:s:temp:C:QYUecf6fcb6cfba4d12b15978d21;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>6,663
+
+<br/></td><td id='temp:s:temp:C:QYUecf6fcb6cfba4d12b15978d21;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>9,895
+
+<br/></td><td id='temp:s:temp:C:QYUecf6fcb6cfba4d12b15978d21;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>11,441
+
+<br/></td><td id='temp:s:temp:C:QYUecf6fcb6cfba4d12b15978d21;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>1,546
+
+<br/></td><td id='temp:s:temp:C:QYUecf6fcb6cfba4d12b15978d21;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>15.6%
+
+<br/></td></tr><tr id='temp:C:QYU616766f58371464fb55969129'><td style='background-color:#f0f0f0'>20</td><td id='temp:s:temp:C:QYU616766f58371464fb55969129;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>AGENCIES - Close to SIM-Only Threshold
+
+<br/></td><td id='temp:s:temp:C:QYU616766f58371464fb55969129;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>4
+
+<br/></td><td id='temp:s:temp:C:QYU616766f58371464fb55969129;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>5
+
+<br/></td><td id='temp:s:temp:C:QYU616766f58371464fb55969129;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>7
+
+<br/></td><td id='temp:s:temp:C:QYU616766f58371464fb55969129;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>7
+
+<br/></td><td id='temp:s:temp:C:QYU616766f58371464fb55969129;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>11
+
+<br/></td><td id='temp:s:temp:C:QYU616766f58371464fb55969129;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>4
+
+<br/></td><td id='temp:s:temp:C:QYU616766f58371464fb55969129;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>57.1%
+
+<br/></td></tr><tr id='temp:C:QYUa680762265f1444a9427d5605'><td style='background-color:#f0f0f0'>21</td><td id='temp:s:temp:C:QYUa680762265f1444a9427d5605;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>% APAP - Close to SIM-Only Threshold
+
+<br/></td><td id='temp:s:temp:C:QYUa680762265f1444a9427d5605;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>2.1%
+
+<br/></td><td id='temp:s:temp:C:QYUa680762265f1444a9427d5605;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>2.3%
+
+<br/></td><td id='temp:s:temp:C:QYUa680762265f1444a9427d5605;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>4.2%
+
+<br/></td><td id='temp:s:temp:C:QYUa680762265f1444a9427d5605;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>5.6%
+
+<br/></td><td id='temp:s:temp:C:QYUa680762265f1444a9427d5605;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>6.2%
+
+<br/></td><td id='temp:s:temp:C:QYUa680762265f1444a9427d5605;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>0.61%
+
+<br/></td><td id='temp:s:temp:C:QYUa680762265f1444a9427d5605;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>10.9%
+
+<br/></td></tr><tr id='temp:C:QYU312ca84bbf8e4270bfd6a1761'><td style='background-color:#f0f0f0'>22</td><td id='temp:s:temp:C:QYU312ca84bbf8e4270bfd6a1761;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU312ca84bbf8e4270bfd6a1761;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU312ca84bbf8e4270bfd6a1761;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU312ca84bbf8e4270bfd6a1761;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU312ca84bbf8e4270bfd6a1761;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU312ca84bbf8e4270bfd6a1761;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU312ca84bbf8e4270bfd6a1761;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU312ca84bbf8e4270bfd6a1761;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU84325fb3b5e74258929c4717f'><td style='background-color:#f0f0f0'>23</td><td id='temp:s:temp:C:QYU84325fb3b5e74258929c4717f;temp:C:QYUc318b6f2b86f4803a458224d5' style=''><b>Some SIM Engagement</b> <i>(Addtl. agencies showing some SIM adoption: 0.5 - 0.99 SIM trainings per person)</i>
+
+<br/></td><td id='temp:s:temp:C:QYU84325fb3b5e74258929c4717f;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84325fb3b5e74258929c4717f;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84325fb3b5e74258929c4717f;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84325fb3b5e74258929c4717f;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84325fb3b5e74258929c4717f;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84325fb3b5e74258929c4717f;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU84325fb3b5e74258929c4717f;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU5b413eafe347472181dc0822b'><td style='background-color:#f0f0f0'>24</td><td id='temp:s:temp:C:QYU5b413eafe347472181dc0822b;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>POINTS - Some SIM Engagement
+
+<br/></td><td id='temp:s:temp:C:QYU5b413eafe347472181dc0822b;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>13,961
+
+<br/></td><td id='temp:s:temp:C:QYU5b413eafe347472181dc0822b;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>20,659
+
+<br/></td><td id='temp:s:temp:C:QYU5b413eafe347472181dc0822b;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>20,209
+
+<br/></td><td id='temp:s:temp:C:QYU5b413eafe347472181dc0822b;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>21,867
+
+<br/></td><td id='temp:s:temp:C:QYU5b413eafe347472181dc0822b;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>19,383
+
+<br/></td><td id='temp:s:temp:C:QYU5b413eafe347472181dc0822b;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#dd5d5d;text-align: center;'>-2,484
+
+<br/></td><td id='temp:s:temp:C:QYU5b413eafe347472181dc0822b;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#dd5d5d;text-align: center;'>-11.4%
+
+<br/></td></tr><tr id='temp:C:QYU19f82fd38d0847e2a834a4e37'><td style='background-color:#f0f0f0'>25</td><td id='temp:s:temp:C:QYU19f82fd38d0847e2a834a4e37;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>AGENCIES - Some SIM Engagement
+
+<br/></td><td id='temp:s:temp:C:QYU19f82fd38d0847e2a834a4e37;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>10
+
+<br/></td><td id='temp:s:temp:C:QYU19f82fd38d0847e2a834a4e37;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>15
+
+<br/></td><td id='temp:s:temp:C:QYU19f82fd38d0847e2a834a4e37;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>13
+
+<br/></td><td id='temp:s:temp:C:QYU19f82fd38d0847e2a834a4e37;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>17
+
+<br/></td><td id='temp:s:temp:C:QYU19f82fd38d0847e2a834a4e37;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>14
+
+<br/></td><td id='temp:s:temp:C:QYU19f82fd38d0847e2a834a4e37;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#dd5d5d;text-align: center;'>-3
+
+<br/></td><td id='temp:s:temp:C:QYU19f82fd38d0847e2a834a4e37;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#dd5d5d;text-align: center;'>-17.6%
+
+<br/></td></tr><tr id='temp:C:QYUdb5aa785d5ed43a4a5f309089'><td style='background-color:#f0f0f0'>26</td><td id='temp:s:temp:C:QYUdb5aa785d5ed43a4a5f309089;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>% APAP - Some SIM Engagement
+
+<br/></td><td id='temp:s:temp:C:QYUdb5aa785d5ed43a4a5f309089;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>9.9%
+
+<br/></td><td id='temp:s:temp:C:QYUdb5aa785d5ed43a4a5f309089;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>13.9%
+
+<br/></td><td id='temp:s:temp:C:QYUdb5aa785d5ed43a4a5f309089;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>12.9%
+
+<br/></td><td id='temp:s:temp:C:QYUdb5aa785d5ed43a4a5f309089;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>12.4%
+
+<br/></td><td id='temp:s:temp:C:QYUdb5aa785d5ed43a4a5f309089;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>10.6%
+
+<br/></td><td id='temp:s:temp:C:QYUdb5aa785d5ed43a4a5f309089;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#dd5d5d;text-align: center;'>-1.86%
+
+<br/></td><td id='temp:s:temp:C:QYUdb5aa785d5ed43a4a5f309089;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#dd5d5d;text-align: center;'>-15.0%
+
+<br/></td></tr><tr id='temp:C:QYU9611e80b2fd54a0085c92f478'><td style='background-color:#f0f0f0'>27</td><td id='temp:s:temp:C:QYU9611e80b2fd54a0085c92f478;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU9611e80b2fd54a0085c92f478;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU9611e80b2fd54a0085c92f478;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU9611e80b2fd54a0085c92f478;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU9611e80b2fd54a0085c92f478;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU9611e80b2fd54a0085c92f478;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU9611e80b2fd54a0085c92f478;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYU9611e80b2fd54a0085c92f478;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYUccf12afd55f04974b3f4bfd51'><td style='background-color:#f0f0f0'>28</td><td id='temp:s:temp:C:QYUccf12afd55f04974b3f4bfd51;temp:C:QYUc318b6f2b86f4803a458224d5' style=''><b>Majors Opportunities</b> <i>(Where we could move the needle)</i>
+
+<br/></td><td id='temp:s:temp:C:QYUccf12afd55f04974b3f4bfd51;temp:C:QYUb07a771316e147889ace964be' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUccf12afd55f04974b3f4bfd51;temp:C:QYUdc37cf5907cf4a678ea320081' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUccf12afd55f04974b3f4bfd51;temp:C:QYU189bd647eb994023b9d86622d' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUccf12afd55f04974b3f4bfd51;temp:C:QYU21a17cf2070541d7afee8f12e' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUccf12afd55f04974b3f4bfd51;temp:C:QYU813d25645466440f85370e6fa' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUccf12afd55f04974b3f4bfd51;temp:C:QYUf2053b099d364a68817b83ac3' style=''>
+
+<br/></td><td id='temp:s:temp:C:QYUccf12afd55f04974b3f4bfd51;temp:C:QYU49ae8a0d06b246a795d09d63d' style=''>
+
+<br/></td></tr><tr id='temp:C:QYU0005ef3570b84662894925d2b'><td style='background-color:#f0f0f0'>29</td><td id='temp:s:temp:C:QYU0005ef3570b84662894925d2b;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>Ppts available from only Non-SIM Increases
+
+<br/></td><td id='temp:s:temp:C:QYU0005ef3570b84662894925d2b;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>1.9%
+
+<br/></td><td id='temp:s:temp:C:QYU0005ef3570b84662894925d2b;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>1.8%
+
+<br/></td><td id='temp:s:temp:C:QYU0005ef3570b84662894925d2b;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>1.7%
+
+<br/></td><td id='temp:s:temp:C:QYU0005ef3570b84662894925d2b;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>1.8%
+
+<br/></td><td id='temp:s:temp:C:QYU0005ef3570b84662894925d2b;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>1.8%
+
+<br/></td><td id='temp:s:temp:C:QYU0005ef3570b84662894925d2b;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#dd5d5d;text-align: center;'>0
+
+<br/></td><td id='temp:s:temp:C:QYU0005ef3570b84662894925d2b;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#dd5d5d;text-align: center;'>-4.1%
+
+<br/></td></tr><tr id='temp:C:QYU533327aa3d1244ea9cd119cfa'><td style='background-color:#f0f0f0'>30</td><td id='temp:s:temp:C:QYU533327aa3d1244ea9cd119cfa;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>Ppts available from Close to SIM Threshold
+
+<br/></td><td id='temp:s:temp:C:QYU533327aa3d1244ea9cd119cfa;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>2.1%
+
+<br/></td><td id='temp:s:temp:C:QYU533327aa3d1244ea9cd119cfa;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>2.3%
+
+<br/></td><td id='temp:s:temp:C:QYU533327aa3d1244ea9cd119cfa;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>4.2%
+
+<br/></td><td id='temp:s:temp:C:QYU533327aa3d1244ea9cd119cfa;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>5.6%
+
+<br/></td><td id='temp:s:temp:C:QYU533327aa3d1244ea9cd119cfa;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>6.2%
+
+<br/></td><td id='temp:s:temp:C:QYU533327aa3d1244ea9cd119cfa;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#2e8526;text-align: center;'>0
+
+<br/></td><td id='temp:s:temp:C:QYU533327aa3d1244ea9cd119cfa;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#2e8526;text-align: center;'>10.9%
+
+<br/></td></tr><tr id='temp:C:QYU0e30546a12ec4a79a792951f8'><td style='background-color:#f0f0f0'>31</td><td id='temp:s:temp:C:QYU0e30546a12ec4a79a792951f8;temp:C:QYUc318b6f2b86f4803a458224d5' style=''>Ppts Available from Some SIM Engagement
+
+<br/></td><td id='temp:s:temp:C:QYU0e30546a12ec4a79a792951f8;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;'>9.9%
+
+<br/></td><td id='temp:s:temp:C:QYU0e30546a12ec4a79a792951f8;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;'>13.9%
+
+<br/></td><td id='temp:s:temp:C:QYU0e30546a12ec4a79a792951f8;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;'>12.9%
+
+<br/></td><td id='temp:s:temp:C:QYU0e30546a12ec4a79a792951f8;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;'>12.4%
+
+<br/></td><td id='temp:s:temp:C:QYU0e30546a12ec4a79a792951f8;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;'>10.6%
+
+<br/></td><td id='temp:s:temp:C:QYU0e30546a12ec4a79a792951f8;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#dd5d5d;text-align: center;'>-1.86%
+
+<br/></td><td id='temp:s:temp:C:QYU0e30546a12ec4a79a792951f8;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#dd5d5d;text-align: center;'>-15.0%
+
+<br/></td></tr><tr id='temp:C:QYUf30d8d3f00f144f1ab6dc7e2d'><td style='background-color:#f0f0f0'>32</td><td id='temp:s:temp:C:QYUf30d8d3f00f144f1ab6dc7e2d;temp:C:QYUc318b6f2b86f4803a458224d5' style='' class='bold'>Total Available Ppts Available from Majors
+
+<br/></td><td id='temp:s:temp:C:QYUf30d8d3f00f144f1ab6dc7e2d;temp:C:QYUb07a771316e147889ace964be' style='text-align: center;' class='bold'>13.9%
+
+<br/></td><td id='temp:s:temp:C:QYUf30d8d3f00f144f1ab6dc7e2d;temp:C:QYUdc37cf5907cf4a678ea320081' style='text-align: center;' class='bold'>18.1%
+
+<br/></td><td id='temp:s:temp:C:QYUf30d8d3f00f144f1ab6dc7e2d;temp:C:QYU189bd647eb994023b9d86622d' style='text-align: center;' class='bold'>18.8%
+
+<br/></td><td id='temp:s:temp:C:QYUf30d8d3f00f144f1ab6dc7e2d;temp:C:QYU21a17cf2070541d7afee8f12e' style='text-align: center;' class='bold'>19.9%
+
+<br/></td><td id='temp:s:temp:C:QYUf30d8d3f00f144f1ab6dc7e2d;temp:C:QYU813d25645466440f85370e6fa' style='text-align: center;' class='bold'>18.6%
+
+<br/></td><td id='temp:s:temp:C:QYUf30d8d3f00f144f1ab6dc7e2d;temp:C:QYUf2053b099d364a68817b83ac3' style='background-color:#dd5d5d;text-align: center;'>-1.33%
+
+<br/></td><td id='temp:s:temp:C:QYUf30d8d3f00f144f1ab6dc7e2d;temp:C:QYU49ae8a0d06b246a795d09d63d' style='background-color:#dd5d5d;text-align: center;'>-6.7%
+
+<br/></td></tr></tbody></table></div><hr style='width:100%'><h2 id='temp:C:QYU4bca5aa72308446ca3725c89e'>Movers and Shakers</h2>
+
+<a href="https://aaxn.sharepoint.com/:x:/s/BusinessIntelligence/EczqxUsxXQFOpUb9uxzkKRkBf1KV5iqCWMDb59CYqSnDWg?e=LmK5Q2">APAP_Detailed_View_VR.xlsx</a><br/>
+
+<h3 id='temp:C:QYU3fa14332bab540b28cebbc8c6'>Agencies Who Churned (-812 pts)</h3>
+
+<div data-section-style='11' style='max-width:100%' class=''><img src='https://quip.com/blob/QYUAAALQ7ob/I2F06kzjt6qOcko9sW-gfA?a=pDEaAvlphzTvhNjQBIvoRQ5aqimDUv3EUCARFjksZMoa' id='temp:C:QYU4612bb975e8b467bb40433eb6' width='800' height='115'></img></div><h3 id='temp:C:QYU7ffae478977e430c836c6a64c'>New Adopters (+4,631 pts)</h3>
+
+<div data-section-style='11' style='max-width:100%' class=''><img src='https://quip.com/blob/QYUAAALQ7ob/wOXNPKpVqOWuMs5NUBGvaw?a=J8yN5U82mvP9IW42Dbff2ApJvY1oEXsTesT7cIBPOToa' id='temp:C:QYU4e5520c25f904308818a3dad2' width='800' height='222'></img></div><div data-section-style='11' style='max-width:100%' class=''><img src='https://quip.com/blob/QYUAAALQ7ob/vO4XmfCbypLNIgiDdstSTw?a=8dzxD0IkmlGw9XU7E8a1YxDMvTMZ79sSUR4yaVIArbAa' id='temp:C:QYU9de471f59e7b445ea92dc28a0' width='768' height='402'></img></div><h3 id='temp:C:QYU48ca6969fbd24ecd87618f0dd'>Longest Adopting Agencies (1+ Year Straight)</h3>
+
+<div data-section-style='11' style='max-width:100%' class=''><img src='https://quip.com/blob/QYUAAALQ7ob/MkNOKzOSWE-ATAp9t_Vj8g?a=6U9aC08R43HmsvYjgPakD0xb9D3EYJlnWA9SrGg8IE0a' id='temp:C:QYUf7535c99cc434e5486d1295a0' width='800' height='108'></img></div><hr style='width:100%'><h2 id='temp:C:QYU5a694ea05097430ba278dd915'>Core 5 Meeting Update</h2>
+
+<div data-section-style='13'><table id='temp:C:QYUfe38e81586134899b73256ffe' title='Sheet7' style='width: 105.2em'><thead><tr><th class='empty' style='width: 2em'/><th id='temp:C:QYU5490814cd5e7426e88d9117c1' class='empty' style='width: 37em'>A<br/></th><th id='temp:C:QYU99c7f1e94ebc4a63a5409698d' class='empty' style='width: 10.4em'>B<br/></th><th id='temp:C:QYU152f5a210a504ee0a930b2ba0' class='empty' style='width: 20.4em'>C<br/></th><th id='temp:C:QYU5b8418dc82ae463a8207867ba' class='empty' style='width: 21.2em'>D<br/></th><th id='temp:C:QYU2157cb9a193e45a896e79ea0d' class='empty' style='width: 10.2667em'>E<br/></th><th id='temp:C:QYU82ee36e66bd2499d89fc04765' class='empty' style='width: 5.93333em'>F<br/></th></tr></thead><tbody><tr id='temp:C:QYU1e934a0d8dc743e6ac8c52f21'><td style='background-color:#f0f0f0'>1</td><td id='temp:s:temp:C:QYU1e934a0d8dc743e6ac8c52f21;temp:C:QYU2af6d49a1feb4394a9a33f4fd' style='background-color:#333333;' class='bold'>Top Adoption Blockers
+
+<br/></td><td id='temp:s:temp:C:QYU1e934a0d8dc743e6ac8c52f21;temp:C:QYU723c3c05e42c4705800aa80e1' style='background-color:#333333;text-align: center;' class='bold'>Estimated Points Impact
+
+<br/></td><td id='temp:s:temp:C:QYU1e934a0d8dc743e6ac8c52f21;temp:C:QYU03974635aed94c409c0a22f0d' style='background-color:#333333;' class='bold'>Next Actions
+
+<br/></td><td id='temp:s:temp:C:QYU1e934a0d8dc743e6ac8c52f21;temp:C:QYU4731a8d026324295a7ce2bfa2' style='background-color:#333333;' class='bold'>How do they drive adoption?
+
+<br/></td><td id='temp:s:temp:C:QYU1e934a0d8dc743e6ac8c52f21;temp:C:QYU8c84abf8c0e94ca39f4412ee1' style='background-color:#333333;' class='bold'>Owner
+
+<br/></td><td id='temp:s:temp:C:QYU1e934a0d8dc743e6ac8c52f21;temp:C:QYU1be25762cf4a4568a243f5d17' style='background-color:#333333;text-align: center;' class='bold'>ETA
+
+<br/></td></tr><tr id='temp:C:QYU761a852c49634b899a2a287ae'><td style='background-color:#f0f0f0'>2</td><td id='temp:s:temp:C:QYU761a852c49634b899a2a287ae;temp:C:QYU2af6d49a1feb4394a9a33f4fd' style=''><b>New Agencies Require High-Touch Onboarding for Initial TASER Certification</b><br><br>Axon VR is a broad and complex solution that requires agencies to be properly trained—not just on the hardware and UI, but on how to design and deliver training programs using the right content. This is especially critical during onboarding, where early success is tied to how well the agency integrates VR into initial TASER certification.<br><br><br><b>Key Blockers:</b><br>1) PSM bandwidth is stretched while onsite — significant time is spent on device setup and updates, leaving less time to train agencies on effective usage.<br>2) Non-Major Accounts lack post-deployment support, as they don’t receive dedicated CSM engagement after PSO concludes.<br>3) Virtual PSO deployments underperform — agencies that go through a virtual onboarding complete only 16% as many trainings as those with physical onsites.
+
+<br/></td><td id='temp:s:temp:C:QYU761a852c49634b899a2a287ae;temp:C:QYU723c3c05e42c4705800aa80e1' style='text-align: center;'><b><br>+ 7.3 ppts<br><br>+ 284 Agenices</b><b><br>+18,094 Points</b>
+
+<br/></td><td id='temp:s:temp:C:QYU761a852c49634b899a2a287ae;temp:C:QYU03974635aed94c409c0a22f0d' style=''>1) Scope LOE to provision devices in-house prior to shipping to customer for 2026 ZBB.<br><br>2) Expand CSM onboarding workflows to T1200 net-new T10/VR agencies by 9/30.<br><br>3) Remove virtual PSO as a sellable service in 2026 pricebooks (approved in 2026 Pricing Strategy).
+
+<br/></td><td id='temp:s:temp:C:QYU761a852c49634b899a2a287ae;temp:C:QYU4731a8d026324295a7ce2bfa2' style=''>New Agencies immediately meet core use case, priming them to expand VR further into their training programs.
+
+<br/></td><td id='temp:s:temp:C:QYU761a852c49634b899a2a287ae;temp:C:QYU8c84abf8c0e94ca39f4412ee1' style=''>CSM Team <br>(<control data-remapped="true" id="temp:C:QYUe8cbbea747e6413f9e965a36a"><a href="https://quip.com/WEYAEA6vvZs">Carolynn Daskalakis</a></control>)<br><br>Sales Team <br>(<control data-remapped="true" id="temp:C:QYU677cac5dff4941ba86cb5f222"><a href="https://quip.com/RVEAEAJGfE4">Daniel Blair</a></control>)<br><br>PSO Team <br>(<control data-remapped="true" id="temp:C:QYU64a573d0154c4fb9ab12c819a"><a href="https://quip.com/LMEAEAn0Gj6">Steve Hadley</a></control>)<br><br>
+
+<br/></td><td id='temp:s:temp:C:QYU761a852c49634b899a2a287ae;temp:C:QYU1be25762cf4a4568a243f5d17' style='text-align: center;'>12/1/2025
+
+<br/></td></tr><tr id='temp:C:QYU03851a2c12c24f869d47c4de3'><td style='background-color:#f0f0f0'>3</td><td id='temp:s:temp:C:QYU03851a2c12c24f869d47c4de3;temp:C:QYU2af6d49a1feb4394a9a33f4fd' style=''><b>Recommended VR Trainings for T10 Re-Certification do not Satisfy Customer Needs</b><br><br>Nearly 40% of agencies experience a 50%+ drop in VR usage during TASER re-certification (Year 2+) compared to their initial certification year—indicating a misalignment between our VR offering and re-certification needs.<br><br><br><b>Key Blockers:</b><br>1) Validation Courses are too long (3 courses at ~20 mins each), making them impractical for re-cert blocks. Agencies like Lincoln PD have opted out as a result.<br>2) Version 24 training booklet excludes VR guidance for T7 agencies, which make up a large portion of re-certifying customers.<br>3) Range Skills content may not align well with re-certification goals (hypothesis).<br>4) Relevant re-cert content (e.g., vRBT scenarios) lacks visibility, especially for trainers not actively engaged post-deployment (hypothesis).<br>
+
+<br/></td><td id='temp:s:temp:C:QYU03851a2c12c24f869d47c4de3;temp:C:QYU723c3c05e42c4705800aa80e1' style='text-align: center;' class='bold'><i>Maintain Current Agencies Adopting SIM<br></i><br>17.6 ppts<br><br>330 Agencies<br>32,327 Points
+
+<br/></td><td id='temp:s:temp:C:QYU03851a2c12c24f869d47c4de3;temp:C:QYU03974635aed94c409c0a22f0d' style=''>1) Release multiple updates in October to reduce Validation Course time by at least 25% (12-15 minutes total).<br><br>2) Schedule VOC with 3 re-certifying agencies by 9/30 to better understand content needs.<br><br>3) Sync with Training team by 10/31 on any changes to the v24 training booklet.
+
+<br/></td><td id='temp:s:temp:C:QYU03851a2c12c24f869d47c4de3;temp:C:QYU4731a8d026324295a7ce2bfa2' style=''>Agencies do not churn out of APAP YoY.
+
+<br/></td><td id='temp:s:temp:C:QYU03851a2c12c24f869d47c4de3;temp:C:QYU8c84abf8c0e94ca39f4412ee1' style=''>TASER Training Team <br>(<control data-remapped="true" id="temp:C:QYU6c952ddcfad14cbda1844cdcc"><a href="https://quip.com/BfDAEA7hz1b">Sam Orlov</a></control> +<br> <control data-remapped="true" id="temp:C:QYU124ab847259343da830b2dab6"><a href="https://quip.com/YDSAEAIeHTy">Jason Spencer</a></control>)
+
+<br/></td><td id='temp:s:temp:C:QYU03851a2c12c24f869d47c4de3;temp:C:QYU1be25762cf4a4568a243f5d17' style='text-align: center;'>10/30/2025
+
+<br/></td></tr><tr id='temp:C:QYUd39993180c2244e78fb0af097'><td style='background-color:#f0f0f0'>4</td><td id='temp:s:temp:C:QYUd39993180c2244e78fb0af097;temp:C:QYU2af6d49a1feb4394a9a33f4fd' style=''><b>Product UX Requires High Trainer Involvement, Limiting Training Throughput</b><br><br>The current VR experience places a high burden on trainers to set up, facilitate, and troubleshoot, reducing the number of users who can train independently—particularly in decentralized or downtime settings.<br><br><br><b>Key Blockers:</b><br>1) Users are not VR experts — common issues like incorrect content selection, unpaired controllers, or boundary prompts require real-time trainer intervention.<br>2) Hardware is difficult to manage at scale, especially for infrequent use—trainers face challenges with charging, updates, storage, and sanitation across multiple headsets, especially in de-centralized settings.
+
+<br/></td><td id='temp:s:temp:C:QYUd39993180c2244e78fb0af097;temp:C:QYU723c3c05e42c4705800aa80e1' style='text-align: center;' class='bold'><br>+ 27.3 ppts<br><br><b>+231 Agencies<br>+ 49,945 points</b>
+
+<br/></td><td id='temp:s:temp:C:QYUd39993180c2244e78fb0af097;temp:C:QYU03974635aed94c409c0a22f0d' style=''>1) Deliver playlists in 2026 to mitigate user error during training sessions.<br><br>2) Conduct VOC with 3 large agencies by 10/31, and scope out hardware management initiatives for 2026.<br><br>3) Conduct a study in 2026 that analyzes how many VR training sessions are required for proficiency with the solution, and how quickly that proficiency decays without continued use.
+
+<br/></td><td id='temp:s:temp:C:QYUd39993180c2244e78fb0af097;temp:C:QYU4731a8d026324295a7ce2bfa2' style=''>Agencies can do more trainings within the same amount of time dedicated for VR during their annual TASER Certifications.
+
+<br/></td><td id='temp:s:temp:C:QYUd39993180c2244e78fb0af097;temp:C:QYU8c84abf8c0e94ca39f4412ee1' style=''>VR Product <br>(<control data-remapped="true" id="temp:C:QYUfd4fd100c4ed4acea9eb44cb6"><a href="https://quip.com/CORAEA14pNJ">Sophi Kim</a></control> + <br><control data-remapped="true" id="temp:C:QYUd5f9410cf2c741ee8a2f05377"><a href="https://quip.com/IIJAEA3qyBD">Robert Murphy</a></control>)
+
+<br/></td><td id='temp:s:temp:C:QYUd39993180c2244e78fb0af097;temp:C:QYU1be25762cf4a4568a243f5d17' style='text-align: center;'>2026
+
+<br/></td></tr><tr id='temp:C:QYU1b6fd87a5fab4bf590baa5e89'><td style='background-color:#f0f0f0'>5</td><td id='temp:s:temp:C:QYU1b6fd87a5fab4bf590baa5e89;temp:C:QYU2af6d49a1feb4394a9a33f4fd' style=''><b>Poor Onboarding Experience Limits Long-Term Product Engagement</b><br><br>Agencies that had a weak initial onboarding experience—particularly those now 2+ years into their contract—are unlikely to re-engage with the latest version of the VR product, despite major improvements.<br><br><br><b>Key Blockers:</b><br>1) Low initial CSAT due to early UX limitations (e.g., wrist trackers).<br>2) Minimal onboarding support, with no CSM follow-up post-deployment.<br>3) Low awareness of new content and features that may now better align with their current training needs.
+
+<br/></td><td id='temp:s:temp:C:QYU1b6fd87a5fab4bf590baa5e89;temp:C:QYU723c3c05e42c4705800aa80e1' style='text-align: center;'><b>+ 32.9 ppts<br><br>+144 Agencies<br>+60,270 Points</b>
+
+<br/></td><td id='temp:s:temp:C:QYU1b6fd87a5fab4bf590baa5e89;temp:C:QYU03974635aed94c409c0a22f0d' style=''>1) Conduct VOC with 3 unengaged Legacy Customers by 10/31 to understand sentiment and painpoints.<br><br>2) Align across CSM + Product + PMM leadership by 12/31 on best way(s) to re-engage customers in 2026.
+
+<br/></td><td id='temp:s:temp:C:QYU1b6fd87a5fab4bf590baa5e89;temp:C:QYU4731a8d026324295a7ce2bfa2' style=''>Lagging, legacy customers meet APAP for the first time.
+
+<br/></td><td id='temp:s:temp:C:QYU1b6fd87a5fab4bf590baa5e89;temp:C:QYU8c84abf8c0e94ca39f4412ee1' style=''><br><br>CSM Team <br>(<control data-remapped="true" id="temp:C:QYU4f30e3712a814b8f90749ce01"><a href="https://quip.com/WEYAEA6vvZs">Carolynn Daskalakis</a></control>)<br><br>PMM Team <br>(<control data-remapped="true" id="temp:C:QYU4dae76248c614e9489776eb32"><a href="https://quip.com/eJbAEAkrMjF">John Sudekum</a></control>)
+
+<br/></td><td id='temp:s:temp:C:QYU1b6fd87a5fab4bf590baa5e89;temp:C:QYU1be25762cf4a4568a243f5d17' style='text-align: center;'>12/31/2025
+
+<br/></td></tr><tr id='temp:C:QYU619d81e6ace642d6b6aef3b3b'><td style='background-color:#f0f0f0'>6</td><td id='temp:s:temp:C:QYU619d81e6ace642d6b6aef3b3b;temp:C:QYU2af6d49a1feb4394a9a33f4fd' style=''><b>Agencies Struggle to Expand VR Beyond TASER Training</b><br><br>As Axon VR expands into areas like Behavioral Health, Specialized Tactics, and Verbal Communication, most agencies are not adopting these non-TASER training modules, limiting the platform’s broader impact.<br><br><br><b>Key Blockers:</b><br>1) VR trainers are typically CEW instructors and are not positioned to champion other training integrations.<br>2) Trainers onboarded via PSO aren’t equipped to train others, limiting program scalability.<br>3) Low awareness of new content and lack of clear guidance on how to integrate it into broader training programs.
+
+<br/></td><td id='temp:s:temp:C:QYU619d81e6ace642d6b6aef3b3b;temp:C:QYU723c3c05e42c4705800aa80e1' style='text-align: center;' class='bold'><br>+7.5 ppts<br><br><b>+235 Agencies<br>+13,811 Points</b>
+
+<br/></td><td id='temp:s:temp:C:QYU619d81e6ace642d6b6aef3b3b;temp:C:QYU03974635aed94c409c0a22f0d' style=''>1) Host recurring webinars and office hours for in-market customers, starting in Q4.<br><br>2) Scope ways to raise better awareness within the product on new apps and releases for 2026 ZBB.<br><br>3) Release our Curriculum Builder GPT by 12/31 to either internal partners and/or to customers directly as a tool to build out training programs using various VR trainings.<br><br>4) Align on a strategy to <control data-remapped="true" id="temp:C:QYU22ed93d270f14848b27f2d496"><a href="https://quip.com/DehQAfap1brL">One Pager: Scaling Product Onboarding Across the Contract Lifecycle</a></control> for 2026 ZBB.
+
+<br/></td><td id='temp:s:temp:C:QYU619d81e6ace642d6b6aef3b3b;temp:C:QYU4731a8d026324295a7ce2bfa2' style=''>Agencies use VR beyond TASER Training programs.
+
+<br/></td><td id='temp:s:temp:C:QYU619d81e6ace642d6b6aef3b3b;temp:C:QYU8c84abf8c0e94ca39f4412ee1' style=''>PMM Team <br>(<control data-remapped="true" id="temp:C:QYUb3c306a348ee40a8a7c20a59a"><a href="https://quip.com/eJbAEAkrMjF">John Sudekum</a></control>)<br><br>PSO Team <br>(<control data-remapped="true" id="temp:C:QYU74bc1c9654f0418a942b8a525"><a href="https://quip.com/LMEAEAn0Gj6">Steve Hadley</a></control>) <br><br>Training Team <br>(<control data-remapped="true" id="temp:C:QYUd78e5e31787e4ad0a72edaa1a"><a href="https://quip.com/BfDAEA7hz1b">Sam Orlov</a></control> + <br><control data-remapped="true" id="temp:C:QYU378ec750a3f746ecb9d78b48f"><a href="https://quip.com/YDSAEAIeHTy">Jason Spencer</a></control>)
+
+<br/></td><td id='temp:s:temp:C:QYU619d81e6ace642d6b6aef3b3b;temp:C:QYU1be25762cf4a4568a243f5d17' style='text-align: center;'>2026
+
+<br/></td></tr></tbody></table></div><h3 id='temp:C:QYU58b985c65860415a8795cb3f2'><i>Commentary (&lt; 400 Words)</i></h3>
+
+Over the past year, aggregate <b>VR product usage has grown by</b> <b>89%</b> since August 2024, driven by a 58% increase in active agencies (now 1,141) and a 7-point YoY rise in monthly penetration (40%). Average usage per active agency remains relatively flat however at 92 trainings per month (+6% YoY).<br/>
+
+<br/>
+
+<br/>
+
+<div data-section-style='11' style='max-width:100%' class=''><img src='https://quip.com/blob/QYUAAALQ7ob/CDrbdqwkQaV6Ky6XN-idvw?a=aYUeTxyAlxEangQyhavEhvDz9AmwnpWJZg4szc0GTaAa' id='temp:C:QYUe9de8926e9904a4889b684611'></img></div><p id='temp:C:QYUd38adef1032e4ca493fde40e9' class='line align-center'><i>Despite a MoM drop likely due to seasonality, <br>August was our second highest adoption month ever.</i></p>
+
+<br/>
+
+Our top priority remains ensuring that <b>new T10-VR customers integrate VR into their initial T10 Certification</b>. Fewer than 20% of all customers are currently meeting this core use case (defined as our Shadow Goal - 1.5x SIM completions per person in the previous 12 months) but newer customers are significantly outperforming historical trends. Of the 61 agencies that purchased in February 2025, nearly 66% have already surpassed the Shadow Goal threshold within their first six months. This trend is likely due to (1) VR’s inclusion in the Version 24 training booklet as of April ‘25, (2) enhanced PSO onboarding that includes Pro-Dev services, and (3) targeted CSM support for Major Accounts following PSO services.<br/>
+
+<br/>
+
+<div data-section-style='11' style='max-width:100%' class=''><img src='https://quip.com/blob/QYUAAALQ7ob/f5Um0HlWI68YjUrmzSVuOw?a=Yl6J2sRF7Ljh4agC1dMNnFf0qs7s4OwafVaUamkVouYa' id='temp:C:QYUe898908456f549c79b96b4c13'></img></div><p id='temp:C:QYUbd81d5335eca4b859262a85a4' class='line align-center'><i>Each month represents the agencies who became APAP eligible <br>(6 months into a contract) during that month.</i></p>
+
+<br/>
+
+That said, <b>early integration doesn’t always lead to sustained usage</b>. Agencies like Lincoln PD have opted out of using VR during TASER re-certification due to time constraints—re-cert courses allow only 4 hours, compared to 8 hours for initial certification, making the three T10 VR Validation Courses difficult to use in their current form (each one currently takes ~20 minutes). This challenge is even greater for T7 agencies, which represent 60–70% of our 2+ year-old customer base but receive no formal VR guidance in the v24 training booklet.  We recently found that <b>40% of agencies that used SIM in 2024 saw usage drop by 50% or more</b> within the first 8 months of 2025, suggesting reduced or discontinued use during re-certification in years 2-5 of a contract.<br/>
+
+<br/>
+
+Finally, the <b>biggest untapped opportunity is re-engaging legacy customers</b> who have had little to no usage in over a year. Our near-term focus has been on onboarding new customers effectively, but as that foundation strengthens, we’ll need to turn our attention to legacy customers — especially those whose contract end dates approach in the next 12–18 months. While CSM and marketing-driven outreach can help, we know that self-service and virtual onboarding is far less effective than PSO-led deployments (physical onsites translate to 6x more adoption). To close this gap, we should explore scalable methods to retrain and re-engage these customers, especially given how much the product has evolved since they first purchased it (<control data-remapped="true" id="temp:C:QYU5702437b044d438b9dcbc38d9"><a href="https://quip.com/DehQAfap1brL">One Pager: Scaling Product Onboarding Across the Contract Lifecycle</a></control>).<br/>
+
+<br/>
+
+<i>For a deep-dive into VR adoption, see <control data-remapped="true" id="temp:C:QYU83c1e31f622147a39310a982a"><a href="https://quip.com/uy4nAxXaabOq">Axon VR Adoption: Q3 2025 Report</a></control></i><br/>
+
+<hr style='width:100%'><h2 id='temp:C:QYUcde8b5c47625427d8e453030d'>Appendix</h2>
+
+<control data-remapped="true" id="temp:C:QYU26debe84bd3a44719755877c4"><a href="https://api.quip.com/2/blob/QYUAAALQ7ob/YnoXsTHuxXtYwK-NyFnIdw?name=August_APAP_Aggregated_Updated_Overview.xlsx">August_APAP_Aggregated_Updated_Overview.xlsx</a></control><br/>
+
+<control data-remapped="true" id="temp:C:QYU117c797abd72435a860cbc8f3"><a href="https://api.quip.com/2/blob/QYUAAALQ7ob/BrZfDjXSptS7jmk-MnIClw?name=August%20APAP%20Adoption%20Opps%20Math.xlsx">August APAP Adoption Opps Math.xlsx</a></control><br/>
+
+<control data-remapped="true" id="temp:C:QYU5c27b4cea5aa4cf69e076b96e"><a href="https://api.quip.com/2/blob/QYUAAALQ7ob/jqzjY9I_ccPpfT2wQsLv2A?name=2025%20Agencies%20Adoption%20when%20First%20Eligible.xlsx">2025 Agencies Adoption when First Eligible.xlsx</a></control><br/>
+
+</body></html>

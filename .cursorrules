@@ -1,0 +1,29 @@
+# Cursor Rules — APAP Living Resource
+
+Always consult:
+- docs/STEP_0_SPEC.md (data contract + label rules)
+- docs/PRD.md (user stories, UX needs, scope)
+- docs/CONTEXT_INDEX.md and context/ (historical reference)
+
+
+How to use context/:
+- Use context/ to understand the METRICS, cohort breakdowns, and narrative patterns we’ve used historically.
+- Do NOT copy layouts from HTML working docs or spreadsheet tabs into the product UI.
+- UI decisions must follow docs/PRD.md and user stories, not legacy working-doc structure.
+
+Implementation priorities:
+1) Correct ingest/join/rolling-window metrics and labels (deterministic)
+2) Explainability (“why” bullets) for every label
+3) Cohort breakdown tables and filters
+4) APAP overview vs configurable goals
+5) AI summary that only summarizes computed metrics provided as structured input
+
+Guardrails:
+- No LLM-driven calculations. All metrics/labels must be deterministic code.
+- AI Summary must only reference numbers present in a generated metrics bundle.
+
+Always consult docs/DESIGN_SPEC.md for layout/components/states before implementing UI.
+UI must use src/styles/tokens.css variables for surfaces and semantic colors (no hard-coded colors).
+Typography must follow the DESIGN_SPEC.md text ramp guidelines.
+
+Reference CHANGELOG.md for context on previous development efforts.

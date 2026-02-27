@@ -1,0 +1,103 @@
+/* src/styles/tokens.css */
+
+/* ========== Base: Typography ========== */
+:root {
+    --font-sans: "Roboto", system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  
+    /* Text ramp (Station defaults) */
+    --text-headline-size: 24px; --text-headline-line: 28px; --text-headline-weight: 500;
+    --text-title-size: 16px;    --text-title-line: 24px;    --text-title-weight: 500;
+    --text-subtitle-size: 14px; --text-subtitle-line: 20px; --text-subtitle-weight: 500;
+    --text-body1-size: 14px;    --text-body1-line: 20px;    --text-body1-weight: 400;
+    --text-body2-size: 12px;    --text-body2-line: 16px;    --text-body2-weight: 400;
+    --text-button-size: 12px;   --text-button-line: 16px;   --text-button-weight: 500; --text-button-letter: 0.5px;
+    --text-label-size: 10px;    --text-label-line: 12px;    --text-label-weight: 500;  --text-label-letter: 0.5px;
+    --text-caption-size: 10px;  --text-caption-line: 12px;  --text-caption-weight: 500;
+  
+    /* Layout */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+    --border-color: rgba(0,0,0,0.10);
+  }
+  
+  /* Mobile overrides (optional hook — apply via media query if you want) */
+  @media (max-width: 768px) {
+    :root {
+      --text-title-size: 20px; --text-title-line: 28px;
+      --text-subtitle-size: 16px; --text-subtitle-line: 24px;
+      --text-body1-size: 16px; --text-body1-line: 24px;
+      --text-body2-size: 14px; --text-body2-line: 20px;
+      --text-button-size: 14px; --text-button-line: 20px;
+      --text-label-size: 12px; --text-label-line: 16px;
+      --text-caption-size: 12px; --text-caption-line: 16px;
+    }
+  }
+  
+  /* ========== Theme: Light ========== */
+  [data-theme="light"] {
+    /* Surfaces */
+    --surface-1: #EBEBEB; /* Gray10 */
+    --surface-2: #F5F5F5; /* Gray05 */
+    --surface-3: #FFFFFF;
+    --surface-4: #FFFFFF;
+  
+    /* Foreground semantics */
+    --fg-primary: #222222;   /* Gray90 */
+    --fg-secondary: #5C5C5C; /* Gray60 */
+    --fg-disabled: #A8A8A8;  /* Gray40 */
+  
+    --fg-action: #045DD2;      /* Blue60 */
+    --fg-destructive: #D03541; /* Red60 */
+    --fg-alert: #AB4307;       /* Orange70 */
+    --fg-success: #007057;     /* Green70 */
+    --fg-live: #5030BB;        /* Purple70 */
+  
+    /* Background semantics (banners/toasts/primary buttons) */
+    --bg-action: #045DD2;
+    --bg-alert: #FC912C;       /* Orange50 */
+    --bg-destructive: #D03541;
+    --bg-success: #007057;
+    --bg-live: #5030BB;
+  
+    /* Brand note: #FFD700 (Axon Yellow) should not be used for UI */
+    --border-color: rgba(0,0,0,0.10);
+  }
+  
+  /* ========== Theme: Dark ========== */
+  [data-theme="dark"] {
+    /* Surfaces */
+    --surface-1: #111111; /* Gray95 */
+    --surface-2: #222222; /* Gray90 */
+    --surface-3: #323232; /* Gray80 */
+    --surface-4: #404040; /* Gray70 */
+  
+    /* Foreground semantics (choose readable counterparts; keep semantics consistent) */
+    --fg-primary: #F5F5F5;
+    --fg-secondary: rgba(245,245,245,0.72);
+    --fg-disabled: rgba(245,245,245,0.45);
+  
+    /* Keep semantic hues; adjust later if Spark provides dark variants */
+    --fg-action: #64B0FC;
+    --fg-destructive: #FF8A8C;
+    --fg-alert: #FC912C;
+    --fg-success: #14CC95;
+    --fg-live: #927CF4;
+  
+    --bg-action: #014492;
+    --bg-alert: #FC912C;
+    --bg-destructive: #AC1527;
+    --bg-success: #033025;
+    --bg-live: #291268;
+  
+    --border-color: rgba(255,255,255,0.14);
+  }
+  
+  /* ========== Utility class examples (optional) ========== */
+  .surface-1 { background: var(--surface-1); }
+  .surface-2 { background: var(--surface-2); }
+  .surface-3 { background: var(--surface-3); }
+  .surface-4 { background: var(--surface-4); }

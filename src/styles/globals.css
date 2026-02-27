@@ -1,0 +1,95 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+  color: var(--fg-primary);
+  background: var(--surface-1);
+}
+
+a {
+  color: var(--fg-action);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:not([class]):hover {
+  color: var(--fg-action);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+a:not([class]):focus {
+  outline: 2px solid var(--fg-action);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Make links in text content clearly visible */
+p a, li a, div a:not([class*="btn"]):not([class*="nav"]) {
+  color: var(--fg-action) !important;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  font-weight: 500;
+}
+
+p a:hover, li a:hover, div a:not([class*="btn"]):not([class*="nav"]):hover {
+  color: var(--fg-action) !important;
+  opacity: 0.8;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:focus {
+  outline: 2px solid var(--fg-action);
+  outline-offset: 2px;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--fg-action);
+  outline-offset: 2px;
+}
+
+/* Button link hover effects */
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-action) !important;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-link:hover {
+  background: var(--bg-action) !important;
+  color: white !important;
+}
+
+/* Navigation link hover */
+.nav-link:hover {
+  color: var(--fg-action) !important;
+  background: rgba(4, 93, 210, 0.1) !important;
+}
+

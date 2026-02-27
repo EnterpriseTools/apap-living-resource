@@ -1,0 +1,920 @@
+<!doctype html>
+<html><head><title>APAP Adoption Cohorts for VOC</title><meta charset="UTF-8"><link href="http://fonts.googleapis.com/css?family=Crimson+Text:400,400italic,700,700italic|Roboto:400,700,700italic,400italic" rel="stylesheet" type="text/css"><style>/*
+ * Copyright 2014 Quip
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+body {
+    font-size: 15px;
+    color: #333;
+    background: white;
+    padding: 60px 95px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern";
+    font-kerning: normal;
+    -moz-font-feature-settings: "kern";
+    -webkit-font-feature-settings: "kern";
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th {
+    font-family: Roboto, sans-serif;
+    font-weight: 700;
+    margin: 0;
+    margin-top: 1.25em;
+    margin-bottom: 0.75em;
+}
+
+h1 {
+    font-size: 35px;
+    line-height: 42px;
+}
+
+h1:first-child {
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 22px;
+    line-height: 22px;
+}
+
+h3 {
+    font-size: 18px;
+    line-height: 16px;
+}
+
+h4,
+h5,
+h6 {
+    font-size: 15px;
+    line-height: 14px;
+}
+h5 {
+    font-style: italic;
+}
+
+h6 {
+    font-weight: unset;
+    text-decoration: underline;
+}
+
+.capitalize-h3 h3 {
+    text-transform: uppercase;
+}
+
+/* Body text */
+body,
+p,
+ul,
+ol,
+td {
+    font-family: "Crimson Text", serif;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+blockquote,
+q {
+    display: block;
+    margin: 1em 0;
+    font-style: italic;
+}
+
+blockquote a,
+q a {
+    text-decoration: underline;
+}
+
+blockquote {
+    padding-left: 10px;
+    border-left: 4px solid #a6a6a6;
+}
+
+q {
+    color: #a6a6a6;
+    line-height: 40px;
+    font-size: 24px;
+    text-align: center;
+    quotes: none;
+}
+
+q a {
+    color: #a6a6a6;
+}
+
+code,
+pre {
+    font-family: Consolas, "Liberation Mono", Menlo, "Courier Prime Web",
+        Courier, monospace;
+    background: #f2f2f2;
+}
+
+code {
+    padding: 1px;
+    margin: 0 -1px;
+    border-radius: 3px;
+}
+
+pre {
+    display: block;
+    line-height: 20px;
+    text-shadow: 0 1px white;
+    padding: 5px 5px 5px 30px;
+    white-space: nowrap;
+    position: relative;
+    margin: 1em 0;
+}
+
+pre:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 15px;
+    border-left: solid 1px #dadada;
+}
+
+/* Text Alignment */
+.line {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-right {
+    text-align: end;
+}
+
+/* Lists */
+div[data-section-style="5"],
+div[data-section-style="6"],
+div[data-section-style="7"] {
+    margin: 12px 0;
+}
+
+ul {
+    padding: 0 0 0 40px;
+}
+
+ul li {
+    margin-bottom: 0.4em;
+}
+
+/* Bulleted list */
+div[data-section-style="5"] ul {
+    list-style-type: disc;
+}
+div[data-section-style="5"] ul ul {
+    list-style-type: circle;
+}
+div[data-section-style="5"] ul ul ul {
+    list-style-type: square;
+}
+div[data-section-style="5"] ul ul ul ul {
+    list-style-type: disc;
+}
+div[data-section-style="5"] ul ul ul ul ul {
+    list-style-type: circle;
+}
+div[data-section-style="5"] ul ul ul ul ul ul {
+    list-style-type: square;
+}
+
+/* Numbered list */
+div[data-section-style="6"] ul {
+    list-style-type: decimal;
+}
+div[data-section-style="6"] ul ul {
+    list-style-type: lower-alpha;
+}
+div[data-section-style="6"] ul ul ul {
+    list-style-type: lower-roman;
+}
+div[data-section-style="6"] ul ul ul ul {
+    list-style-type: decimal;
+}
+div[data-section-style="6"] ul ul ul ul ul {
+    list-style-type: lower-alpha;
+}
+div[data-section-style="6"] ul ul ul ul ul ul {
+    list-style-type: lower-roman;
+}
+
+/* Checklist */
+div[data-section-style="7"] ul {
+    list-style-type: none;
+}
+
+div[data-section-style="7"] ul li:before {
+    content: "\2610";
+    position: absolute;
+    display: inline;
+    margin-right: 1.2em;
+    margin-left: -1.2em;
+}
+
+div[data-section-style="7"] ul li.checked {
+    text-decoration: line-through;
+}
+
+div[data-section-style="7"] ul li.checked:before {
+    content: "\2611";
+    text-decoration: none;
+}
+
+/* Tables */
+div[data-section-style="8"] {
+    margin: 12px 0;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: separate;
+    border: solid 1px #bbb;
+    table-layout: fixed;
+    position: relative;
+}
+
+table th,
+table td {
+    padding: 2px 2px 0;
+    min-width: 1.5em;
+    word-wrap: break-word;
+}
+
+table th {
+    border-bottom: 1px solid #c7cbd1;
+    background: #f2f2f2;
+    font-weight: bold;
+    vertical-align: bottom;
+    color: #3a4449;
+    text-align: center;
+}
+
+table td {
+    padding-top: 0;
+    border-left: 1px solid #c7cbd1;
+    border-top: 1px solid #c7cbd1;
+    vertical-align: top;
+}
+
+table td.bold {
+    font-weight: bold;
+}
+
+table td.italic {
+    font-style: italic;
+}
+
+table td.underline {
+    text-decoration: underline;
+}
+
+table td.strikethrough {
+    text-decoration: line-through;
+}
+
+table td.underline.strikethrough {
+    text-decoration: underline line-through;
+}
+
+table td:first-child {
+    border-left: hidden;
+}
+
+table tr:first-child td {
+    border-top: hidden;
+}
+
+/* Images */
+div[data-section-style="11"] {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div[data-section-style="11"][data-section-float="0"] {
+    clear: both;
+    text-align: center;
+}
+
+div[data-section-style="11"][data-section-float="1"] {
+    float: left;
+    clear: left;
+    margin-right: 20px;
+}
+
+div[data-section-style="11"][data-section-float="2"] {
+    float: right;
+    clear: right;
+    margin-left: 20px;
+}
+
+div[data-section-style="11"] img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+}
+
+div[data-section-style="11"].show-border {
+    outline: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.05);
+}
+
+hr {
+    width: 70px;
+    margin: 20px auto;
+}
+
+/* Apps */
+div[data-section-style="19"].placeholder {
+    margin: 0.8em auto;
+    padding: 4px 0;
+    display: block;
+    color: #3d87f5;
+    text-align: center;
+    border: 1px solid rgba(41, 182, 242, 0.2);
+    border-radius: 3px;
+    background: #e9f8fe;
+    font-family: Roboto, sans-serif;
+}
+
+div[data-section-style="19"].first-party-element {
+    margin-bottom: 10px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+div[data-section-style="19"].first-party-element.kanban {
+    background-image: url("https://quip-cdn.com/nK0hSyhsb4jrLIL2s5Ma-g");
+    height: 166px;
+}
+
+div[data-section-style="19"].first-party-element.calendar {
+    background-image: url("https://quip-cdn.com/OYujqLny03RILxcLIiyERg");
+    height: 244px;
+}
+
+div[data-section-style="19"].first-party-element.poll {
+    background-image: url("https://quip-cdn.com/fbIiFrcKGv__4NB7CBfxoA");
+    height: 116px;
+}
+
+div[data-section-style="19"].first-party-element.countdown {
+    background-image: url("https://quip-cdn.com/3bPhykD2dBei9sSjCWteTQ");
+    height: 96px;
+}
+
+div[data-section-style="19"].first-party-element.process_bar {
+    background-image: url("https://quip-cdn.com/ybQlHnHEIIBLog5rZmYs_w");
+    height: 36px;
+}
+
+div[data-section-style="19"].first-party-element.project_tracker {
+    background-image: url("https://quip-cdn.com/OFQU087b4Mxzz1ZaHwtjXA");
+    height: 164px;
+}
+
+div[data-section-style="19"] img {
+    margin: 0.5em;
+}
+
+div[data-section-style="19"] img.masked-image {
+    margin: 0;
+    transform-origin: top left;
+}
+
+div[data-section-style="19"] .image-mask {
+    position: relative;
+    overflow: hidden;
+}
+/*
+ * Copyright 2019 Quip
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+body {
+    counter-reset: indent0 indent1 indent2 indent3 indent4 indent5 indent6
+        indent7 indent8;
+}
+
+/* Numbered list */
+div[data-section-style="6"] {
+    counter-reset: indent0 indent1 indent2 indent3 indent4 indent5 indent6
+        indent7 indent8;
+}
+div[data-section-style="6"].list-numbering-continue {
+    counter-reset: none;
+}
+div[data-section-style="6"].list-numbering-restart-at {
+    counter-reset: indent0 var(--indent0) indent1 indent2 indent3 indent4
+        indent5 indent6 indent7 indent8;
+}
+div[data-section-style="6"] ul {
+    /* indent0 is not reset since it is shared across the div elements */
+    list-style-type: none !important;
+}
+div[data-section-style="6"] ul ul {
+    counter-reset: indent1;
+}
+div[data-section-style="6"] ul ul ul {
+    counter-reset: indent2;
+}
+div[data-section-style="6"] ul ul ul ul {
+    counter-reset: indent3;
+}
+div[data-section-style="6"] ul ul ul ul ul {
+    counter-reset: indent4;
+}
+div[data-section-style="6"] ul ul ul ul ul ul {
+    counter-reset: indent5;
+}
+div[data-section-style="6"] ul li {
+    counter-increment: indent0;
+}
+div[data-section-style="6"] ul ul li {
+    counter-increment: indent1;
+}
+div[data-section-style="6"] ul ul ul li {
+    counter-increment: indent2;
+}
+div[data-section-style="6"] ul ul ul ul li {
+    counter-increment: indent3;
+}
+div[data-section-style="6"] ul ul ul ul ul li {
+    counter-increment: indent4;
+}
+div[data-section-style="6"] ul ul ul ul ul ul li {
+    counter-increment: indent5;
+}
+div[data-section-style="6"] ul li:before {
+    content: counter(indent0, decimal) ". ";
+}
+div[data-section-style="6"] ul ul li:before {
+    content: counter(indent1, lower-alpha) ". ";
+}
+div[data-section-style="6"] ul ul ul li:before {
+    content: counter(indent2, lower-roman) ". ";
+}
+div[data-section-style="6"] ul ul ul ul li:before {
+    content: counter(indent3, decimal) ". ";
+}
+div[data-section-style="6"] ul ul ul ul ul li:before {
+    content: counter(indent4, lower-alpha) ". ";
+}
+div[data-section-style="6"] ul ul ul ul ul ul li:before {
+    content: counter(indent5, lower-roman) ". ";
+}
+</style></head><body><h1 id='temp:C:MdS2eef8b37559248ce83ff50111'>APAP Adoption Cohorts for VOC</h1>
+
+<h3 id='temp:C:MdSd5225ea0ffb44faebfc8bc6c6'>Significant Drop off in Year 2 - Better Understand Recert Needs</h3>
+
+<div data-section-style='13'><table id='temp:C:MdS564a2c37e51b45a3bd82356f7' title='Sheet1' style='width: 82.7333em'><thead><tr><th class='empty' style='width: 2em'/><th id='temp:C:MdS1dafe06fb6b844acae065f2ed' class='empty' style='width: 8.86667em'>A<br/></th><th id='temp:C:MdSf0e911e917a14fdfa04c9b6b9' class='empty' style='width: 18.9333em'>B<br/></th><th id='temp:C:MdS12d1f054c88d445987f75d82e' class='empty' style='width: 6em'>C<br/></th><th id='temp:C:MdSf78c57eafc3948f4bcbe93233' class='empty' style='width: 10.7333em'>D<br/></th><th id='temp:C:MdS138bbbfbb4484a79851b4cef2' class='empty' style='width: 10.7333em'>E<br/></th><th id='temp:C:MdS33586c03336748f1994d6b895' class='empty' style='width: 10.7333em'>F<br/></th><th id='temp:C:MdS97d0d4350ea34d278a8a47ca5' class='empty' style='width: 10.7333em'>G<br/></th><th id='temp:C:MdS1b3df4710ba74b8da585cc4a9' class='empty' style='width: 6em'>H<br/></th></tr></thead><tbody><tr id='temp:C:MdS3eb7e26693374d1ea514012e8'><td style='background-color:#f0f0f0'>1</td><td id='temp:s:temp:C:MdS3eb7e26693374d1ea514012e8;temp:C:MdS5e92f77130ef4a089df2cca2b' style='text-align: center;vertical-align: middle;' class='bold'>Account_Number
+
+<br/></td><td id='temp:s:temp:C:MdS3eb7e26693374d1ea514012e8;temp:C:MdS00034cd7e2434229bf9e9cc1e' style='text-align: center;vertical-align: middle;' class='bold'>AgencyName
+
+<br/></td><td id='temp:s:temp:C:MdS3eb7e26693374d1ea514012e8;temp:C:MdS4ac2b6ca0abf4a2d88b315fe0' style='text-align: center;vertical-align: middle;' class='bold'>Axon Footprint
+
+<br/></td><td id='temp:s:temp:C:MdS3eb7e26693374d1ea514012e8;temp:C:MdSc32a9480eaad4fc7b3598a964' style='text-align: center;vertical-align: middle;' class='bold'>Jan_Eligibility_Cohort
+
+<br/></td><td id='temp:s:temp:C:MdS3eb7e26693374d1ea514012e8;temp:C:MdS567a3f35325048e9af0848175' style='text-align: center;vertical-align: middle;' class='bold'>Jan_T12_SIM_pp
+
+<br/></td><td id='temp:s:temp:C:MdS3eb7e26693374d1ea514012e8;temp:C:MdSfe47aef6f5a74ec69b119d897' style='text-align: center;vertical-align: middle;' class='bold'>Sept_T12_SIM_pp
+
+<br/></td><td id='temp:s:temp:C:MdS3eb7e26693374d1ea514012e8;temp:C:MdS76a9b02f284a4bcda06565f36' style='text-align: center;vertical-align: middle;' class='bold'>Sept_Eligibility_Cohort
+
+<br/></td><td id='temp:s:temp:C:MdS3eb7e26693374d1ea514012e8;temp:C:MdS1e125fc140594b43bef287f01' style='text-align: center;vertical-align: middle;' class='bold'>Difference
+
+<br/></td></tr><tr id='temp:C:MdS99680a3a2e7f4abba205a6490'><td style='background-color:#f0f0f0'>2</td><td id='temp:s:temp:C:MdS99680a3a2e7f4abba205a6490;temp:C:MdS5e92f77130ef4a089df2cca2b' style='text-align: left;vertical-align: bottom;'>
+
+<br/></td><td id='temp:s:temp:C:MdS99680a3a2e7f4abba205a6490;temp:C:MdS00034cd7e2434229bf9e9cc1e' style='text-align: left;vertical-align: bottom;'>Lincoln PD
+
+<br/></td><td id='temp:s:temp:C:MdS99680a3a2e7f4abba205a6490;temp:C:MdS4ac2b6ca0abf4a2d88b315fe0' style='text-align: center;vertical-align: bottom;'>
+
+<br/></td><td id='temp:s:temp:C:MdS99680a3a2e7f4abba205a6490;temp:C:MdSc32a9480eaad4fc7b3598a964' style='text-align: center;vertical-align: bottom;'>
+
+<br/></td><td id='temp:s:temp:C:MdS99680a3a2e7f4abba205a6490;temp:C:MdS567a3f35325048e9af0848175' style='text-align: center;vertical-align: bottom;'>
+
+<br/></td><td id='temp:s:temp:C:MdS99680a3a2e7f4abba205a6490;temp:C:MdSfe47aef6f5a74ec69b119d897' style='text-align: center;vertical-align: bottom;'>
+
+<br/></td><td id='temp:s:temp:C:MdS99680a3a2e7f4abba205a6490;temp:C:MdS76a9b02f284a4bcda06565f36' style='text-align: center;vertical-align: bottom;'>
+
+<br/></td><td id='temp:s:temp:C:MdS99680a3a2e7f4abba205a6490;temp:C:MdS1e125fc140594b43bef287f01' style='text-align: center;vertical-align: bottom;'>
+
+<br/></td></tr><tr id='temp:C:MdSa31bba8ed4654c50ad4292bb2'><td style='background-color:#f0f0f0'>3</td><td id='temp:s:temp:C:MdSa31bba8ed4654c50ad4292bb2;temp:C:MdS5e92f77130ef4a089df2cca2b' style='text-align: left;vertical-align: bottom;'>110318
+
+<br/></td><td id='temp:s:temp:C:MdSa31bba8ed4654c50ad4292bb2;temp:C:MdS00034cd7e2434229bf9e9cc1e' style='text-align: left;vertical-align: bottom;'>Volusia Sheriff's Office - FL
+
+<br/></td><td id='temp:s:temp:C:MdSa31bba8ed4654c50ad4292bb2;temp:C:MdS4ac2b6ca0abf4a2d88b315fe0' style='text-align: center;vertical-align: bottom;'>533
+
+<br/></td><td id='temp:s:temp:C:MdSa31bba8ed4654c50ad4292bb2;temp:C:MdSc32a9480eaad4fc7b3598a964' style='text-align: center;vertical-align: bottom;'>15
+
+<br/></td><td id='temp:s:temp:C:MdSa31bba8ed4654c50ad4292bb2;temp:C:MdS567a3f35325048e9af0848175' style='text-align: center;vertical-align: bottom;'>0.95
+
+<br/></td><td id='temp:s:temp:C:MdSa31bba8ed4654c50ad4292bb2;temp:C:MdSfe47aef6f5a74ec69b119d897' style='text-align: center;vertical-align: bottom;'>0.17
+
+<br/></td><td id='temp:s:temp:C:MdSa31bba8ed4654c50ad4292bb2;temp:C:MdS76a9b02f284a4bcda06565f36' style='text-align: center;vertical-align: bottom;'>23
+
+<br/></td><td id='temp:s:temp:C:MdSa31bba8ed4654c50ad4292bb2;temp:C:MdS1e125fc140594b43bef287f01' style='text-align: center;vertical-align: bottom;'>-82.11%
+
+<br/></td></tr><tr id='temp:C:MdS15ea5ae49f224d60860b7f944'><td style='background-color:#f0f0f0'>4</td><td id='temp:s:temp:C:MdS15ea5ae49f224d60860b7f944;temp:C:MdS5e92f77130ef4a089df2cca2b' style='text-align: left;vertical-align: bottom;'>105754
+
+<br/></td><td id='temp:s:temp:C:MdS15ea5ae49f224d60860b7f944;temp:C:MdS00034cd7e2434229bf9e9cc1e' style='text-align: left;vertical-align: bottom;'>Corona Police Dept. - CA
+
+<br/></td><td id='temp:s:temp:C:MdS15ea5ae49f224d60860b7f944;temp:C:MdS4ac2b6ca0abf4a2d88b315fe0' style='text-align: center;vertical-align: bottom;'>228
+
+<br/></td><td id='temp:s:temp:C:MdS15ea5ae49f224d60860b7f944;temp:C:MdSc32a9480eaad4fc7b3598a964' style='text-align: center;vertical-align: bottom;'>11
+
+<br/></td><td id='temp:s:temp:C:MdS15ea5ae49f224d60860b7f944;temp:C:MdS567a3f35325048e9af0848175' style='text-align: center;vertical-align: bottom;'>1.37
+
+<br/></td><td id='temp:s:temp:C:MdS15ea5ae49f224d60860b7f944;temp:C:MdSfe47aef6f5a74ec69b119d897' style='text-align: center;vertical-align: bottom;'>0.06
+
+<br/></td><td id='temp:s:temp:C:MdS15ea5ae49f224d60860b7f944;temp:C:MdS76a9b02f284a4bcda06565f36' style='text-align: center;vertical-align: bottom;'>19
+
+<br/></td><td id='temp:s:temp:C:MdS15ea5ae49f224d60860b7f944;temp:C:MdS1e125fc140594b43bef287f01' style='text-align: center;vertical-align: bottom;'>-95.62%
+
+<br/></td></tr><tr id='temp:C:MdSebdff213e05848d4b7651357a'><td style='background-color:#f0f0f0'>5</td><td id='temp:s:temp:C:MdSebdff213e05848d4b7651357a;temp:C:MdS5e92f77130ef4a089df2cca2b' style='text-align: left;vertical-align: bottom;'>112676
+
+<br/></td><td id='temp:s:temp:C:MdSebdff213e05848d4b7651357a;temp:C:MdS00034cd7e2434229bf9e9cc1e' style='text-align: left;vertical-align: bottom;'>Johnson City Police Dept. -TN
+
+<br/></td><td id='temp:s:temp:C:MdSebdff213e05848d4b7651357a;temp:C:MdS4ac2b6ca0abf4a2d88b315fe0' style='text-align: center;vertical-align: bottom;'>184
+
+<br/></td><td id='temp:s:temp:C:MdSebdff213e05848d4b7651357a;temp:C:MdSc32a9480eaad4fc7b3598a964' style='text-align: center;vertical-align: bottom;'>5
+
+<br/></td><td id='temp:s:temp:C:MdSebdff213e05848d4b7651357a;temp:C:MdS567a3f35325048e9af0848175' style='text-align: center;vertical-align: bottom;'>1.91
+
+<br/></td><td id='temp:s:temp:C:MdSebdff213e05848d4b7651357a;temp:C:MdSfe47aef6f5a74ec69b119d897' style='text-align: center;vertical-align: bottom;'>0.33
+
+<br/></td><td id='temp:s:temp:C:MdSebdff213e05848d4b7651357a;temp:C:MdS76a9b02f284a4bcda06565f36' style='text-align: center;vertical-align: bottom;'>13
+
+<br/></td><td id='temp:s:temp:C:MdSebdff213e05848d4b7651357a;temp:C:MdS1e125fc140594b43bef287f01' style='text-align: center;vertical-align: bottom;'>-82.72%
+
+<br/></td></tr><tr id='temp:C:MdS867e397f559546e092a69c955'><td style='background-color:#f0f0f0'>6</td><td id='temp:s:temp:C:MdS867e397f559546e092a69c955;temp:C:MdS5e92f77130ef4a089df2cca2b' style='text-align: left;vertical-align: bottom;'>109686
+
+<br/></td><td id='temp:s:temp:C:MdS867e397f559546e092a69c955;temp:C:MdS00034cd7e2434229bf9e9cc1e' style='text-align: left;vertical-align: bottom;'>Surprise Police Dept. - AZ
+
+<br/></td><td id='temp:s:temp:C:MdS867e397f559546e092a69c955;temp:C:MdS4ac2b6ca0abf4a2d88b315fe0' style='text-align: center;vertical-align: bottom;'>165
+
+<br/></td><td id='temp:s:temp:C:MdS867e397f559546e092a69c955;temp:C:MdSc32a9480eaad4fc7b3598a964' style='text-align: center;vertical-align: bottom;'>14
+
+<br/></td><td id='temp:s:temp:C:MdS867e397f559546e092a69c955;temp:C:MdS567a3f35325048e9af0848175' style='text-align: center;vertical-align: bottom;'>1.69
+
+<br/></td><td id='temp:s:temp:C:MdS867e397f559546e092a69c955;temp:C:MdSfe47aef6f5a74ec69b119d897' style='text-align: center;vertical-align: bottom;'>0.02
+
+<br/></td><td id='temp:s:temp:C:MdS867e397f559546e092a69c955;temp:C:MdS76a9b02f284a4bcda06565f36' style='text-align: center;vertical-align: bottom;'>22
+
+<br/></td><td id='temp:s:temp:C:MdS867e397f559546e092a69c955;temp:C:MdS1e125fc140594b43bef287f01' style='text-align: center;vertical-align: bottom;'>-98.82%
+
+<br/></td></tr><tr id='temp:C:MdSd55f4cf335df41d691eea66b9'><td style='background-color:#f0f0f0'>7</td><td id='temp:s:temp:C:MdSd55f4cf335df41d691eea66b9;temp:C:MdS5e92f77130ef4a089df2cca2b' style='text-align: left;vertical-align: bottom;'>167965
+
+<br/></td><td id='temp:s:temp:C:MdSd55f4cf335df41d691eea66b9;temp:C:MdS00034cd7e2434229bf9e9cc1e' style='text-align: left;vertical-align: bottom;'>Kanawha County Sheriff's Office - WV
+
+<br/></td><td id='temp:s:temp:C:MdSd55f4cf335df41d691eea66b9;temp:C:MdS4ac2b6ca0abf4a2d88b315fe0' style='text-align: center;vertical-align: bottom;'>128
+
+<br/></td><td id='temp:s:temp:C:MdSd55f4cf335df41d691eea66b9;temp:C:MdSc32a9480eaad4fc7b3598a964' style='text-align: center;vertical-align: bottom;'>12
+
+<br/></td><td id='temp:s:temp:C:MdSd55f4cf335df41d691eea66b9;temp:C:MdS567a3f35325048e9af0848175' style='text-align: center;vertical-align: bottom;'>1.55
+
+<br/></td><td id='temp:s:temp:C:MdSd55f4cf335df41d691eea66b9;temp:C:MdSfe47aef6f5a74ec69b119d897' style='text-align: center;vertical-align: bottom;'>0.43
+
+<br/></td><td id='temp:s:temp:C:MdSd55f4cf335df41d691eea66b9;temp:C:MdS76a9b02f284a4bcda06565f36' style='text-align: center;vertical-align: bottom;'>20
+
+<br/></td><td id='temp:s:temp:C:MdSd55f4cf335df41d691eea66b9;temp:C:MdS1e125fc140594b43bef287f01' style='text-align: center;vertical-align: bottom;'>-72.26%
+
+<br/></td></tr></tbody></table></div><h3 id='temp:C:MdSd2da2605a1864050ad7526334'>Large Agencies for Fleet Management VOC</h3>
+
+<div style="" class="" data-section-style='5'><ul id='temp:C:MdS521e824c986f44dd80e874bc1'><li id='temp:C:MdS6dca8db17c4f4576a3320fed7' class='' value='1'>Shreveport PD (Created their own storage units with sanitation, Steve Tuttle recommendation)
+
+<br/></li><li id='temp:C:MdS0e58089fe93642fea084de121' class=''>CK to identify more - should partner with Zaid too
+
+<br/></li></ul></div><br/>
+
+<h3 id='temp:C:MdSaf8ca99f2d1248a0a8e4426be'>Re-Engaged Legacy Customers - What changed that caused the spike?</h3>
+
+<div data-section-style='13'><table id='temp:C:MdS59a1c5e8f3ef4b20ac73f2473' title='Sheet2' style='width: 85.5333em'><thead><tr><th class='empty' style='width: 2em'/><th id='temp:C:MdS9bd77394de014b8d952d97be9' class='empty' style='width: 9.13333em'>A<br/></th><th id='temp:C:MdS4e16697114ca4f17889c63c8a' class='empty' style='width: 19.6em'>B<br/></th><th id='temp:C:MdSef56d046dec344e39dac8b1b2' class='empty' style='width: 6em'>C<br/></th><th id='temp:C:MdS95db659bb333430cb315719ea' class='empty' style='width: 11.2em'>D<br/></th><th id='temp:C:MdS65900645d7444e2b95c9b80d2' class='empty' style='width: 11.2em'>E<br/></th><th id='temp:C:MdS0561b77fedc7480cb69ace45e' class='empty' style='width: 11.2em'>F<br/></th><th id='temp:C:MdSf0be8ea175c54606a0c87aee9' class='empty' style='width: 11.2em'>G<br/></th><th id='temp:C:MdS21ca95f2c89d486f8190afed0' class='empty' style='width: 6em'>H<br/></th></tr></thead><tbody><tr id='temp:C:MdS8a417b9a6a25462aac5533445'><td style='background-color:#f0f0f0'>1</td><td id='temp:s:temp:C:MdS8a417b9a6a25462aac5533445;temp:C:MdSd5ef55d871b54dc6acf74a300' style='text-align: center;vertical-align: middle;' class='bold'>Account_Number
+
+<br/></td><td id='temp:s:temp:C:MdS8a417b9a6a25462aac5533445;temp:C:MdSc7305e5112514873983c0fbe2' style='text-align: center;vertical-align: middle;' class='bold'>AgencyName
+
+<br/></td><td id='temp:s:temp:C:MdS8a417b9a6a25462aac5533445;temp:C:MdS1e29839e430d4974bbfc6ef81' style='text-align: center;vertical-align: middle;' class='bold'>Axon Footprint
+
+<br/></td><td id='temp:s:temp:C:MdS8a417b9a6a25462aac5533445;temp:C:MdSea80e2a3c9c9461f83b51b289' style='text-align: center;vertical-align: middle;' class='bold'>Jan_Eligibility_Cohort
+
+<br/></td><td id='temp:s:temp:C:MdS8a417b9a6a25462aac5533445;temp:C:MdSa786b7e6fe014155a08406f06' style='text-align: center;vertical-align: middle;' class='bold'>Jan_T12_SIM_pp
+
+<br/></td><td id='temp:s:temp:C:MdS8a417b9a6a25462aac5533445;temp:C:MdSeaa6e739e51b475dbfe0dcba6' style='text-align: center;vertical-align: middle;' class='bold'>Sept_T12_SIM_pp
+
+<br/></td><td id='temp:s:temp:C:MdS8a417b9a6a25462aac5533445;temp:C:MdSd05c7f4ad9674b15a7fab00c7' style='text-align: center;vertical-align: middle;' class='bold'>Sept_Eligibility_Cohort
+
+<br/></td><td id='temp:s:temp:C:MdS8a417b9a6a25462aac5533445;temp:C:MdS1dc1b5d5cf954d04b02d073e1' style='text-align: center;vertical-align: middle;' class='bold'>Difference
+
+<br/></td></tr><tr id='temp:C:MdS22a9248c75714e42b451a8490'><td style='background-color:#f0f0f0'>2</td><td id='temp:s:temp:C:MdS22a9248c75714e42b451a8490;temp:C:MdSd5ef55d871b54dc6acf74a300' style='text-align: left;vertical-align: bottom;'>110010
+
+<br/></td><td id='temp:s:temp:C:MdS22a9248c75714e42b451a8490;temp:C:MdSc7305e5112514873983c0fbe2' style='text-align: left;vertical-align: bottom;'>Palm Beach County Sheriff's Office - FL
+
+<br/></td><td id='temp:s:temp:C:MdS22a9248c75714e42b451a8490;temp:C:MdS1e29839e430d4974bbfc6ef81' style='text-align: center;vertical-align: bottom;'>2000
+
+<br/></td><td id='temp:s:temp:C:MdS22a9248c75714e42b451a8490;temp:C:MdSea80e2a3c9c9461f83b51b289' style='text-align: center;vertical-align: bottom;'>25
+
+<br/></td><td id='temp:s:temp:C:MdS22a9248c75714e42b451a8490;temp:C:MdSa786b7e6fe014155a08406f06' style='text-align: center;vertical-align: bottom;'>0.03
+
+<br/></td><td id='temp:s:temp:C:MdS22a9248c75714e42b451a8490;temp:C:MdSeaa6e739e51b475dbfe0dcba6' style='text-align: center;'>33
+
+<br/></td><td id='temp:s:temp:C:MdS22a9248c75714e42b451a8490;temp:C:MdSd05c7f4ad9674b15a7fab00c7' style='text-align: center;'>0.93
+
+<br/></td><td id='temp:s:temp:C:MdS22a9248c75714e42b451a8490;temp:C:MdS1dc1b5d5cf954d04b02d073e1' style='text-align: center;'>3061%
+
+<br/></td></tr><tr id='temp:C:MdS74d59347ec9f47edb9d01e770'><td style='background-color:#f0f0f0'>3</td><td id='temp:s:temp:C:MdS74d59347ec9f47edb9d01e770;temp:C:MdSd5ef55d871b54dc6acf74a300' style='text-align: left;vertical-align: bottom;'>105785
+
+<br/></td><td id='temp:s:temp:C:MdS74d59347ec9f47edb9d01e770;temp:C:MdSc7305e5112514873983c0fbe2' style='text-align: left;vertical-align: bottom;'>Fort Worth Police Department - TX
+
+<br/></td><td id='temp:s:temp:C:MdS74d59347ec9f47edb9d01e770;temp:C:MdS1e29839e430d4974bbfc6ef81' style='text-align: center;vertical-align: bottom;'>1993
+
+<br/></td><td id='temp:s:temp:C:MdS74d59347ec9f47edb9d01e770;temp:C:MdSea80e2a3c9c9461f83b51b289' style='text-align: center;vertical-align: bottom;'>35
+
+<br/></td><td id='temp:s:temp:C:MdS74d59347ec9f47edb9d01e770;temp:C:MdSa786b7e6fe014155a08406f06' style='text-align: center;vertical-align: bottom;'>0.07
+
+<br/></td><td id='temp:s:temp:C:MdS74d59347ec9f47edb9d01e770;temp:C:MdSeaa6e739e51b475dbfe0dcba6' style='text-align: center;'>43
+
+<br/></td><td id='temp:s:temp:C:MdS74d59347ec9f47edb9d01e770;temp:C:MdSd05c7f4ad9674b15a7fab00c7' style='text-align: center;'>0.81
+
+<br/></td><td id='temp:s:temp:C:MdS74d59347ec9f47edb9d01e770;temp:C:MdS1dc1b5d5cf954d04b02d073e1' style='text-align: center;'>1148%
+
+<br/></td></tr><tr id='temp:C:MdS5a9569000cc84dd5aa9935bac'><td style='background-color:#f0f0f0'>4</td><td id='temp:s:temp:C:MdS5a9569000cc84dd5aa9935bac;temp:C:MdSd5ef55d871b54dc6acf74a300' style='text-align: left;vertical-align: bottom;'>109182
+
+<br/></td><td id='temp:s:temp:C:MdS5a9569000cc84dd5aa9935bac;temp:C:MdSc7305e5112514873983c0fbe2' style='text-align: left;vertical-align: bottom;'>Metropolitan Transportation Authority PD - NY
+
+<br/></td><td id='temp:s:temp:C:MdS5a9569000cc84dd5aa9935bac;temp:C:MdS1e29839e430d4974bbfc6ef81' style='text-align: center;vertical-align: bottom;'>1156
+
+<br/></td><td id='temp:s:temp:C:MdS5a9569000cc84dd5aa9935bac;temp:C:MdSea80e2a3c9c9461f83b51b289' style='text-align: center;vertical-align: bottom;'>38
+
+<br/></td><td id='temp:s:temp:C:MdS5a9569000cc84dd5aa9935bac;temp:C:MdSa786b7e6fe014155a08406f06' style='text-align: center;vertical-align: bottom;'>0.13
+
+<br/></td><td id='temp:s:temp:C:MdS5a9569000cc84dd5aa9935bac;temp:C:MdSeaa6e739e51b475dbfe0dcba6' style='text-align: center;'>46
+
+<br/></td><td id='temp:s:temp:C:MdS5a9569000cc84dd5aa9935bac;temp:C:MdSd05c7f4ad9674b15a7fab00c7' style='text-align: center;'>1.18
+
+<br/></td><td id='temp:s:temp:C:MdS5a9569000cc84dd5aa9935bac;temp:C:MdS1dc1b5d5cf954d04b02d073e1' style='text-align: center;'>839%
+
+<br/></td></tr><tr id='temp:C:MdS43ef996f2b8341b0912abd515'><td style='background-color:#f0f0f0'>5</td><td id='temp:s:temp:C:MdS43ef996f2b8341b0912abd515;temp:C:MdSd5ef55d871b54dc6acf74a300' style='text-align: left;vertical-align: bottom;'>124496
+
+<br/></td><td id='temp:s:temp:C:MdS43ef996f2b8341b0912abd515;temp:C:MdSc7305e5112514873983c0fbe2' style='text-align: left;vertical-align: bottom;'>Pittsburgh Bureau of Police - PA
+
+<br/></td><td id='temp:s:temp:C:MdS43ef996f2b8341b0912abd515;temp:C:MdS1e29839e430d4974bbfc6ef81' style='text-align: center;vertical-align: bottom;'>992
+
+<br/></td><td id='temp:s:temp:C:MdS43ef996f2b8341b0912abd515;temp:C:MdSea80e2a3c9c9461f83b51b289' style='text-align: center;vertical-align: bottom;'>18
+
+<br/></td><td id='temp:s:temp:C:MdS43ef996f2b8341b0912abd515;temp:C:MdSa786b7e6fe014155a08406f06' style='text-align: center;vertical-align: bottom;'>0.28
+
+<br/></td><td id='temp:s:temp:C:MdS43ef996f2b8341b0912abd515;temp:C:MdSeaa6e739e51b475dbfe0dcba6' style='text-align: center;'>26
+
+<br/></td><td id='temp:s:temp:C:MdS43ef996f2b8341b0912abd515;temp:C:MdSd05c7f4ad9674b15a7fab00c7' style='text-align: center;'>1.7
+
+<br/></td><td id='temp:s:temp:C:MdS43ef996f2b8341b0912abd515;temp:C:MdS1dc1b5d5cf954d04b02d073e1' style='text-align: center;'>510%
+
+<br/></td></tr><tr id='temp:C:MdS3ec9d1665cbd45b5bcfbe30eb'><td style='background-color:#f0f0f0'>6</td><td id='temp:s:temp:C:MdS3ec9d1665cbd45b5bcfbe30eb;temp:C:MdSd5ef55d871b54dc6acf74a300' style='text-align: left;vertical-align: bottom;'>107750
+
+<br/></td><td id='temp:s:temp:C:MdS3ec9d1665cbd45b5bcfbe30eb;temp:C:MdSc7305e5112514873983c0fbe2' style='text-align: left;vertical-align: bottom;'>New Mexico Dept. of Public Safety - NM
+
+<br/></td><td id='temp:s:temp:C:MdS3ec9d1665cbd45b5bcfbe30eb;temp:C:MdS1e29839e430d4974bbfc6ef81' style='text-align: center;vertical-align: bottom;'>745
+
+<br/></td><td id='temp:s:temp:C:MdS3ec9d1665cbd45b5bcfbe30eb;temp:C:MdSea80e2a3c9c9461f83b51b289' style='text-align: center;vertical-align: bottom;'>15
+
+<br/></td><td id='temp:s:temp:C:MdS3ec9d1665cbd45b5bcfbe30eb;temp:C:MdSa786b7e6fe014155a08406f06' style='text-align: center;vertical-align: bottom;'>0.1
+
+<br/></td><td id='temp:s:temp:C:MdS3ec9d1665cbd45b5bcfbe30eb;temp:C:MdSeaa6e739e51b475dbfe0dcba6' style='text-align: center;'>23
+
+<br/></td><td id='temp:s:temp:C:MdS3ec9d1665cbd45b5bcfbe30eb;temp:C:MdSd05c7f4ad9674b15a7fab00c7' style='text-align: center;'>1.4
+
+<br/></td><td id='temp:s:temp:C:MdS3ec9d1665cbd45b5bcfbe30eb;temp:C:MdS1dc1b5d5cf954d04b02d073e1' style='text-align: center;'>1344%
+
+<br/></td></tr><tr id='temp:C:MdS34652cf244094f19ad141a6e0'><td style='background-color:#f0f0f0'>7</td><td id='temp:s:temp:C:MdS34652cf244094f19ad141a6e0;temp:C:MdSd5ef55d871b54dc6acf74a300' style='text-align: left;vertical-align: bottom;'>107092
+
+<br/></td><td id='temp:s:temp:C:MdS34652cf244094f19ad141a6e0;temp:C:MdSc7305e5112514873983c0fbe2' style='text-align: left;vertical-align: bottom;'>Seminole County Sheriff's Office - FL
+
+<br/></td><td id='temp:s:temp:C:MdS34652cf244094f19ad141a6e0;temp:C:MdS1e29839e430d4974bbfc6ef81' style='text-align: center;vertical-align: bottom;'>570
+
+<br/></td><td id='temp:s:temp:C:MdS34652cf244094f19ad141a6e0;temp:C:MdSea80e2a3c9c9461f83b51b289' style='text-align: center;vertical-align: bottom;'>28
+
+<br/></td><td id='temp:s:temp:C:MdS34652cf244094f19ad141a6e0;temp:C:MdSa786b7e6fe014155a08406f06' style='text-align: center;vertical-align: bottom;'>0.34
+
+<br/></td><td id='temp:s:temp:C:MdS34652cf244094f19ad141a6e0;temp:C:MdSeaa6e739e51b475dbfe0dcba6' style='text-align: center;'>36
+
+<br/></td><td id='temp:s:temp:C:MdS34652cf244094f19ad141a6e0;temp:C:MdSd05c7f4ad9674b15a7fab00c7' style='text-align: center;'>6.01
+
+<br/></td><td id='temp:s:temp:C:MdS34652cf244094f19ad141a6e0;temp:C:MdS1dc1b5d5cf954d04b02d073e1' style='text-align: center;'>1646%
+
+<br/></td></tr><tr id='temp:C:MdSd80b44b6775e4150aa2f6d7a4'><td style='background-color:#f0f0f0'>8</td><td id='temp:s:temp:C:MdSd80b44b6775e4150aa2f6d7a4;temp:C:MdSd5ef55d871b54dc6acf74a300' style='text-align: left;vertical-align: bottom;'>115314
+
+<br/></td><td id='temp:s:temp:C:MdSd80b44b6775e4150aa2f6d7a4;temp:C:MdSc7305e5112514873983c0fbe2' style='text-align: left;vertical-align: bottom;'>Jefferson County Sheriff's Office - AL
+
+<br/></td><td id='temp:s:temp:C:MdSd80b44b6775e4150aa2f6d7a4;temp:C:MdS1e29839e430d4974bbfc6ef81' style='text-align: center;vertical-align: bottom;'>487
+
+<br/></td><td id='temp:s:temp:C:MdSd80b44b6775e4150aa2f6d7a4;temp:C:MdSea80e2a3c9c9461f83b51b289' style='text-align: center;vertical-align: bottom;'>15
+
+<br/></td><td id='temp:s:temp:C:MdSd80b44b6775e4150aa2f6d7a4;temp:C:MdSa786b7e6fe014155a08406f06' style='text-align: center;vertical-align: bottom;'>0.02
+
+<br/></td><td id='temp:s:temp:C:MdSd80b44b6775e4150aa2f6d7a4;temp:C:MdSeaa6e739e51b475dbfe0dcba6' style='text-align: center;'>23
+
+<br/></td><td id='temp:s:temp:C:MdSd80b44b6775e4150aa2f6d7a4;temp:C:MdSd05c7f4ad9674b15a7fab00c7' style='text-align: center;'>1.03
+
+<br/></td><td id='temp:s:temp:C:MdSd80b44b6775e4150aa2f6d7a4;temp:C:MdS1dc1b5d5cf954d04b02d073e1' style='text-align: center;'>4075%
+
+<br/></td></tr><tr id='temp:C:MdS00d5aa41645e44ba9706cda9d'><td style='background-color:#f0f0f0'>9</td><td id='temp:s:temp:C:MdS00d5aa41645e44ba9706cda9d;temp:C:MdSd5ef55d871b54dc6acf74a300' style='text-align: left;'>115779
+
+<br/></td><td id='temp:s:temp:C:MdS00d5aa41645e44ba9706cda9d;temp:C:MdSc7305e5112514873983c0fbe2' style=''>Bryan Police Dept. - TX
+
+<br/></td><td id='temp:s:temp:C:MdS00d5aa41645e44ba9706cda9d;temp:C:MdS1e29839e430d4974bbfc6ef81' style='text-align: center;'>201
+
+<br/></td><td id='temp:s:temp:C:MdS00d5aa41645e44ba9706cda9d;temp:C:MdSea80e2a3c9c9461f83b51b289' style='text-align: center;'>43
+
+<br/></td><td id='temp:s:temp:C:MdS00d5aa41645e44ba9706cda9d;temp:C:MdSa786b7e6fe014155a08406f06' style='text-align: center;'>0
+
+<br/></td><td id='temp:s:temp:C:MdS00d5aa41645e44ba9706cda9d;temp:C:MdSeaa6e739e51b475dbfe0dcba6' style='text-align: center;'>51
+
+<br/></td><td id='temp:s:temp:C:MdS00d5aa41645e44ba9706cda9d;temp:C:MdSd05c7f4ad9674b15a7fab00c7' style='text-align: center;'>1.4
+
+<br/></td><td id='temp:s:temp:C:MdS00d5aa41645e44ba9706cda9d;temp:C:MdS1dc1b5d5cf954d04b02d073e1' style='text-align: center;'>5000%
+
+<br/></td></tr><tr id='temp:C:MdS67464aad09a9484f8b9209bbb'><td style='background-color:#f0f0f0'>10</td><td id='temp:s:temp:C:MdS67464aad09a9484f8b9209bbb;temp:C:MdSd5ef55d871b54dc6acf74a300' style='text-align: left;'>160259
+
+<br/></td><td id='temp:s:temp:C:MdS67464aad09a9484f8b9209bbb;temp:C:MdSc7305e5112514873983c0fbe2' style=''>University Of Kentucky Police Department - KY
+
+<br/></td><td id='temp:s:temp:C:MdS67464aad09a9484f8b9209bbb;temp:C:MdS1e29839e430d4974bbfc6ef81' style='text-align: center;'>84
+
+<br/></td><td id='temp:s:temp:C:MdS67464aad09a9484f8b9209bbb;temp:C:MdSea80e2a3c9c9461f83b51b289' style='text-align: center;'>25
+
+<br/></td><td id='temp:s:temp:C:MdS67464aad09a9484f8b9209bbb;temp:C:MdSa786b7e6fe014155a08406f06' style='text-align: center;'>0.04
+
+<br/></td><td id='temp:s:temp:C:MdS67464aad09a9484f8b9209bbb;temp:C:MdSeaa6e739e51b475dbfe0dcba6' style='text-align: center;'>33
+
+<br/></td><td id='temp:s:temp:C:MdS67464aad09a9484f8b9209bbb;temp:C:MdSd05c7f4ad9674b15a7fab00c7' style='text-align: center;'>1.81
+
+<br/></td><td id='temp:s:temp:C:MdS67464aad09a9484f8b9209bbb;temp:C:MdS1dc1b5d5cf954d04b02d073e1' style='text-align: center;'>4967%
+
+<br/></td></tr></tbody></table></div><h3 id='temp:C:MdS7759d0b3a26b41438e12d916e'>Consistently Unengaged Legacy Customers - Why haven’t they used the product?</h3>
+
+<div data-section-style='13'><table id='temp:C:MdSea67875e0c034383b58df9fe3' title='Sheet3' style='width: 83.8em'><thead><tr><th class='empty' style='width: 2em'/><th id='temp:C:MdScde9be01443941f493660b913' class='empty' style='width: 8.73333em'>A<br/></th><th id='temp:C:MdSdf53c584868d402282492a65d' class='empty' style='width: 18.5333em'>B<br/></th><th id='temp:C:MdS8ec7fe88519d491888eb34a60' class='empty' style='width: 6em'>C<br/></th><th id='temp:C:MdS1fdf0a0e2a9447f6a07dadfc4' class='empty' style='width: 11.1333em'>D<br/></th><th id='temp:C:MdSbfa20538c78245de9f39b72b1' class='empty' style='width: 11.1333em'>E<br/></th><th id='temp:C:MdS062fff794ae949a9848543dde' class='empty' style='width: 11.1333em'>F<br/></th><th id='temp:C:MdSca205266c4d44b1b9ce1d3926' class='empty' style='width: 11.1333em'>G<br/></th><th id='temp:C:MdS562e0cca7319437aa7dcedeed' class='empty' style='width: 6em'>H<br/></th></tr></thead><tbody><tr id='temp:C:MdS6e41d238a2544dc1bad082bf4'><td style='background-color:#f0f0f0'>1</td><td id='temp:s:temp:C:MdS6e41d238a2544dc1bad082bf4;temp:C:MdSef61d6ac8848476dad2b5088c' style='text-align: center;vertical-align: middle;' class='bold'>Account_Number
+
+<br/></td><td id='temp:s:temp:C:MdS6e41d238a2544dc1bad082bf4;temp:C:MdS56044177ac084ed08b4cb1e09' style='text-align: center;vertical-align: middle;' class='bold'>AgencyName
+
+<br/></td><td id='temp:s:temp:C:MdS6e41d238a2544dc1bad082bf4;temp:C:MdSe6cf62ab6c04407c8255e29d7' style='text-align: center;vertical-align: middle;' class='bold'>Axon Footprint
+
+<br/></td><td id='temp:s:temp:C:MdS6e41d238a2544dc1bad082bf4;temp:C:MdS1a7ca162e3514fb3ac17eba5d' style='text-align: center;vertical-align: middle;' class='bold'>Jan_Eligibility_Cohort
+
+<br/></td><td id='temp:s:temp:C:MdS6e41d238a2544dc1bad082bf4;temp:C:MdS4d89791e6fc14993a5ce2c063' style='text-align: center;vertical-align: middle;' class='bold'>Sept_Eligibility_Cohort
+
+<br/></td><td id='temp:s:temp:C:MdS6e41d238a2544dc1bad082bf4;temp:C:MdSa44a55061b19427697bb30a9b' style='text-align: center;vertical-align: middle;' class='bold'>Jan_T12_SIM_pp
+
+<br/></td><td id='temp:s:temp:C:MdS6e41d238a2544dc1bad082bf4;temp:C:MdS3c9cfe0c4eb346afbafd348d1' style='text-align: center;vertical-align: middle;' class='bold'>Sept_T12_SIM_pp
+
+<br/></td><td id='temp:s:temp:C:MdS6e41d238a2544dc1bad082bf4;temp:C:MdS079fff6c8c264652bbb750954' style='text-align: center;vertical-align: middle;' class='bold'>Change
+
+<br/></td></tr><tr id='temp:C:MdSafd801941c9248dea8f5b0bd3'><td style='background-color:#f0f0f0'>2</td><td id='temp:s:temp:C:MdSafd801941c9248dea8f5b0bd3;temp:C:MdSef61d6ac8848476dad2b5088c' style='text-align: left;vertical-align: bottom;'>106346
+
+<br/></td><td id='temp:s:temp:C:MdSafd801941c9248dea8f5b0bd3;temp:C:MdS56044177ac084ed08b4cb1e09' style='text-align: left;vertical-align: bottom;'>Seattle Police Dept. - WA
+
+<br/></td><td id='temp:s:temp:C:MdSafd801941c9248dea8f5b0bd3;temp:C:MdSe6cf62ab6c04407c8255e29d7' style='text-align: center;vertical-align: bottom;'>1340
+
+<br/></td><td id='temp:s:temp:C:MdSafd801941c9248dea8f5b0bd3;temp:C:MdS1a7ca162e3514fb3ac17eba5d' style='text-align: center;vertical-align: bottom;'>37
+
+<br/></td><td id='temp:s:temp:C:MdSafd801941c9248dea8f5b0bd3;temp:C:MdS4d89791e6fc14993a5ce2c063' style='text-align: center;vertical-align: bottom;'>45
+
+<br/></td><td id='temp:s:temp:C:MdSafd801941c9248dea8f5b0bd3;temp:C:MdSa44a55061b19427697bb30a9b' style='text-align: center;vertical-align: bottom;'>0.12
+
+<br/></td><td id='temp:s:temp:C:MdSafd801941c9248dea8f5b0bd3;temp:C:MdS3c9cfe0c4eb346afbafd348d1' style='text-align: center;vertical-align: bottom;'>0.12
+
+<br/></td><td id='temp:s:temp:C:MdSafd801941c9248dea8f5b0bd3;temp:C:MdS079fff6c8c264652bbb750954' style='text-align: left;vertical-align: bottom;'>1%
+
+<br/></td></tr><tr id='temp:C:MdSd4bea70e4b84415aacc9e6254'><td style='background-color:#f0f0f0'>3</td><td id='temp:s:temp:C:MdSd4bea70e4b84415aacc9e6254;temp:C:MdSef61d6ac8848476dad2b5088c' style='text-align: left;vertical-align: bottom;'>135122
+
+<br/></td><td id='temp:s:temp:C:MdSd4bea70e4b84415aacc9e6254;temp:C:MdS56044177ac084ed08b4cb1e09' style='text-align: left;vertical-align: bottom;'>Anne Arundel County Police Dept. - MD
+
+<br/></td><td id='temp:s:temp:C:MdSd4bea70e4b84415aacc9e6254;temp:C:MdSe6cf62ab6c04407c8255e29d7' style='text-align: center;vertical-align: bottom;'>862
+
+<br/></td><td id='temp:s:temp:C:MdSd4bea70e4b84415aacc9e6254;temp:C:MdS1a7ca162e3514fb3ac17eba5d' style='text-align: center;vertical-align: bottom;'>18
+
+<br/></td><td id='temp:s:temp:C:MdSd4bea70e4b84415aacc9e6254;temp:C:MdS4d89791e6fc14993a5ce2c063' style='text-align: center;vertical-align: bottom;'>26
+
+<br/></td><td id='temp:s:temp:C:MdSd4bea70e4b84415aacc9e6254;temp:C:MdSa44a55061b19427697bb30a9b' style='text-align: center;vertical-align: bottom;'>0.4
+
+<br/></td><td id='temp:s:temp:C:MdSd4bea70e4b84415aacc9e6254;temp:C:MdS3c9cfe0c4eb346afbafd348d1' style='text-align: center;vertical-align: bottom;'>0.21
+
+<br/></td><td id='temp:s:temp:C:MdSd4bea70e4b84415aacc9e6254;temp:C:MdS079fff6c8c264652bbb750954' style='text-align: left;vertical-align: bottom;'>-46%
+
+<br/></td></tr><tr id='temp:C:MdSd11fae28b4254eef9d0d4dd90'><td style='background-color:#f0f0f0'>4</td><td id='temp:s:temp:C:MdSd11fae28b4254eef9d0d4dd90;temp:C:MdSef61d6ac8848476dad2b5088c' style='text-align: left;vertical-align: bottom;'>108360
+
+<br/></td><td id='temp:s:temp:C:MdSd11fae28b4254eef9d0d4dd90;temp:C:MdS56044177ac084ed08b4cb1e09' style='text-align: left;vertical-align: bottom;'>Minnesota State Patrol - MN
+
+<br/></td><td id='temp:s:temp:C:MdSd11fae28b4254eef9d0d4dd90;temp:C:MdSe6cf62ab6c04407c8255e29d7' style='text-align: center;vertical-align: bottom;'>782
+
+<br/></td><td id='temp:s:temp:C:MdSd11fae28b4254eef9d0d4dd90;temp:C:MdS1a7ca162e3514fb3ac17eba5d' style='text-align: center;vertical-align: bottom;'>40
+
+<br/></td><td id='temp:s:temp:C:MdSd11fae28b4254eef9d0d4dd90;temp:C:MdS4d89791e6fc14993a5ce2c063' style='text-align: center;vertical-align: bottom;'>48
+
+<br/></td><td id='temp:s:temp:C:MdSd11fae28b4254eef9d0d4dd90;temp:C:MdSa44a55061b19427697bb30a9b' style='text-align: center;vertical-align: bottom;'>0.11
+
+<br/></td><td id='temp:s:temp:C:MdSd11fae28b4254eef9d0d4dd90;temp:C:MdS3c9cfe0c4eb346afbafd348d1' style='text-align: center;vertical-align: bottom;'>0.03
+
+<br/></td><td id='temp:s:temp:C:MdSd11fae28b4254eef9d0d4dd90;temp:C:MdS079fff6c8c264652bbb750954' style='text-align: left;vertical-align: bottom;'>-76%
+
+<br/></td></tr><tr id='temp:C:MdS3d95aef8919f4fb09c9c0473a'><td style='background-color:#f0f0f0'>5</td><td id='temp:s:temp:C:MdS3d95aef8919f4fb09c9c0473a;temp:C:MdSef61d6ac8848476dad2b5088c' style='text-align: left;vertical-align: bottom;'>107397
+
+<br/></td><td id='temp:s:temp:C:MdS3d95aef8919f4fb09c9c0473a;temp:C:MdS56044177ac084ed08b4cb1e09' style='text-align: left;vertical-align: bottom;'>Pasco Sheriff's Office - FL
+
+<br/></td><td id='temp:s:temp:C:MdS3d95aef8919f4fb09c9c0473a;temp:C:MdSe6cf62ab6c04407c8255e29d7' style='text-align: center;vertical-align: bottom;'>673
+
+<br/></td><td id='temp:s:temp:C:MdS3d95aef8919f4fb09c9c0473a;temp:C:MdS1a7ca162e3514fb3ac17eba5d' style='text-align: center;vertical-align: bottom;'>27
+
+<br/></td><td id='temp:s:temp:C:MdS3d95aef8919f4fb09c9c0473a;temp:C:MdS4d89791e6fc14993a5ce2c063' style='text-align: center;vertical-align: bottom;'>35
+
+<br/></td><td id='temp:s:temp:C:MdS3d95aef8919f4fb09c9c0473a;temp:C:MdSa44a55061b19427697bb30a9b' style='text-align: center;vertical-align: bottom;'>0.17
+
+<br/></td><td id='temp:s:temp:C:MdS3d95aef8919f4fb09c9c0473a;temp:C:MdS3c9cfe0c4eb346afbafd348d1' style='text-align: center;vertical-align: bottom;'>0.15
+
+<br/></td><td id='temp:s:temp:C:MdS3d95aef8919f4fb09c9c0473a;temp:C:MdS079fff6c8c264652bbb750954' style='text-align: left;vertical-align: bottom;'>-15%
+
+<br/></td></tr><tr id='temp:C:MdSd3acaa9da8164d948be94eb1c'><td style='background-color:#f0f0f0'>6</td><td id='temp:s:temp:C:MdSd3acaa9da8164d948be94eb1c;temp:C:MdSef61d6ac8848476dad2b5088c' style='text-align: left;vertical-align: bottom;'>513462
+
+<br/></td><td id='temp:s:temp:C:MdSd3acaa9da8164d948be94eb1c;temp:C:MdS56044177ac084ed08b4cb1e09' style='text-align: left;vertical-align: bottom;'>Virginia Beach Sheriff's Office - VA
+
+<br/></td><td id='temp:s:temp:C:MdSd3acaa9da8164d948be94eb1c;temp:C:MdSe6cf62ab6c04407c8255e29d7' style='text-align: center;vertical-align: bottom;'>595
+
+<br/></td><td id='temp:s:temp:C:MdSd3acaa9da8164d948be94eb1c;temp:C:MdS1a7ca162e3514fb3ac17eba5d' style='text-align: center;vertical-align: bottom;'>21
+
+<br/></td><td id='temp:s:temp:C:MdSd3acaa9da8164d948be94eb1c;temp:C:MdS4d89791e6fc14993a5ce2c063' style='text-align: center;vertical-align: bottom;'>29
+
+<br/></td><td id='temp:s:temp:C:MdSd3acaa9da8164d948be94eb1c;temp:C:MdSa44a55061b19427697bb30a9b' style='text-align: center;vertical-align: bottom;'>0.1
+
+<br/></td><td id='temp:s:temp:C:MdSd3acaa9da8164d948be94eb1c;temp:C:MdS3c9cfe0c4eb346afbafd348d1' style='text-align: center;vertical-align: bottom;'>0.11
+
+<br/></td><td id='temp:s:temp:C:MdSd3acaa9da8164d948be94eb1c;temp:C:MdS079fff6c8c264652bbb750954' style='text-align: left;vertical-align: bottom;'>2%
+
+<br/></td></tr><tr id='temp:C:MdS5aaa6b91d6a4424091900b26e'><td style='background-color:#f0f0f0'>7</td><td id='temp:s:temp:C:MdS5aaa6b91d6a4424091900b26e;temp:C:MdSef61d6ac8848476dad2b5088c' style='background-color:#FF9B99;text-align: left;vertical-align: bottom;'>106916
+
+<br/></td><td id='temp:s:temp:C:MdS5aaa6b91d6a4424091900b26e;temp:C:MdS56044177ac084ed08b4cb1e09' style='background-color:#FF9B99;text-align: left;vertical-align: bottom;'>Henrico County Police Dept. - VA
+
+<br/></td><td id='temp:s:temp:C:MdS5aaa6b91d6a4424091900b26e;temp:C:MdSe6cf62ab6c04407c8255e29d7' style='background-color:#FF9B99;text-align: center;vertical-align: bottom;'>533
+
+<br/></td><td id='temp:s:temp:C:MdS5aaa6b91d6a4424091900b26e;temp:C:MdS1a7ca162e3514fb3ac17eba5d' style='background-color:#FF9B99;text-align: center;vertical-align: bottom;'>24
+
+<br/></td><td id='temp:s:temp:C:MdS5aaa6b91d6a4424091900b26e;temp:C:MdS4d89791e6fc14993a5ce2c063' style='background-color:#FF9B99;text-align: center;vertical-align: bottom;'>32
+
+<br/></td><td id='temp:s:temp:C:MdS5aaa6b91d6a4424091900b26e;temp:C:MdSa44a55061b19427697bb30a9b' style='background-color:#FF9B99;text-align: center;vertical-align: bottom;'>0.21
+
+<br/></td><td id='temp:s:temp:C:MdS5aaa6b91d6a4424091900b26e;temp:C:MdS3c9cfe0c4eb346afbafd348d1' style='background-color:#FF9B99;text-align: center;vertical-align: bottom;'>0.21
+
+<br/></td><td id='temp:s:temp:C:MdS5aaa6b91d6a4424091900b26e;temp:C:MdS079fff6c8c264652bbb750954' style='background-color:#FF9B99;text-align: left;vertical-align: bottom;'>3%
+
+<br/></td></tr><tr id='temp:C:MdS7ca3684337d5450ea46ab0e7f'><td style='background-color:#f0f0f0'>8</td><td id='temp:s:temp:C:MdS7ca3684337d5450ea46ab0e7f;temp:C:MdSef61d6ac8848476dad2b5088c' style='text-align: left;vertical-align: bottom;'>158258
+
+<br/></td><td id='temp:s:temp:C:MdS7ca3684337d5450ea46ab0e7f;temp:C:MdS56044177ac084ed08b4cb1e09' style='text-align: left;vertical-align: bottom;'>Oneida County Sheriff's Office - NY
+
+<br/></td><td id='temp:s:temp:C:MdS7ca3684337d5450ea46ab0e7f;temp:C:MdSe6cf62ab6c04407c8255e29d7' style='text-align: center;vertical-align: bottom;'>500
+
+<br/></td><td id='temp:s:temp:C:MdS7ca3684337d5450ea46ab0e7f;temp:C:MdS1a7ca162e3514fb3ac17eba5d' style='text-align: center;vertical-align: bottom;'>60
+
+<br/></td><td id='temp:s:temp:C:MdS7ca3684337d5450ea46ab0e7f;temp:C:MdS4d89791e6fc14993a5ce2c063' style='text-align: center;vertical-align: bottom;'>38
+
+<br/></td><td id='temp:s:temp:C:MdS7ca3684337d5450ea46ab0e7f;temp:C:MdSa44a55061b19427697bb30a9b' style='text-align: center;vertical-align: bottom;'>0.34
+
+<br/></td><td id='temp:s:temp:C:MdS7ca3684337d5450ea46ab0e7f;temp:C:MdS3c9cfe0c4eb346afbafd348d1' style='text-align: center;vertical-align: bottom;'>0.16
+
+<br/></td><td id='temp:s:temp:C:MdS7ca3684337d5450ea46ab0e7f;temp:C:MdS079fff6c8c264652bbb750954' style='text-align: left;vertical-align: bottom;'>-52%
+
+<br/></td></tr></tbody></table></div></body></html>
