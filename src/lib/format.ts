@@ -28,6 +28,25 @@ export function formatDecimal(value: number | null | undefined, fractionDigits =
   return value.toFixed(fractionDigits);
 }
 
+/**
+ * Format a percent from a numerator/denominator pair using scaled integer rounding.
+ * This avoids common JS floating-point rounding issues (e.g. 40.15 → "40.1").
+ */
+export function formatPercentFromParts(
+  numerator: number | null | undefined,
+  denominator: number | null | undefined,
+  fractionDigits = 1
+): string {
+  if (numerator === null || numerator === undefined) return '—';
+  if (denominator === null || denominator === undefined) return '—';
+  if (!Number.isFinite(numerator) || !Number.isFinite(denominator)) return '—';
+  if (denominator <= 0) return (0).toFixed(fractionDigits);
+
+  const scale = Math.pow(10, Math.max(0, Math.floor(fractionDigits)));
+  const scaled = Math.round((numerator * 100 * scale) / denominator);
+  return (scaled / scale).toFixed(fractionDigits);
+}
+
 /** Format month key (YYYY-MM) or Date as short label (e.g. "Jan 2026"). */
 export function formatMonthLabel(monthKeyOrDate: string | Date | null | undefined): string {
   if (monthKeyOrDate === null || monthKeyOrDate === undefined) return '—';

@@ -11,7 +11,7 @@ export type SummaryBundle = {
     previous_month: number | null;
     mom_change: number | null; // percentage point change
     high_confidence_goal: 42;
-    hard_climb_goal: 46.2;
+    hard_climb_goal: 46;
     gap_to_high_confidence: number;
     gap_to_hard_climb: number;
   };
@@ -434,9 +434,9 @@ export function buildSummaryBundle(
       previous_month: previousMonthAPAP,
       mom_change: momAPAPChange,
       high_confidence_goal: 42,
-      hard_climb_goal: 46.2,
+      hard_climb_goal: 46,
       gap_to_high_confidence: 42 - currentAPAP.apap,
-      gap_to_hard_climb: 46.2 - currentAPAP.apap,
+      gap_to_hard_climb: 46 - currentAPAP.apap,
     },
     kpi: {
       counts: {

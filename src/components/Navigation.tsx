@@ -14,8 +14,14 @@ export default function Navigation() {
 
   // Re-sync with storage on pathname change so "Viewing" matches data after upload or month switch
   useEffect(() => {
-    setStoredMonths(getStoredMonths());
-    setCurrentMonthState(getCurrentMonth());
+    const sync = () => {
+      setStoredMonths(getStoredMonths());
+      setCurrentMonthState(getCurrentMonth());
+    };
+    sync();
+    const onMonthsUpdated = () => sync();
+    window.addEventListener('apap-months-updated', onMonthsUpdated as EventListener);
+    return () => window.removeEventListener('apap-months-updated', onMonthsUpdated as EventListener);
   }, [pathname]);
 
   const handleMonthChange = (month: string) => {

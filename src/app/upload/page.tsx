@@ -35,6 +35,8 @@ export default function UploadPage() {
   const [results, setResults] = useState<ReturnType<typeof processData> | null>(null);
   /** Which month this upload is saved as (auto = use detected month from data). Re-uploading same month overwrites. */
   const [dataForMonth, setDataForMonth] = useState<string>('auto');
+  /** Snowflake load range to cache snapshots for multiple months. */
+  const [snowflakeRange, setSnowflakeRange] = useState<'current' | 'last6' | 'last12'>('current');
   /** Set when we overwrote an existing snapshot for that month (show "Replaced existing snapshot for MMM YYYY"). */
   const [replacedMonthLabel, setReplacedMonthLabel] = useState<string | null>(null);
 
@@ -74,125 +76,85 @@ export default function UploadPage() {
         return json;
       };
 
+      const rangeMonths = snowflakeRange === 'last12' ? 12 : snowflakeRange === 'last6' ? 6 : 1;
+
+      // Always start by resolving the "current" month (auto -> latest) so we know which monthKey to build the range from.
       const json = await callSnowflakeProcess(dataForMonth);
-      const monthKey: string = json.monthKey;
-      const snapshot = json.snapshot;
+      const endMonthKey: string = json.monthKey;
+      const endSnapshot = json.snapshot;
 
-      const existingRaw = getProcessedData(monthKey);
-      setReplacedMonthLabel(existingRaw ? format(parseISO(monthKey + '-01'), 'MMM yyyy') : null);
+      const existingRaw = getProcessedData(endMonthKey);
+      setReplacedMonthLabel(existingRaw ? format(parseISO(endMonthKey + '-01'), 'MMM yyyy') : null);
 
-      setProcessedData(snapshot, monthKey);
+      // For 6/12 month mode: backfill trend history via a single aggregated call (avoids opening many auth tabs).
+      if (rangeMonths > 1) {
+        const resp = await fetch('/api/snowflake/history', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ monthsBack: rangeMonths, endMonthKey }),
+        });
+        const hist = await resp.json();
+        if (!resp.ok) throw new Error(hist?.error || 'Failed to load Snowflake history');
 
-      // Save historical data for trend analysis (mirrors upload flow, but keeps storage compact)
-      try {
-        const { saveHistoricalData } = await import('@/lib/history');
-        const asOfMonthISO = snapshot?.asOfMonth as string | null;
-        const asOfMonth = asOfMonthISO ? new Date(asOfMonthISO) : null;
-        const agencyLabelsArr = Array.isArray(snapshot?.agencyLabels) ? snapshot.agencyLabels : [];
-        const labelsMap = new Map(agencyLabelsArr as any);
-
-        if (asOfMonth) {
-          saveHistoricalData(
-            asOfMonth,
-            [],
-            snapshot?.cohortSummaries ?? {},
-            snapshot?.usageRollups,
-            labelsMap,
-            json?.apap?.apap ?? undefined,
-            json?.simT10?.t12Total ?? undefined,
-            json?.simT10?.usageByMonth ?? undefined,
-            json?.apap
-              ? {
-                  eligibleCount: json.apap.eligibleCount,
-                  eligiblePoints: json.apap.eligiblePoints,
-                  adoptingCount: json.apap.adoptingCount,
-                  adoptingPoints: json.apap.adoptingPoints,
-                }
-              : undefined,
-            json?.kpiCountsAndPoints ?? undefined
-          );
-        }
-      } catch (err) {
-        console.warn('Failed to save historical data after Snowflake load:', err);
-      }
-
-      // Best-effort: prefetch previous month so “Biggest movers” has MoM context.
-      try {
-        const prevKey = format(subMonths(parseISO(monthKey + '-01'), 1), 'yyyy-MM');
-        const hasPrev = !!getProcessedData(prevKey);
-        if (!hasPrev) {
-          const prevJson = await callSnowflakeProcess(prevKey);
-          const prevSnapshot = prevJson.snapshot;
-          setProcessedDataForMonth(prevSnapshot, prevKey, { select: false });
-
+        try {
           const { saveHistoricalData } = await import('@/lib/history');
-          const prevAsOf = prevSnapshot?.asOfMonth ? new Date(prevSnapshot.asOfMonth) : null;
-          const prevLabelsArr = Array.isArray(prevSnapshot?.agencyLabels) ? prevSnapshot.agencyLabels : [];
-          const prevLabelsMap = new Map(prevLabelsArr as any);
-          if (prevAsOf) {
+          const months: any[] = Array.isArray(hist?.months) ? hist.months : [];
+          for (const m of months) {
+            const activityMonth = m?.activityMonth as string | undefined;
+            if (!activityMonth) continue;
+            const asOfMonth = new Date(activityMonth);
             saveHistoricalData(
-              prevAsOf,
+              asOfMonth,
               [],
-              prevSnapshot?.cohortSummaries ?? {},
-              prevSnapshot?.usageRollups,
-              prevLabelsMap,
-              prevJson?.apap?.apap ?? undefined,
-              prevJson?.simT10?.t12Total ?? undefined,
-              prevJson?.simT10?.usageByMonth ?? undefined,
-              prevJson?.apap
+              {},
+              undefined,
+              undefined,
+              typeof m.apap === 'number' ? m.apap : undefined,
+              undefined,
+              undefined,
+              m.eligiblePoints != null && m.adoptionPoints != null && m.eligibleCount != null && m.adoptingCount != null
                 ? {
-                    eligibleCount: prevJson.apap.eligibleCount,
-                    eligiblePoints: prevJson.apap.eligiblePoints,
-                    adoptingCount: prevJson.apap.adoptingCount,
-                    adoptingPoints: prevJson.apap.adoptingPoints,
+                    eligibleCount: Number(m.eligibleCount),
+                    eligiblePoints: Number(m.eligiblePoints),
+                    adoptingCount: Number(m.adoptingCount),
+                    adoptingPoints: Number(m.adoptionPoints),
                   }
                 : undefined,
-              prevJson?.kpiCountsAndPoints ?? undefined
+              undefined
             );
           }
+        } catch (err) {
+          console.warn('Failed to save Snowflake history:', err);
         }
-      } catch (err) {
-        console.warn('Failed to prefetch previous month after Snowflake load:', err);
       }
 
-      // Best-effort: ensure baseline month (2025-11) exists to populate Goal Progress retention/conversion.
-      // Goal Progress reads baseline via getProcessedData('2025-11').
-      try {
-        const baselineKey = '2025-11';
-        const hasBaseline = !!getProcessedData(baselineKey);
-        if (!hasBaseline) {
-          const baseJson = await callSnowflakeProcess(baselineKey);
-          const baseSnapshot = baseJson.snapshot;
-          setProcessedDataForMonth(baseSnapshot, baselineKey, { select: false });
+      // Cache snapshots for the requested range so the top "Viewing" dropdown can switch months.
+      // (Sequential calls; EXTERNALBROWSER session reuse prevents multiple verification tabs.)
+      const monthsToFetch: string[] = [];
+      const endDate = parseISO(endMonthKey + '-01');
+      for (let i = rangeMonths - 1; i >= 0; i--) {
+        monthsToFetch.push(format(subMonths(endDate, i), 'yyyy-MM'));
+      }
 
-          const { saveHistoricalData } = await import('@/lib/history');
-          const baseAsOf = baseSnapshot?.asOfMonth ? new Date(baseSnapshot.asOfMonth) : null;
-          const baseLabelsArr = Array.isArray(baseSnapshot?.agencyLabels) ? baseSnapshot.agencyLabels : [];
-          const baseLabelsMap = new Map(baseLabelsArr as any);
-          if (baseAsOf) {
-            saveHistoricalData(
-              baseAsOf,
-              [],
-              baseSnapshot?.cohortSummaries ?? {},
-              baseSnapshot?.usageRollups,
-              baseLabelsMap,
-              baseJson?.apap?.apap ?? undefined,
-              baseJson?.simT10?.t12Total ?? undefined,
-              baseJson?.simT10?.usageByMonth ?? undefined,
-              baseJson?.apap
-                ? {
-                    eligibleCount: baseJson.apap.eligibleCount,
-                    eligiblePoints: baseJson.apap.eligiblePoints,
-                    adoptingCount: baseJson.apap.adoptingCount,
-                    adoptingPoints: baseJson.apap.adoptingPoints,
-                  }
-                : undefined,
-              baseJson?.kpiCountsAndPoints ?? undefined
-            );
-          }
+      const failedMonths: string[] = [];
+      for (const mKey of monthsToFetch) {
+        try {
+          const mJson = mKey === endMonthKey ? json : await callSnowflakeProcess(mKey);
+          const snapshot = mJson.snapshot;
+          if (mKey === endMonthKey) setProcessedData(snapshot, mKey);
+          else setProcessedDataForMonth(snapshot, mKey, { select: false });
+        } catch (e) {
+          failedMonths.push(mKey);
         }
-      } catch (err) {
-        console.warn('Failed to prefetch baseline month (2025-11) after Snowflake load:', err);
+      }
+
+      // Nudge the nav month dropdown to refresh immediately.
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('apap-months-updated'));
+      }
+
+      if (failedMonths.length > 0) {
+        setError(`Loaded ${monthsToFetch.length - failedMonths.length}/${monthsToFetch.length} months. Failed: ${failedMonths.join(', ')}`);
       }
 
       setResults(null);
@@ -565,6 +527,31 @@ export default function UploadPage() {
               </option>
             ))}
           </select>
+          <div style={{ marginTop: '0.75rem' }}>
+            <label style={{ display: 'block', fontSize: 'var(--text-body2-size)', fontWeight: 'var(--text-subtitle-weight)', color: 'var(--fg-primary)', marginBottom: '0.5rem' }}>
+              Load from Snowflake range
+            </label>
+            <select
+              value={snowflakeRange}
+              onChange={(e) => setSnowflakeRange(e.target.value as any)}
+              style={{
+                padding: '0.5rem 0.75rem',
+                fontSize: 'var(--text-body2-size)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-sm)',
+                background: 'var(--surface-3)',
+                color: 'var(--fg-primary)',
+                minWidth: '200px',
+              }}
+            >
+              <option value="current">Current month only</option>
+              <option value="last6">Last 6 months</option>
+              <option value="last12">Last 12 months</option>
+            </select>
+            <p style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)', marginTop: '0.5rem', marginBottom: 0 }}>
+              This caches a snapshot for each month so you can switch months in the top “Viewing” dropdown. Last 12 months may require clearing cached snapshots if storage fills up.
+            </p>
+          </div>
           <p style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)', marginTop: '0.5rem', marginBottom: 0 }}>
             Auto uses the latest month in your telemetry. Picking a month saves/overwrites that month&apos;s dataset so you can re-run analysis or correct data later.
           </p>

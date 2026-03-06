@@ -10,6 +10,8 @@ import { computeSimT10Usage } from '@/lib/usageRollups';
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
+const SOURCE_TABLE = 'PRODUCT_ANALYTICS.APAP_REPORTS.ADOPTION_VR_PREVIEW';
+
 type RptAdoptionVrRow = {
   ACTIVITY_MONTH: string; // 'YYYY-MM-01' (or date)
   ACCOUNT_NUMBER: string | number | null;
@@ -17,6 +19,7 @@ type RptAdoptionVrRow = {
   LICENSE_QUANTITY: number | null;
   PRO_LICENSES?: number | null;
   BASIC_PRO_LICENSES?: number | null;
+  ADOPTION_POINTS?: number | null;
   IS_APAP_CONSIDERED?: number | boolean | null;
   EVER_PURCHASED?: number | boolean | null;
   ELIGIBILITY_COHORT: number | null;
@@ -30,6 +33,11 @@ type RptAdoptionVrRow = {
   COUNTRY?: string | null;
   T6_SIM_EVENTS?: number | null;
   T12_SIM_EVENTS?: number | null;
+  MEETS_ELIGIBILITY?: number | boolean | null;
+  DOMAIN_STATUS?: string | null;
+  PRODUCTION_TYPE?: string | null;
+  IS_FEDERAL?: number | boolean | null;
+  IS_ENTERPRISE?: number | boolean | null;
 };
 
 function monthKeyFromActivityMonth(activityMonth: string): string {
@@ -115,8 +123,13 @@ function buildSyntheticSimTelemetry(
 async function getLatestActivityMonth(): Promise<string> {
   const rows = await snowflakeQuery<{ MAX_ACTIVITY_MONTH: string }>(
     `select to_varchar(max(ACTIVITY_MONTH), 'YYYY-MM-01') as MAX_ACTIVITY_MONTH
-     from PRODUCT_ANALYTICS.APAP.RPT_ADOPTION_VR
-     where ACTIVITY_MONTH <= current_date()`
+     from ${SOURCE_TABLE}
+     where ACTIVITY_MONTH <= current_date()
+       and MEETS_ELIGIBILITY = 1
+       and IS_FEDERAL = 0
+       and IS_ENTERPRISE = 0
+       and lower(DOMAIN_STATUS) = 'active'
+       and lower(PRODUCTION_TYPE) = 'live'`
   );
   const v = rows[0]?.MAX_ACTIVITY_MONTH;
   if (!v) throw new Error('Could not determine latest ACTIVITY_MONTH from Snowflake');
@@ -135,6 +148,33 @@ export async function POST(req: Request) {
     const monthKey = monthKeyFromActivityMonth(activityMonth);
     const asOfMonthDate = startOfMonth(parseISO(activityMonth));
 
+    // Aggregate APAP points from Snowflake source-of-truth fields.
+    const apapAgg = await snowflakeQuery<{
+      ELIGIBLE_POINTS: number | null;
+      ADOPTION_POINTS: number | null;
+      ELIGIBLE_COUNT: number | null;
+      ADOPTING_COUNT: number | null;
+    }>(
+      `select
+         sum(ELIGIBLE_POINTS) as ELIGIBLE_POINTS,
+         sum(ADOPTION_POINTS) as ADOPTION_POINTS,
+         count(*) as ELIGIBLE_COUNT,
+         count_if(coalesce(ADOPTION_POINTS, 0) > 0) as ADOPTING_COUNT
+       from ${SOURCE_TABLE}
+       where ACTIVITY_MONTH = to_date(?, 'YYYY-MM-DD')
+         and MEETS_ELIGIBILITY = 1
+         and IS_FEDERAL = 0
+         and IS_ENTERPRISE = 0
+         and lower(DOMAIN_STATUS) = 'active'
+         and lower(PRODUCTION_TYPE) = 'live'`,
+      [activityMonth]
+    );
+    const eligiblePointsAgg = toNumberOrNull(apapAgg[0]?.ELIGIBLE_POINTS) ?? 0;
+    const adoptingPointsAgg = toNumberOrNull(apapAgg[0]?.ADOPTION_POINTS) ?? 0;
+    const eligibleCountAgg = toNumberOrNull(apapAgg[0]?.ELIGIBLE_COUNT) ?? 0;
+    const adoptingCountAgg = toNumberOrNull(apapAgg[0]?.ADOPTING_COUNT) ?? 0;
+    const apapPctAgg = eligiblePointsAgg > 0 ? (adoptingPointsAgg / eligiblePointsAgg) * 100 : 0;
+
     const rptRows = await snowflakeQuery<RptAdoptionVrRow>(
       `select
         ACTIVITY_MONTH,
@@ -143,10 +183,11 @@ export async function POST(req: Request) {
         LICENSE_QUANTITY,
         PRO_LICENSES,
         BASIC_PRO_LICENSES,
+        ADOPTION_POINTS,
+        ELIGIBLE_POINTS,
         IS_APAP_CONSIDERED,
         EVER_PURCHASED,
         ELIGIBILITY_COHORT,
-        ELIGIBLE_POINTS,
         TOTAL_REGISTERED_T10_CONTROLLERS,
         AXON_FOOTPRINT,
         CONTRACT_START_MONTH,
@@ -155,9 +196,18 @@ export async function POST(req: Request) {
         ACCOUNT_MANAGER,
         COUNTRY,
         T6_SIM_EVENTS,
-        T12_SIM_EVENTS
-      from PRODUCT_ANALYTICS.APAP.RPT_ADOPTION_VR
+        T12_SIM_EVENTS,
+        MEETS_ELIGIBILITY,
+        DOMAIN_STATUS,
+        PRODUCTION_TYPE,
+        IS_FEDERAL,
+        IS_ENTERPRISE
+      from ${SOURCE_TABLE}
       where ACTIVITY_MONTH = to_date(?, 'YYYY-MM-DD')
+        and IS_FEDERAL = 0
+        and IS_ENTERPRISE = 0
+        and lower(DOMAIN_STATUS) = 'active'
+        and lower(PRODUCTION_TYPE) = 'live'
         and (IS_APAP_CONSIDERED = 1 or EVER_PURCHASED = 1)`,
       [activityMonth]
     );
@@ -208,8 +258,14 @@ export async function POST(req: Request) {
     }
 
     const processed = processData(agencies, telemetry, monthKey);
-    const { computeAPAP, computeKPICountsAndPoints } = await import('@/lib/history');
-    const apap = computeAPAP(processed.agencies, processed.agencyLabels);
+    const { computeKPICountsAndPoints } = await import('@/lib/history');
+    const apap = {
+      apap: apapPctAgg,
+      adoptingPoints: adoptingPointsAgg,
+      eligiblePoints: eligiblePointsAgg,
+      eligibleCount: eligibleCountAgg,
+      adoptingCount: adoptingCountAgg,
+    };
     const kpiCountsAndPoints = computeKPICountsAndPoints(processed.agencies, processed.agencyLabels);
     const t10Ids = new Set(processed.agencies.map((a) => a.agency_id));
     const simT10 = computeSimT10Usage(telemetry, t10Ids, asOfMonthDate);
@@ -222,6 +278,8 @@ export async function POST(req: Request) {
       asOfMonth: processed.asOfMonth?.toISOString() ?? null,
       cohortSummaries: processed.cohortSummaries,
       usageRollups: processed.usageRollups,
+      // Source-of-truth APAP from Snowflake points (matches adoption_vr_preview sums)
+      apap,
       asOfMonthKey: monthKey,
       createdAt: new Date().toISOString(),
       snapshotSchemaVersion: SNAPSHOT_SCHEMA_VERSION,
@@ -229,7 +287,7 @@ export async function POST(req: Request) {
       t6RangeLabel: getLookbackRangeLabel(monthKey, 6),
       t12RangeLabel: getLookbackRangeLabel(monthKey, 12),
       source: 'snowflake',
-      sourceTable: 'PRODUCT_ANALYTICS.APAP.RPT_ADOPTION_VR',
+      sourceTable: SOURCE_TABLE,
     };
 
     return NextResponse.json({

@@ -31,7 +31,7 @@ CRITICAL RULES:
    - Biggest Drivers: New agencies who are adopting (from drivers.new_adopting)
    - Biggest Shakers: Newly unadopting agencies (from shakers.newly_churned and shakers.newly_unadopting)
    - Trends: Cohort performance, patterns across time since purchase, agency size, CEW type
-   - Path to Goals: Analysis of gap to 42% (high confidence) and 46.2% (hard climb) goals, what it would take to reach them
+   - Path to Goals: Analysis of gap to 42% (high confidence) and 46% (hard climb) goals, what it would take to reach them
 7. Be specific about agency names, officer counts, and what changed month-over-month.
 8. Focus on actionable insights: who to contact, what cohorts are moving, what's working/not working.`;
 
@@ -48,7 +48,7 @@ Requirements:
   2. Biggest Drivers: Highlight new adopting agencies (bundle.drivers.new_adopting). Who are they? What cohorts? What's their impact?
   3. Biggest Shakers: Identify newly churned (bundle.shakers.newly_churned) and newly unadopting agencies (bundle.shakers.newly_unadopting). Who fell off? Why might this have happened?
   4. Trends: Analyze cohort highlights (bundle.cohort_highlights) - which cohorts are performing best/worst? What patterns emerge?
-  5. Path to Goals: Current APAP is ${bundle.apap.current.toFixed(1)}%. High confidence goal is 42% (gap: ${bundle.apap.gap_to_high_confidence.toFixed(1)}pp). Hard climb goal is 46.2% (gap: ${bundle.apap.gap_to_hard_climb.toFixed(1)}pp). What would it take to reach these goals? How many agencies need to adopt? What's the path forward?
+  5. Path to Goals: Current APAP is ${bundle.apap.current.toFixed(1)}%. High confidence goal is 42% (gap: ${bundle.apap.gap_to_high_confidence.toFixed(1)}pp). Hard climb goal is 46% (gap: ${bundle.apap.gap_to_hard_climb.toFixed(1)}pp). What would it take to reach these goals? How many agencies need to adopt? What's the path forward?
 - Use ONLY the numbers provided in the bundle
 - Include the required disclaimer: "Labels are based on Simulator Training only."
 - Be specific: mention agency names, officer counts, cohorts when relevant
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     
     // Optional org/project scoping for enterprise accounts.
     // If using a project-scoped key (sk-proj-...), avoid overriding routing with headers.
-    const isProjectScopedKey = apiKey.startsWith('sk-proj-');
+    const isProjectScopedKey = apiKey.startsWith('sk-proj-') || apiKey.startsWith('sk-svcacct-');
     if (!isProjectScopedKey && process.env.OPENAI_ORGANIZATION_ID) {
       headers['OpenAI-Organization'] = process.env.OPENAI_ORGANIZATION_ID;
     }

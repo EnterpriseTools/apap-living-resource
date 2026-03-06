@@ -60,9 +60,9 @@ export const GOAL_MODEL_CONFIG: GoalModelConfig = {
       projectedAdoptingPoints: 100359,
     },
     hard_climb: {
-      overallTargetApapPct: 46.2,
+      overallTargetApapPct: 46.0,
       projectedEligiblePoints: 239200,
-      projectedAdoptingPoints: 110454,
+      projectedAdoptingPoints: 110032,
     },
   },
 

@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     // Optional org/project scoping for enterprise accounts.
     // If using a project-scoped key (sk-proj-...), avoid overriding routing with headers.
-    const isProjectScopedKey = apiKey.startsWith('sk-proj-');
+    const isProjectScopedKey = apiKey.startsWith('sk-proj-') || apiKey.startsWith('sk-svcacct-');
     if (!isProjectScopedKey && process.env.OPENAI_ORGANIZATION_ID) {
       headers['OpenAI-Organization'] = process.env.OPENAI_ORGANIZATION_ID;
     }

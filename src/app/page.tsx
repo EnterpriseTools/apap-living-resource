@@ -8,6 +8,7 @@ import type { Agency, AgencyWithLabel, TelemetryMonthly } from '@/lib/schema';
 import { format, parseISO, subMonths, subYears } from 'date-fns';
 import { getProcessedDataParsed, getCurrentMonth } from '@/lib/storage';
 import { computeSimT10Usage } from '@/lib/usageRollups';
+import { formatPercentFromParts } from '@/lib/format';
 
 export default function Home() {
   const [baseline, setBaseline] = useState<BaselineData | null>(null);
@@ -16,6 +17,7 @@ export default function Home() {
     agencyLabels: [string, AgencyWithLabel][];
     asOfMonth: string | null;
     simTelemetry?: Array<{ month: string; agency_id: string; product: string; completions: number }>;
+    apap?: { apap: number; adoptingPoints: number; eligiblePoints: number; eligibleCount: number; adoptingCount: number };
   } | null>(null);
   const [selectedMonthNoData, setSelectedMonthNoData] = useState(false);
   const [selectedMonthKeyWhenNoData, setSelectedMonthKeyWhenNoData] = useState<string | null>(null);
@@ -59,6 +61,7 @@ export default function Home() {
         agencyLabels: parsed.agencyLabels || [],
         asOfMonth: parsed.asOfMonth || null,
         simTelemetry: parsed.simTelemetry || undefined,
+        apap: (parsed as any).apap || undefined,
       });
     } else {
       setStaleSnapshot(false);
@@ -69,6 +72,7 @@ export default function Home() {
   // Compute current APAP
   const currentAPAP = useMemo(() => {
     if (!currentData) return null;
+    if (currentData.apap && Number.isFinite(currentData.apap.apap)) return currentData.apap;
     const labelsMap = new Map(currentData.agencyLabels);
     return computeAPAP(currentData.agencies, labelsMap);
   }, [currentData]);
@@ -301,7 +305,7 @@ export default function Home() {
     if (!currentAPAP) return null;
 
     const gapToHighConfidence = 42 - currentAPAP.apap;
-    const gapToHardClimb = 46.2 - currentAPAP.apap;
+    const gapToHardClimb = 46 - currentAPAP.apap;
     
     // Calculate MoM change
     const momChange = previousMonthAPAP !== null 
@@ -316,8 +320,8 @@ export default function Home() {
       ? (currentAPAP.apap - baseline.baseline_apap) / (42 - baseline.baseline_apap) * 100
       : (currentAPAP.apap / 42) * 100;
     const progressToHardClimb = baseline
-      ? (currentAPAP.apap - baseline.baseline_apap) / (46.2 - baseline.baseline_apap) * 100
-      : (currentAPAP.apap / 46.2) * 100;
+      ? (currentAPAP.apap - baseline.baseline_apap) / (46 - baseline.baseline_apap) * 100
+      : (currentAPAP.apap / 46) * 100;
 
     return {
       current: currentAPAP.apap,
@@ -325,7 +329,7 @@ export default function Home() {
       previous_month: previousMonthAPAP,
       mom_change: momChange,
       high_confidence: 42,
-      hard_climb: 46.2,
+      hard_climb: 46,
       gap_to_high_confidence: gapToHighConfidence,
       gap_to_hard_climb: gapToHardClimb,
       progress_from_baseline: progressFromBaseline,
@@ -574,7 +578,9 @@ export default function Home() {
                 APAP this month
               </div>
               <div style={{ fontSize: '1.75rem', fontWeight: 600, color: 'var(--fg-primary)' }}>
-                {goalProgress.current.toFixed(1)}%
+                {currentAPAP
+                  ? `${formatPercentFromParts(currentAPAP.adoptingPoints, currentAPAP.eligiblePoints, 1)}%`
+                  : `${goalProgress.current.toFixed(1)}%`}
               </div>
             </div>
             {goalProgress.mom_change !== null && (
@@ -611,7 +617,7 @@ export default function Home() {
             </div>
             <div>
               <div style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)', marginBottom: '0.25rem' }}>
-                vs Hard Climb (46.2%)
+                vs Hard Climb (46%)
               </div>
               <div style={{
                 fontSize: '1.1rem',
@@ -1505,7 +1511,7 @@ function APAPGrowthChart({ data }: { data: Array<{ month: string; apap: number; 
   
   // Goal lines
   const highConfidenceGoal = 42;
-  const hardClimbGoal = 46.2;
+  const hardClimbGoal = 46;
 
   // Calculate x positions
   const xStep = innerWidth / Math.max(1, data.length - 1);
@@ -1627,7 +1633,7 @@ function APAPGrowthChart({ data }: { data: Array<{ month: string; apap: number; 
           fill="var(--fg-action)"
           fontWeight="600"
         >
-          Goal: 46.2%
+          Goal: 46%
         </text>
 
         {/* Line segments with gradient colors based on MoM changes */}

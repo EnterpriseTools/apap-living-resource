@@ -9,13 +9,13 @@ export const maxDuration = 60;
  * Returns the first N rows (default 5) from a table/view.
  *
  * Query params:
- * - table: fully qualified name, default PRODUCT_ANALYTICS.APAP.RPT_ADOPTION_VR
+ * - table: fully qualified name, default PRODUCT_ANALYTICS.APAP_REPORTS.ADOPTION_VR_PREVIEW
  * - limit: number of rows, default 5 (max 50)
  */
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
-    const table = url.searchParams.get('table') || 'PRODUCT_ANALYTICS.APAP.RPT_ADOPTION_VR';
+    const table = url.searchParams.get('table') || 'PRODUCT_ANALYTICS.APAP_REPORTS.ADOPTION_VR_PREVIEW';
     const limitRaw = Number(url.searchParams.get('limit') || 5);
     const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(1, Math.floor(limitRaw)), 50) : 5;
 

@@ -7,13 +7,15 @@ import { computeAPAP, computeKPICounts, computeKPICountsAndPoints, getHistorical
 import { getBaselineData, type BaselineAgency } from '@/lib/baseline';
 import type { CohortSummary, CohortDimension } from '@/lib/aggregate';
 import { aggregateCohorts } from '@/lib/aggregate';
-import { getProcessedData, getCurrentMonth } from '@/lib/storage';
+import { getProcessedData, getCurrentMonth, getStoredMonths, setCurrentMonth, setProcessedDataForMonth } from '@/lib/storage';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { TrendingUp, BarChart3, CheckCircle2, AlertTriangle, XCircle, HelpCircle, ArrowUp, ArrowDown, Users, Filter, Target, Crosshair } from 'lucide-react';
 import { format, parseISO, subMonths } from 'date-fns';
 import { computeSimT10Usage } from '@/lib/usageRollups';
+import { formatPercentFromParts } from '@/lib/format';
 import { GOAL_MODEL_CONFIG, type EligBucket, type LineSize } from '@/config/goal_model_config';
+import { ADOPTION_R6_THRESHOLD, ADOPTION_R12_THRESHOLD } from '@/config/domain_constants';
 import {
   computeStructuralVarianceFromConfig,
   computeDriverProgressFromConfig,
@@ -32,6 +34,7 @@ type StoredData = {
   dataQuality: any;
   asOfMonth: string | null;
   asOfMonthKey?: string | null;
+  apap?: { apap: number; adoptingPoints: number; eligiblePoints: number; eligibleCount: number; adoptingCount: number };
   cohortSummaries: Record<string, any[]>;
   usageRollups?: UsageRollups;
   simTelemetry: any[];
@@ -44,6 +47,9 @@ export default function OverviewPage() {
   const pathname = usePathname();
   const [data, setData] = useState<StoredData | null>(null);
   const [comparisonType, setComparisonType] = useState<ComparisonType>('last_month');
+  const [excludeCurrentMonth, setExcludeCurrentMonth] = useState(false);
+  const [refreshingApap, setRefreshingApap] = useState(false);
+  const [refreshApapError, setRefreshApapError] = useState<string | null>(null);
   
   const [apapCohortFilter, setApapCohortFilter] = useState<{
     time_since_purchase_cohort?: string[];
@@ -53,12 +59,36 @@ export default function OverviewPage() {
   const [selectedDimension, setSelectedDimension] = useState<CohortDimension>('time_since_purchase_cohort');
   const [filterPurchaseCohort, setFilterPurchaseCohort] = useState<string>('all');
   const [filterSizeBand, setFilterSizeBand] = useState<string>('all');
+  const [momSizeBandFilter, setMomSizeBandFilter] = useState<string>('all');
 
   // APAP Goal Progress: filters (eligibility bucket × agency size)
   const ELIG_BUCKETS: EligBucket[] = ['6_12', '13_18', '19_24', '25_plus'];
   const LINE_SIZES: LineSize[] = ['Major', 'T1200', 'Direct'];
   const [goalProgressEligFilter, setGoalProgressEligFilter] = useState<EligBucket[]>(() => [...ELIG_BUCKETS]);
   const [goalProgressLineSizeFilter, setGoalProgressLineSizeFilter] = useState<LineSize[]>(() => [...LINE_SIZES]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const raw = localStorage.getItem('apap_overview_exclude_current_month');
+    setExcludeCurrentMonth(raw === '1');
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('apap_overview_exclude_current_month', excludeCurrentMonth ? '1' : '0');
+
+    if (!excludeCurrentMonth) return;
+
+    // If user is viewing the newest month, auto-switch to the previous month so incomplete data is hidden.
+    const months = getStoredMonths(); // newest first
+    const latest = months[0] ?? null;
+    const previous = months[1] ?? null;
+    const viewing = getCurrentMonth();
+    if (latest && previous && viewing === latest) {
+      setCurrentMonth(previous);
+      window.location.reload();
+    }
+  }, [excludeCurrentMonth]);
 
 
   // Re-load from storage when pathname changes; use viewing month so we show latest stored data for that month
@@ -232,8 +262,384 @@ export default function OverviewPage() {
   // Overall APAP: same calculation as Home page (no filters). Use this for the primary APAP % so it matches across pages.
   const overallAPAP = useMemo(() => {
     if (!data?.agencies) return null;
+    if (data.apap && Number.isFinite(data.apap.apap)) return data.apap;
     return computeAPAP(data.agencies, labelsMap);
-  }, [data?.agencies, labelsMap]);
+  }, [data?.agencies, data?.apap, labelsMap]);
+
+  const apapPointsByMonth = useMemo(() => {
+    if (typeof window === 'undefined') return [];
+    const historicalData = getHistoricalData();
+    const rows = Object.entries(historicalData)
+      .filter(([, v]) => v?.apapEligiblePoints != null && v?.apapAdoptingPoints != null)
+      .map(([monthKey, v]) => ({
+        monthKey,
+        eligiblePoints: Number(v.apapEligiblePoints ?? 0),
+        adoptingPoints: Number(v.apapAdoptingPoints ?? 0),
+      }));
+
+    const currentMonthKey = data?.asOfMonth ? format(parseISO(data.asOfMonth), 'yyyy-MM') : null;
+    if (currentMonthKey && overallAPAP?.eligiblePoints != null && overallAPAP?.adoptingPoints != null) {
+      const idx = rows.findIndex((r) => r.monthKey === currentMonthKey);
+      const currentRow = {
+        monthKey: currentMonthKey,
+        eligiblePoints: Number(overallAPAP.eligiblePoints ?? 0),
+        adoptingPoints: Number(overallAPAP.adoptingPoints ?? 0),
+      };
+      if (idx >= 0) rows[idx] = currentRow;
+      else rows.push(currentRow);
+    }
+
+    return rows
+      .filter((r) => Number.isFinite(r.eligiblePoints) && Number.isFinite(r.adoptingPoints))
+      .sort((a, b) => a.monthKey.localeCompare(b.monthKey));
+  }, [data?.asOfMonth, overallAPAP]);
+
+  const monthOverMonthAgencyChanges = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return {
+        prevMonthKey: null as string | null,
+        newlyEligible: [] as Array<{ agency_id: string; agency_name: string; officer_count: number; vr_licenses: number; agency_size_band: string | null; adopting_now: boolean }>,
+        newlyAdopting: [],
+        newlyChurned: [],
+        otherSliceEnteredAdopting: [] as Array<{ agency_id: string; agency_name: string; officer_count: number; agency_size_band: string | null }>,
+        otherSliceExitedAdopting: [] as Array<{ agency_id: string; agency_name: string; prev_officer_count: number; agency_size_band: string | null }>,
+        continuingAdopters: [] as Array<{ agency_id: string; agency_name: string; delta_points: number; agency_size_band: string | null }>,
+      };
+    }
+    if (!data?.asOfMonth || !currentMonthKey) {
+      return {
+        prevMonthKey: null as string | null,
+        newlyEligible: [] as Array<{ agency_id: string; agency_name: string; officer_count: number; vr_licenses: number; agency_size_band: string | null; adopting_now: boolean }>,
+        newlyAdopting: [],
+        newlyChurned: [],
+        otherSliceEnteredAdopting: [] as Array<{ agency_id: string; agency_name: string; officer_count: number; agency_size_band: string | null }>,
+        otherSliceExitedAdopting: [] as Array<{ agency_id: string; agency_name: string; prev_officer_count: number; agency_size_band: string | null }>,
+        continuingAdopters: [] as Array<{ agency_id: string; agency_name: string; delta_points: number; agency_size_band: string | null }>,
+      };
+    }
+
+    const prevMonthKey = format(subMonths(parseISO(currentMonthKey + '-01'), 1), 'yyyy-MM');
+    const meetsApapThreshold = (l: AgencyWithLabel | undefined | null): boolean => {
+      const r6 = l?.metrics?.R6 ?? null;
+      const r12 = l?.metrics?.R12 ?? null;
+      return (r6 != null && r6 >= ADOPTION_R6_THRESHOLD) || (r12 != null && r12 >= ADOPTION_R12_THRESHOLD);
+    };
+
+    const inSelectedSlice = (a: Agency | undefined | null): boolean => {
+      if (!a || a.cew_type !== 'T10') return false;
+      const lineSize = getLineSizeFromConfig(a.officer_count);
+      if (lineSize === 'Unknown') return false;
+      if (!goalProgressLineSizeFilter.includes(lineSize)) return false;
+      const eligBucket = getEligBucketFromConfig(a.eligibility_cohort);
+      if (eligBucket === 'unknown' || eligBucket === 'ineligible') return false;
+      return goalProgressEligFilter.includes(eligBucket);
+    };
+
+    const agenciesById = new Map<string, Agency>();
+    for (const a of data.agencies) agenciesById.set(String(a.agency_id), a);
+
+    // Prefer historical store; fall back to cached processed data for the prior month if history was quota-trimmed.
+    let prevLabelsMap: Map<string, AgencyWithLabel> | null = null;
+    try {
+      const historicalData = getHistoricalData();
+      const hist = historicalData[prevMonthKey];
+      if (hist?.agencyLabels && Array.isArray(hist.agencyLabels)) {
+        prevLabelsMap = new Map(hist.agencyLabels as [string, AgencyWithLabel][]);
+      }
+    } catch {
+      // ignore
+    }
+    if (!prevLabelsMap) {
+      try {
+        const raw = getProcessedData(prevMonthKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed?.agencyLabels)) {
+            prevLabelsMap = new Map(parsed.agencyLabels as [string, AgencyWithLabel][]);
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+    if (!prevLabelsMap) {
+      return {
+        prevMonthKey,
+        newlyEligible: [] as Array<{ agency_id: string; agency_name: string; officer_count: number; vr_licenses: number; agency_size_band: string | null; adopting_now: boolean }>,
+        newlyAdopting: [],
+        newlyChurned: [],
+        otherSliceEnteredAdopting: [] as Array<{ agency_id: string; agency_name: string; officer_count: number; agency_size_band: string | null }>,
+        otherSliceExitedAdopting: [] as Array<{ agency_id: string; agency_name: string; prev_officer_count: number; agency_size_band: string | null }>,
+        continuingAdopters: [] as Array<{ agency_id: string; agency_name: string; delta_points: number; agency_size_band: string | null }>,
+      };
+    }
+
+    let prevAgenciesById: Map<string, Agency> | null = null;
+    try {
+      const rawPrev = getProcessedData(prevMonthKey);
+      if (rawPrev) {
+        const parsedPrev = JSON.parse(rawPrev);
+        if (Array.isArray(parsedPrev?.agencies)) {
+          prevAgenciesById = new Map<string, Agency>();
+          for (const a of parsedPrev.agencies as Agency[]) prevAgenciesById.set(String(a.agency_id), a);
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    const newlyAdopting: Array<{
+      agency_id: string;
+      agency_name: string;
+      officer_count: number;
+      vr_licenses: number;
+      r6: number | null;
+      r12: number | null;
+      agency_size_band: string | null;
+      prev_label: string | null;
+      current_label: string;
+    }> = [];
+
+    const newlyEligible: Array<{
+      agency_id: string;
+      agency_name: string;
+      officer_count: number;
+      vr_licenses: number;
+      agency_size_band: string | null;
+      adopting_now: boolean;
+    }> = [];
+
+    const newlyChurned: Array<{
+      agency_id: string;
+      agency_name: string;
+      officer_count: number;
+      vr_licenses: number;
+      r6: number | null;
+      r12: number | null;
+      agency_size_band: string | null;
+      prev_label: string | null;
+      current_label: string;
+      churn_type: 'Churned Out' | 'Stopped adopting';
+      prev_officer_count: number;
+    }> = [];
+
+    const otherSliceEnteredAdopting: Array<{ agency_id: string; agency_name: string; officer_count: number; agency_size_band: string | null }> = [];
+    const otherSliceExitedAdopting: Array<{ agency_id: string; agency_name: string; prev_officer_count: number; agency_size_band: string | null }> = [];
+    const continuingAdopters: Array<{ agency_id: string; agency_name: string; delta_points: number; agency_size_band: string | null }> = [];
+
+    for (const [idRaw, current] of labelsMap.entries()) {
+      const id = String(idRaw);
+      const prev = prevLabelsMap.get(id);
+      const currentLabel = current?.label;
+      const prevLabel = prev?.label ?? null;
+
+      const agency = agenciesById.get(id);
+      const prevAgency = prevAgenciesById?.get(id) ?? null;
+
+      const inSliceNow = inSelectedSlice(agency);
+      const inSlicePrev = inSelectedSlice(prevAgency);
+
+      // Keep MoM change tables focused on the selected APAP slice.
+      if (!inSliceNow && !inSlicePrev) continue;
+
+      const adoptingNow = meetsApapThreshold(current);
+      const adoptingPrev = meetsApapThreshold(prev ?? null);
+
+      const officer_count = agency?.officer_count ?? 0;
+      const prev_officer_count = prevAgency?.officer_count ?? 0;
+      const vr_licenses = agency?.vr_licenses ?? 0;
+      const agency_size_band = agency?.agency_size_band ?? current?.cohorts?.agency_size_band ?? null;
+      const r6 = current?.metrics?.R6 ?? null;
+      const r12 = current?.metrics?.R12 ?? null;
+      const prevElig = typeof prevAgency?.eligibility_cohort === 'number' ? prevAgency.eligibility_cohort : null;
+      const currElig = typeof agency?.eligibility_cohort === 'number' ? agency.eligibility_cohort : null;
+      const wasEligiblePrev = prevElig != null && prevElig >= 6;
+      const isEligibleNow = currElig != null && currElig >= 6;
+      const isNewlyEligible5to6 = prevElig === 5 && currElig === 6;
+
+      // Newly eligible (5→6): time-based eligibility entry into APAP. Only count when now in the selected slice.
+      if (isNewlyEligible5to6 && inSliceNow) {
+        newlyEligible.push({
+          agency_id: id,
+          agency_name: current.agency_name,
+          officer_count,
+          vr_licenses,
+          agency_size_band,
+          adopting_now: adoptingNow,
+        });
+      }
+
+      // Other slice movement while adopting (NOT 5→6): agencies moving into/out of the selected slice for other reasons
+      // (e.g., 12→13 bucket change, line size change, missing eligibility/line size last month).
+      if (!isNewlyEligible5to6 && adoptingNow && inSliceNow && !inSlicePrev) {
+        otherSliceEnteredAdopting.push({ agency_id: id, agency_name: current.agency_name, officer_count, agency_size_band });
+      }
+      if (!isNewlyEligible5to6 && adoptingPrev && inSlicePrev && !inSliceNow) {
+        otherSliceExitedAdopting.push({ agency_id: id, agency_name: current.agency_name, prev_officer_count, agency_size_band });
+      }
+
+      // Continuing adopters: points delta (adopting both months, in slice both months)
+      if (adoptingNow && adoptingPrev && inSliceNow && inSlicePrev) {
+        const delta = officer_count - prev_officer_count;
+        if (delta !== 0) continuingAdopters.push({ agency_id: id, agency_name: current.agency_name, delta_points: delta, agency_size_band });
+      }
+
+      // Newly adopting / churned lists: require being in-slice both months to align with slice MoM deltas.
+      if (inSliceNow && inSlicePrev && wasEligiblePrev && isEligibleNow && adoptingNow && !adoptingPrev) {
+        newlyAdopting.push({
+          agency_id: id,
+          agency_name: current.agency_name,
+          officer_count,
+          vr_licenses,
+          r6,
+          r12,
+          agency_size_band,
+          prev_label: prevLabel,
+          current_label: currentLabel,
+        });
+      }
+
+      if (inSliceNow && inSlicePrev && wasEligiblePrev && isEligibleNow && adoptingPrev && !adoptingNow) {
+        newlyChurned.push({
+          agency_id: id,
+          agency_name: current.agency_name,
+          officer_count,
+          prev_officer_count,
+          vr_licenses,
+          r6,
+          r12,
+          agency_size_band,
+          prev_label: prevLabel,
+          current_label: currentLabel,
+          churn_type: currentLabel === 'Churned Out' ? 'Churned Out' : 'Stopped adopting',
+        });
+      }
+    }
+
+    newlyEligible.sort((a, b) => b.officer_count - a.officer_count);
+    newlyAdopting.sort((a, b) => b.officer_count - a.officer_count);
+    newlyChurned.sort((a, b) => b.prev_officer_count - a.prev_officer_count);
+    otherSliceEnteredAdopting.sort((a, b) => b.officer_count - a.officer_count);
+    otherSliceExitedAdopting.sort((a, b) => b.prev_officer_count - a.prev_officer_count);
+
+    return {
+      prevMonthKey,
+      newlyEligible,
+      newlyAdopting,
+      newlyChurned,
+      otherSliceEnteredAdopting,
+      otherSliceExitedAdopting,
+      continuingAdopters,
+    };
+  }, [currentMonthKey, data?.asOfMonth, data?.agencies, labelsMap, goalProgressEligFilter, goalProgressLineSizeFilter]);
+
+  const momFiltered = useMemo(() => {
+    const size = momSizeBandFilter;
+    const newlyEligible =
+      size === 'all'
+        ? monthOverMonthAgencyChanges.newlyEligible
+        : monthOverMonthAgencyChanges.newlyEligible.filter((r) => r.agency_size_band === size);
+    const newlyAdopting =
+      size === 'all'
+        ? monthOverMonthAgencyChanges.newlyAdopting
+        : monthOverMonthAgencyChanges.newlyAdopting.filter((r) => r.agency_size_band === size);
+    const newlyChurned =
+      size === 'all'
+        ? monthOverMonthAgencyChanges.newlyChurned
+        : monthOverMonthAgencyChanges.newlyChurned.filter((r) => r.agency_size_band === size);
+    const otherSliceEnteredAdopting =
+      size === 'all'
+        ? monthOverMonthAgencyChanges.otherSliceEnteredAdopting
+        : monthOverMonthAgencyChanges.otherSliceEnteredAdopting.filter((r) => r.agency_size_band === size);
+    const otherSliceExitedAdopting =
+      size === 'all'
+        ? monthOverMonthAgencyChanges.otherSliceExitedAdopting
+        : monthOverMonthAgencyChanges.otherSliceExitedAdopting.filter((r) => r.agency_size_band === size);
+    const continuingAdopters =
+      size === 'all'
+        ? monthOverMonthAgencyChanges.continuingAdopters
+        : monthOverMonthAgencyChanges.continuingAdopters.filter((r) => r.agency_size_band === size);
+
+    const newlyEligibleEligiblePoints = newlyEligible.reduce((sum, r) => sum + (r.officer_count ?? 0), 0);
+    const newlyEligibleAdoptingPoints = newlyEligible.reduce((sum, r) => sum + (r.adopting_now ? (r.officer_count ?? 0) : 0), 0);
+    const newlyAdoptingPoints = newlyAdopting.reduce((sum, r) => sum + (r.officer_count ?? 0), 0);
+    const newlyChurnedPoints = newlyChurned.reduce((sum, r) => sum + (r.prev_officer_count ?? 0), 0);
+
+    const otherSliceEnteredAdoptingPoints = otherSliceEnteredAdopting.reduce((sum, r) => sum + (r.officer_count ?? 0), 0);
+    const otherSliceExitedAdoptingPoints = otherSliceExitedAdopting.reduce((sum, r) => sum + (r.prev_officer_count ?? 0), 0);
+    const continuingAdoptingPointDeltaRaw = continuingAdopters.reduce((sum, r) => sum + (r.delta_points ?? 0), 0);
+    // Fold other slice movement into "continuing adopters" to reduce bucket confusion while
+    // preserving reconciliation to slice-level adopting points delta.
+    const continuingAdoptingPointDelta =
+      continuingAdoptingPointDeltaRaw + otherSliceEnteredAdoptingPoints - otherSliceExitedAdoptingPoints;
+
+    const reconciledDeltaAdoptingPoints =
+      newlyEligibleAdoptingPoints +
+      newlyAdoptingPoints -
+      newlyChurnedPoints +
+      continuingAdoptingPointDelta;
+
+    return {
+      newlyEligible,
+      newlyEligibleEligiblePoints,
+      newlyEligibleAdoptingPoints,
+      newlyAdopting,
+      newlyChurned,
+      continuingAdopters,
+      newlyAdoptingPoints,
+      newlyChurnedPoints,
+      continuingAdoptingPointDelta,
+      reconciledDeltaAdoptingPoints,
+    };
+  }, [
+    monthOverMonthAgencyChanges.newlyEligible,
+    monthOverMonthAgencyChanges.newlyAdopting,
+    monthOverMonthAgencyChanges.newlyChurned,
+    monthOverMonthAgencyChanges.continuingAdopters,
+    momSizeBandFilter,
+  ]);
+
+  const refreshOverallApapFromSnowflake = async () => {
+    if (!currentMonthKey) return;
+    setRefreshingApap(true);
+    setRefreshApapError(null);
+    try {
+      const resp = await fetch('/api/snowflake/history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ monthsBack: 1, endMonthKey: currentMonthKey }),
+      });
+      const json = await resp.json();
+      if (!resp.ok) throw new Error(json?.error || 'Failed to refresh APAP from Snowflake');
+      const m = Array.isArray(json?.months) ? json.months[0] : null;
+      if (!m) throw new Error('No month returned from Snowflake history');
+
+      const apapObj = {
+        apap: Number(m.apap ?? 0),
+        adoptingPoints: Number(m.adoptionPoints ?? 0),
+        eligiblePoints: Number(m.eligiblePoints ?? 0),
+        eligibleCount: Number(m.eligibleCount ?? 0),
+        adoptingCount: Number(m.adoptingCount ?? 0),
+      };
+
+      // Update UI + persist back into the cached snapshot so Home/other pages show the corrected value.
+      setData((prev) => {
+        if (!prev) return prev;
+        const next = { ...prev, apap: apapObj };
+        const viewing = getCurrentMonth();
+        try {
+          setProcessedDataForMonth(next, currentMonthKey, { select: viewing === currentMonthKey });
+        } catch {
+          // ignore; UI is still updated
+        }
+        return next;
+      });
+    } catch (e) {
+      setRefreshApapError(e instanceof Error ? e.message : 'Failed to refresh APAP');
+    } finally {
+      setRefreshingApap(false);
+    }
+  };
 
   // Overall APAP comparison (same period logic as Home) so overall % and MoM match across pages
   const overallComparisonAPAP = useMemo(() => {
@@ -661,8 +1067,10 @@ export default function OverviewPage() {
     return computeAPAPForStructuralSlice(data.agencies, labelsMap, eligFilter, lineFilter);
   }, [data?.agencies, labelsMap, eligFilter, lineFilter]);
   const goalRatesForSlice = useMemo(() => {
-    if (!currentAPAPGoalProgress) return { highConfidencePct: 42, hardClimbPct: 46.2 };
-    return getGoalRatesForSlice(GOAL_MODEL_CONFIG, eligFilter, lineFilter, currentAPAPGoalProgress.eligiblePointsByKey);
+    // Goals are fixed targets (not slice-weighted).
+    // We still compute slice APAP using elig/line filters, but the HC/Hard Climb goal lines should
+    // remain at the global targets.
+    return { highConfidencePct: 42, hardClimbPct: 46 };
   }, [currentAPAPGoalProgress, eligFilter, lineFilter]);
   const comparisonAPAPGoalProgress = useMemo(() => {
     if (!currentAPAPGoalProgress || !data?.asOfMonth || !comparisonType) return null;
@@ -715,7 +1123,14 @@ export default function OverviewPage() {
         const agencies: Agency[] = parsed.agencies ?? [];
         const labels = parsed.agencyLabels ? new Map(parsed.agencyLabels as [string, AgencyWithLabel][]) : new Map<string, AgencyWithLabel>();
         if (agencies.length === 0) continue;
-        const apap = useOverall ? computeAPAP(agencies, labels).apap : computeAPAPForStructuralSlice(agencies, labels, eligFilter, lineFilter).apap;
+        // When showing overall (all cohorts selected), prefer the snapshot's Snowflake-aggregated APAP if present.
+        // This keeps the trend chart aligned with the source-of-truth query (eligible_points/adoption_points).
+        const apap =
+          useOverall && parsed?.apap && Number.isFinite(Number(parsed.apap.eligiblePoints)) && Number(parsed.apap.eligiblePoints) > 0
+            ? (Number(parsed.apap.adoptingPoints) / Number(parsed.apap.eligiblePoints)) * 100
+            : useOverall
+              ? computeAPAP(agencies, labels).apap
+              : computeAPAPForStructuralSlice(agencies, labels, eligFilter, lineFilter).apap;
         history.push({ month: monthKey, apap, label: format(monthDate, 'MMM yyyy') });
       } catch {
         // skip
@@ -1048,7 +1463,50 @@ export default function OverviewPage() {
           </div>
           
           {/* Period Comparison Selector */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontSize: 'var(--text-body2-size)',
+                color: 'var(--fg-primary)',
+                fontWeight: 'var(--text-subtitle-weight)',
+                padding: '0.4rem 0.75rem',
+                borderRadius: 'var(--radius-sm)',
+                border: `1px solid var(--border-color)`,
+                background: 'var(--surface-2)',
+                cursor: 'pointer',
+                userSelect: 'none',
+              }}
+              title="Hides the newest month (often incomplete) by automatically switching to the prior month."
+            >
+              <input
+                type="checkbox"
+                checked={excludeCurrentMonth}
+                onChange={(e) => setExcludeCurrentMonth(e.target.checked)}
+              />
+              Hide current month
+            </label>
+            {data?.source === 'snowflake' && (
+              <button
+                onClick={refreshOverallApapFromSnowflake}
+                disabled={refreshingApap || !currentMonthKey}
+                style={{
+                  padding: '0.45rem 0.75rem',
+                  borderRadius: 'var(--radius-sm)',
+                  border: `1px solid var(--border-color)`,
+                  background: refreshingApap ? 'var(--fg-disabled)' : 'var(--surface-2)',
+                  color: 'var(--fg-primary)',
+                  cursor: refreshingApap ? 'not-allowed' : 'pointer',
+                  fontSize: 'var(--text-body2-size)',
+                  fontWeight: 'var(--text-subtitle-weight)',
+                }}
+                title="Refreshes Overall APAP from Snowflake adoption_vr_preview points."
+              >
+                {refreshingApap ? 'Refreshing…' : 'Refresh APAP'}
+              </button>
+            )}
             <label style={{
               fontSize: 'var(--text-body2-size)',
               color: 'var(--fg-secondary)',
@@ -1076,6 +1534,18 @@ export default function OverviewPage() {
             </select>
           </div>
         </div>
+        {refreshApapError && (
+          <div style={{
+            marginBottom: '1rem',
+            padding: '0.75rem 1rem',
+            borderRadius: 'var(--radius-sm)',
+            background: 'var(--bg-destructive)',
+            color: 'white',
+            fontSize: 'var(--text-body2-size)',
+          }}>
+            {refreshApapError}
+          </div>
+        )}
 
         {/* APAP (Adoption Percentage) section + Filter by Cohort (Time Since Purchase / Agency Size) removed in favor of APAP Goal Progress below. Restore from git history if needed: search for "APAP Total Section" or "APAP (Adoption Percentage)". */}
 
@@ -1103,7 +1573,7 @@ export default function OverviewPage() {
                     Overall APAP (same as Home)
                   </div>
                   <div style={{ fontSize: '3rem', fontWeight: 'var(--text-headline-weight)', color: 'var(--fg-primary)', lineHeight: 1, marginBottom: '0.5rem' }}>
-                    {overallAPAP.apap.toFixed(1)}%
+                    {formatPercentFromParts(overallAPAP.adoptingPoints, overallAPAP.eligiblePoints, 1)}%
                   </div>
                   <div style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)', marginBottom: '0.5rem' }}>
                     {overallAPAP.adoptingPoints.toLocaleString()} adopting / {overallAPAP.eligiblePoints.toLocaleString()} eligible points
@@ -1122,11 +1592,57 @@ export default function OverviewPage() {
                       {(overallAPAP.apap - overallComparisonAPAP.apap).toFixed(1)}pp vs {comparisonLabel}
                     </div>
                   )}
+                  {overallComparisonAPAP && comparisonLabel && (
+                    <div style={{
+                      marginTop: '0.5rem',
+                      fontSize: 'var(--text-caption-size)',
+                      color: 'var(--fg-secondary)',
+                      padding: '0.75rem',
+                      background: 'var(--surface-2)',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-color)',
+                      textAlign: 'left',
+                    }}>
+                      <div style={{ fontWeight: 600, marginBottom: '0.5rem', color: 'var(--fg-primary)', fontSize: 'var(--text-body2-size)' }}>
+                        Overall changes vs {comparisonLabel}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        <div>Eligible agencies: {overallAPAP.eligibleCount}
+                          {overallAPAP.eligibleCount !== overallComparisonAPAP.eligibleCount && (
+                            <span style={{ color: overallAPAP.eligibleCount >= overallComparisonAPAP.eligibleCount ? 'var(--fg-success)' : 'var(--fg-destructive)', marginLeft: '0.25rem' }}>
+                              ({overallAPAP.eligibleCount >= overallComparisonAPAP.eligibleCount ? '+' : ''}{overallAPAP.eligibleCount - overallComparisonAPAP.eligibleCount})
+                            </span>
+                          )}
+                        </div>
+                        <div>Adopting agencies: {overallAPAP.adoptingCount}
+                          {overallAPAP.adoptingCount !== overallComparisonAPAP.adoptingCount && (
+                            <span style={{ color: overallAPAP.adoptingCount >= overallComparisonAPAP.adoptingCount ? 'var(--fg-success)' : 'var(--fg-destructive)', marginLeft: '0.25rem' }}>
+                              ({overallAPAP.adoptingCount >= overallComparisonAPAP.adoptingCount ? '+' : ''}{overallAPAP.adoptingCount - overallComparisonAPAP.adoptingCount})
+                            </span>
+                          )}
+                        </div>
+                        <div>Eligible points: {overallAPAP.eligiblePoints.toLocaleString()}
+                          {overallAPAP.eligiblePoints !== overallComparisonAPAP.eligiblePoints && (
+                            <span style={{ color: overallAPAP.eligiblePoints >= overallComparisonAPAP.eligiblePoints ? 'var(--fg-success)' : 'var(--fg-destructive)', marginLeft: '0.25rem' }}>
+                              ({overallAPAP.eligiblePoints >= overallComparisonAPAP.eligiblePoints ? '+' : ''}{(overallAPAP.eligiblePoints - overallComparisonAPAP.eligiblePoints).toLocaleString()})
+                            </span>
+                          )}
+                        </div>
+                        <div>Adopting points: {overallAPAP.adoptingPoints.toLocaleString()}
+                          {overallAPAP.adoptingPoints !== overallComparisonAPAP.adoptingPoints && (
+                            <span style={{ color: overallAPAP.adoptingPoints >= overallComparisonAPAP.adoptingPoints ? 'var(--fg-success)' : 'var(--fg-destructive)', marginLeft: '0.25rem' }}>
+                              ({overallAPAP.adoptingPoints >= overallComparisonAPAP.adoptingPoints ? '+' : ''}{(overallAPAP.adoptingPoints - overallComparisonAPAP.adoptingPoints).toLocaleString()})
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {comparisonAPAPGoalProgress && comparisonLabel && (
                     <>
                       <div style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)', padding: '0.75rem', background: 'var(--surface-2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', marginTop: '0.5rem', textAlign: 'left' }}>
                         <div style={{ fontWeight: 'var(--text-body2-weight)', marginBottom: '0.5rem', color: 'var(--fg-primary)', fontSize: 'var(--text-body2-size)' }}>
-                          For selected cohorts vs {comparisonLabel}:
+                          For selected cohorts (slice) vs {comparisonLabel}:
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                           <div>Slice APAP: {currentAPAPGoalProgress.apap.toFixed(1)}% ({currentAPAPGoalProgress.apap >= comparisonAPAPGoalProgress.apap ? '+' : ''}{(currentAPAPGoalProgress.apap - comparisonAPAPGoalProgress.apap).toFixed(1)}pp)</div>
@@ -1366,6 +1882,272 @@ export default function OverviewPage() {
           </div>
         )}
 
+        {/* Month-by-month points (Eligible vs Adopting) */}
+        {apapPointsByMonth.length > 0 && (
+          <div style={{
+            marginBottom: '3rem',
+            padding: '1.5rem',
+            background: 'var(--surface-2)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-color)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+              <Crosshair size={24} color="var(--fg-action)" />
+              <h2 style={{ fontSize: 'var(--text-title-size)', fontWeight: 'var(--text-title-weight)', margin: 0, color: 'var(--fg-primary)' }}>
+                APAP points by month
+              </h2>
+            </div>
+            <p style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)', marginBottom: '1rem' }}>
+              Eligible points vs adopting points (SIM-only labels) for each stored month.
+            </p>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--text-body2-size)' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid var(--border-color)', background: 'var(--surface-2)' }}>
+                    <th style={{ textAlign: 'left', padding: '0.6rem 0.75rem' }}>Month</th>
+                    <th style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>Adopting points</th>
+                    <th style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>Eligible points</th>
+                    <th style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>APAP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {apapPointsByMonth.map((r) => (
+                    <tr key={r.monthKey} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                      <td style={{ padding: '0.6rem 0.75rem', color: 'var(--fg-primary)', fontWeight: 600 }}>
+                        {format(parseISO(r.monthKey + '-01'), 'MMM yyyy')}
+                      </td>
+                      <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>{r.adoptingPoints.toLocaleString()}</td>
+                      <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>{r.eligiblePoints.toLocaleString()}</td>
+                      <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem', color: 'var(--fg-secondary)' }}>
+                        {formatPercentFromParts(r.adoptingPoints, r.eligiblePoints, 1)}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Month-over-month agency changes */}
+        {monthOverMonthAgencyChanges.prevMonthKey && (
+          <div style={{
+            marginBottom: '3rem',
+            padding: '1.5rem',
+            background: 'var(--surface-2)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-color)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+              <TrendingUp size={24} color="var(--fg-action)" />
+              <h2 style={{ fontSize: 'var(--text-title-size)', fontWeight: 'var(--text-title-weight)', margin: 0, color: 'var(--fg-primary)' }}>
+                Month-over-month changes (agencies)
+              </h2>
+            </div>
+            <p style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)', marginBottom: '1rem' }}>
+              Comparing {format(parseISO(monthOverMonthAgencyChanges.prevMonthKey + '-01'), 'MMM yyyy')} → {currentMonthKey ? format(parseISO(currentMonthKey + '-01'), 'MMM yyyy') : 'current month'}.
+            </p>
+
+            {(monthOverMonthAgencyChanges.newlyAdopting.length === 0 && monthOverMonthAgencyChanges.newlyChurned.length === 0) ? (
+              <div style={{ fontSize: 'var(--text-body2-size)', color: 'var(--fg-secondary)' }}>
+                No prior-month label history found to compute “newly adopting” / “newly churned” lists for this month.
+              </div>
+            ) : (
+              <>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  flexWrap: 'wrap',
+                  marginBottom: '1rem',
+                }}>
+                  <div style={{ fontSize: 'var(--text-body2-size)', color: 'var(--fg-secondary)' }}>
+                    Totals below respect the agency size filter.
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: 'var(--text-body2-size)', color: 'var(--fg-secondary)', fontWeight: 'var(--text-subtitle-weight)' }}>
+                      Agency size:
+                    </span>
+                    <select
+                      value={momSizeBandFilter}
+                      onChange={(e) => setMomSizeBandFilter(e.target.value)}
+                      style={{
+                        padding: '0.45rem 0.75rem',
+                        borderRadius: 'var(--radius-sm)',
+                        border: `1px solid var(--border-color)`,
+                        background: 'var(--surface-2)',
+                        color: 'var(--fg-primary)',
+                        fontSize: 'var(--text-body2-size)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <option value="all">All</option>
+                      {uniqueSizeBands.map((b) => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ overflowX: 'auto', marginBottom: '1.5rem' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--text-body2-size)' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid var(--border-color)', background: 'var(--surface-2)' }}>
+                        <th style={{ textAlign: 'left', padding: '0.6rem 0.75rem' }}>Metric</th>
+                        <th style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>Agencies</th>
+                        <th style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>Adopting points impact</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                        <td
+                          title="Agencies that moved from eligibility cohort 5 → 6 (time-based eligibility) and are in the selected APAP slice this month. Adopting impact = sum of current-month points for those that meet APAP threshold this month."
+                          style={{ padding: '0.6rem 0.75rem', fontWeight: 600, color: 'var(--fg-action)', cursor: 'help', textDecoration: 'underline dotted' }}
+                        >
+                          Newly eligible (5→6)
+                        </td>
+                        <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>{momFiltered.newlyEligible.length.toLocaleString()}</td>
+                        <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>{momFiltered.newlyEligibleAdoptingPoints.toLocaleString()}</td>
+                      </tr>
+                      <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                        <td
+                          title="Agencies that were eligible for APAP last month (cohort ≥ 6), are in the selected APAP slice in BOTH months, and meet APAP threshold this month but not last month. Eligible points = — (already eligible). Adopting impact = sum of current-month points."
+                          style={{ padding: '0.6rem 0.75rem', fontWeight: 600, color: 'var(--fg-success)', cursor: 'help', textDecoration: 'underline dotted' }}
+                        >
+                          Newly Adopting (6+)
+                        </td>
+                        <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>{momFiltered.newlyAdopting.length.toLocaleString()}</td>
+                        <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>{momFiltered.newlyAdoptingPoints.toLocaleString()}</td>
+                      </tr>
+                      <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                        <td
+                          title="Agencies that were eligible for APAP last month (cohort ≥ 6), are in the selected APAP slice in BOTH months, and met APAP threshold last month but not this month. Eligible points = —. Adopting impact = negative prior-month points (what is removed from adopting points)."
+                          style={{ padding: '0.6rem 0.75rem', fontWeight: 600, color: 'var(--fg-destructive)', cursor: 'help', textDecoration: 'underline dotted' }}
+                        >
+                          Newly churned
+                        </td>
+                        <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>{momFiltered.newlyChurned.length.toLocaleString()}</td>
+                        <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem' }}>{(-momFiltered.newlyChurnedPoints).toLocaleString()}</td>
+                      </tr>
+                      <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                      </tr>
+                      <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                        <td
+                          title="Agencies that are in the selected APAP slice in BOTH months and meet APAP threshold in BOTH months, PLUS the net effect of adopting agencies moving into/out of the selected slice (for reasons other than 5→6). Eligible points = —. Adopting impact = sum of (current-month points − prior-month points) for continuing adopters, plus net slice-movement impact."
+                          style={{ padding: '0.6rem 0.75rem', color: 'var(--fg-secondary)', cursor: 'help', textDecoration: 'underline dotted' }}
+                        >
+                          Continuing adopters: points delta
+                        </td>
+                        <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem', color: 'var(--fg-secondary)' }}>—</td>
+                        <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem', color: 'var(--fg-secondary)' }}>{momFiltered.continuingAdoptingPointDelta.toLocaleString()}</td>
+                      </tr>
+                      <tr>
+                        <td
+                          title="A check-sum that explains the slice’s month-over-month change in adopting points: Newly eligible adopting + Newly adopting − Newly churned + Continuing adopters delta. (Continuing delta includes net slice movement for adopting agencies other than 5→6.) This should align with the APAP Goal Progress ‘Adopting points’ change for the selected slice."
+                          style={{ padding: '0.6rem 0.75rem', fontWeight: 700, color: 'var(--fg-primary)', cursor: 'help', textDecoration: 'underline dotted' }}
+                        >
+                          Reconciled Δ adopting points
+                        </td>
+                        <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem', fontWeight: 700, color: 'var(--fg-primary)' }}>—</td>
+                        <td style={{ textAlign: 'right', padding: '0.6rem 0.75rem', fontWeight: 700, color: 'var(--fg-primary)' }}>{momFiltered.reconciledDeltaAdoptingPoints.toLocaleString()}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '1.5rem' }}>
+                <div style={{ padding: '1rem', background: 'var(--surface-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h3 style={{ margin: '0 0 0.75rem 0', fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', color: 'var(--fg-success)' }}>
+                    Newly Adopting (6+) ({momFiltered.newlyAdopting.length})
+                  </h3>
+                  {momFiltered.newlyAdopting.length === 0 ? (
+                    <div style={{ fontSize: 'var(--text-body2-size)', color: 'var(--fg-secondary)' }}>None this month.</div>
+                  ) : (
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--text-body2-size)' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '2px solid var(--border-color)', background: 'var(--surface-2)' }}>
+                            <th style={{ textAlign: 'left', padding: '0.5rem 0.6rem' }}>Agency</th>
+                            <th style={{ textAlign: 'right', padding: '0.5rem 0.6rem' }}>Points</th>
+                            <th style={{ textAlign: 'right', padding: '0.5rem 0.6rem' }}>Licenses</th>
+                            <th style={{ textAlign: 'right', padding: '0.5rem 0.6rem' }}>T6</th>
+                            <th style={{ textAlign: 'right', padding: '0.5rem 0.6rem' }}>T12</th>
+                            <th style={{ textAlign: 'left', padding: '0.5rem 0.6rem' }}>Prev</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {momFiltered.newlyAdopting.slice(0, 25).map((r) => (
+                            <tr key={r.agency_id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                              <td style={{ padding: '0.5rem 0.6rem' }}>
+                                <div style={{ fontWeight: 600, color: 'var(--fg-primary)' }}>{r.agency_name}</div>
+                                <div style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)' }}>{r.agency_id}</div>
+                              </td>
+                              <td style={{ textAlign: 'right', padding: '0.5rem 0.6rem' }}>{r.officer_count.toLocaleString()}</td>
+                              <td style={{ textAlign: 'right', padding: '0.5rem 0.6rem' }}>{r.vr_licenses.toLocaleString()}</td>
+                              <td style={{ textAlign: 'right', padding: '0.5rem 0.6rem', color: 'var(--fg-secondary)' }}>{r.r6 != null ? r.r6.toFixed(2) : '—'}</td>
+                              <td style={{ textAlign: 'right', padding: '0.5rem 0.6rem', color: 'var(--fg-secondary)' }}>{r.r12 != null ? r.r12.toFixed(2) : '—'}</td>
+                              <td style={{ padding: '0.5rem 0.6rem', color: 'var(--fg-secondary)' }}>{r.prev_label ?? '—'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {momFiltered.newlyAdopting.length > 25 && (
+                        <div style={{ marginTop: '0.5rem', fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)' }}>
+                          Showing top 25 by points.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ padding: '1rem', background: 'var(--surface-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h3 style={{ margin: '0 0 0.75rem 0', fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', color: 'var(--fg-destructive)' }}>
+                    Newly churned ({momFiltered.newlyChurned.length})
+                  </h3>
+                  {momFiltered.newlyChurned.length === 0 ? (
+                    <div style={{ fontSize: 'var(--text-body2-size)', color: 'var(--fg-secondary)' }}>None this month.</div>
+                  ) : (
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--text-body2-size)' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '2px solid var(--border-color)', background: 'var(--surface-2)' }}>
+                            <th style={{ textAlign: 'left', padding: '0.5rem 0.6rem' }}>Agency</th>
+                            <th style={{ textAlign: 'right', padding: '0.5rem 0.6rem' }}>Prev points</th>
+                            <th style={{ textAlign: 'left', padding: '0.5rem 0.6rem' }}>Churn</th>
+                            <th style={{ textAlign: 'left', padding: '0.5rem 0.6rem' }}>Current</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {momFiltered.newlyChurned.slice(0, 25).map((r) => (
+                            <tr key={r.agency_id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                              <td style={{ padding: '0.5rem 0.6rem' }}>
+                                <div style={{ fontWeight: 600, color: 'var(--fg-primary)' }}>{r.agency_name}</div>
+                                <div style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)' }}>{r.agency_id}</div>
+                              </td>
+                              <td style={{ textAlign: 'right', padding: '0.5rem 0.6rem' }}>{r.prev_officer_count.toLocaleString()}</td>
+                              <td style={{ padding: '0.5rem 0.6rem', color: r.churn_type === 'Churned Out' ? 'var(--fg-destructive)' : 'var(--fg-secondary)' }}>
+                                {r.churn_type}
+                              </td>
+                              <td style={{ padding: '0.5rem 0.6rem', color: 'var(--fg-secondary)' }}>{r.current_label}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {momFiltered.newlyChurned.length > 25 && (
+                        <div style={{ marginTop: '0.5rem', fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)' }}>
+                          Showing top 25 by points.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              </>
+            )}
+          </div>
+        )}
+
         {/* Biggest movers: top 3 positive and top 3 negative MoM, with goal/variance context */}
         <div style={{
           marginBottom: '3rem',
@@ -1446,7 +2228,7 @@ export default function OverviewPage() {
             </h2>
           </div>
           <p style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)', marginBottom: '1rem' }}>
-            Variance to goal and driver progress use SIM-only adoption labels. Goal model from config (High Confidence 42%, Hard Climb 46.2%).
+            Variance to goal and driver progress use SIM-only adoption labels. Goal model from config (High Confidence 42%, Hard Climb 46%).
           </p>
 
           {data && (
@@ -2344,7 +3126,7 @@ function APAPTrendChart({
   const dataMin = Math.min(...values);
   const dataMax = Math.max(...values);
   const highConfidenceGoal = 42;
-  const hardClimbGoal = 46.2;
+  const hardClimbGoal = 46;
   
   // Include goal values in the range calculation
   const effectiveMin = Math.min(dataMin, highConfidenceGoal, hardClimbGoal);
@@ -2441,7 +3223,7 @@ function APAPTrendChart({
           );
         })()}
         
-        {/* Y-axis label at 46.2% (Hard Climb goal) - always visible */}
+        {/* Y-axis label at 46% (Hard Climb goal) - always visible */}
         {(() => {
           const goal462Y = padding.top + innerHeight - ((hardClimbGoal - minValue) / valueRange * innerHeight);
           return (
@@ -2453,7 +3235,7 @@ function APAPTrendChart({
               fill="var(--fg-action)"
               fontWeight="500"
             >
-              46.2%
+              46%
             </text>
           );
         })()}
@@ -2518,7 +3300,7 @@ function APAPTrendChart({
           </text>
         </g>
         
-        {/* Hard Climb goal line (46.2%) - blue to differentiate from purple and trend */}
+        {/* Hard Climb goal line (46%) - blue to differentiate from purple and trend */}
         <g>
           <line
             x1={padding.left}
@@ -2537,7 +3319,7 @@ function APAPTrendChart({
             fill="var(--fg-action)"
             fontWeight="600"
           >
-            Hard Climb (46.2%)
+            Hard Climb (46%)
           </text>
         </g>
         

@@ -120,28 +120,44 @@ export function saveHistoricalData(
       entriesToKeep[key] = history[key];
     }
     
-    // Try to save, but handle quota errors gracefully
-    try {
-      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(entriesToKeep));
-    } catch (quotaError) {
-      if (quotaError instanceof Error && quotaError.name === 'QuotaExceededError') {
-        console.warn('⚠️ localStorage quota exceeded. Clearing old data and retrying...');
-        // Clear all historical data except the current month
-        const currentMonthData = entriesToKeep[asOfMonthKey];
-        const clearedHistory: HistoricalData = {};
-        if (currentMonthData) {
-          clearedHistory[asOfMonthKey] = currentMonthData;
-        }
-        try {
-          localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(clearedHistory));
-          console.log('✅ Cleared old historical data and saved current month');
-        } catch (retryError) {
-          console.error('❌ Still failed to save after clearing old data:', retryError);
-        }
-      } else {
-        throw quotaError;
+    const trySave = (obj: HistoricalData): boolean => {
+      try {
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(obj));
+        return true;
+      } catch (e) {
+        if (e instanceof Error && e.name === 'QuotaExceededError') return false;
+        throw e;
       }
+    };
+
+    // Try to save. If quota exceeded, degrade gracefully without nuking all history.
+    if (trySave(entriesToKeep)) return;
+
+    console.warn('⚠️ localStorage quota exceeded. Trimming historical data and retrying...');
+
+    // Step 1: Strip agencyLabels from all entries (largest optional payload)
+    const stripped: HistoricalData = {};
+    for (const key of Object.keys(entriesToKeep)) {
+      const v = entriesToKeep[key];
+      stripped[key] = v ? { ...v, agencyLabels: undefined } : v;
     }
+    if (trySave(stripped)) return;
+
+    // Step 2: Keep as many recent months as possible (still stripped)
+    const keysDesc = Object.keys(stripped).sort().reverse();
+    for (let keepCount = keysDesc.length; keepCount >= 1; keepCount--) {
+      const subset: HistoricalData = {};
+      for (const k of keysDesc.slice(0, keepCount)) subset[k] = stripped[k];
+      if (trySave(subset)) return;
+    }
+
+    // Step 3: Last resort — store only current month, stripped further if needed
+    const currentMonthData = stripped[asOfMonthKey];
+    const lastResort: HistoricalData = {};
+    if (currentMonthData) {
+      lastResort[asOfMonthKey] = { ...currentMonthData, cohortSummaries: {}, usageRollups: undefined, agencyLabels: undefined };
+    }
+    trySave(lastResort);
   } catch (err) {
     console.error('Failed to save historical data:', err);
   }

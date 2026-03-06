@@ -12,6 +12,7 @@ import { getT6Tooltip, getT12Tooltip } from '@/lib/lookbackTooltips';
 import { buildActionList, type ActionReason, type ActionListRow } from '@/lib/actionList';
 import { ACTION_LIST_CONFIG } from '@/config/action_list_config';
 import { formatNumber, formatDecimal, formatMonthLabel } from '@/lib/format';
+import { format, parseISO, subMonths } from 'date-fns';
 
 type StoredData = {
   agencies: any[];
@@ -84,7 +85,32 @@ export default function ActionsPage() {
       return;
     }
     const labelsMap = new Map(data.agencyLabels as [string, any][]);
+    // Action List needs per-agency adoption labels for prior months. Our persisted historical store
+    // may omit `agencyLabels` (quota trimming), so backfill a lightweight version from cached
+    // month snapshots when available.
     const historyData = getHistoricalData();
+    const mergedHistoryData: Record<string, any> = { ...historyData };
+    const asOfKey = data.asOfMonth;
+    if (asOfKey) {
+      const asOfDate = parseISO(asOfKey + '-01');
+      for (let i = 0; i <= 24; i++) {
+        const d = subMonths(asOfDate, i);
+        const key = format(d, 'yyyy-MM');
+        try {
+          const raw = getProcessedData(key);
+          if (!raw) continue;
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed?.agencyLabels)) continue;
+          // Keep only what Action List needs: `[agency_id, { label }]`.
+          const compact = (parsed.agencyLabels as [string, any][])
+            .map(([id, l]) => [String(id), { label: l?.label }])
+            .filter(([, v]) => typeof v?.label === 'string');
+          mergedHistoryData[key] = { ...(mergedHistoryData[key] ?? {}), agencyLabels: compact };
+        } catch {
+          // ignore individual month failures
+        }
+      }
+    }
     let baselineProcessed: { agencies: any[]; agencyLabels: [string, any][] } | null = null;
     try {
       const baselineRaw = getProcessedData(ACTION_LIST_CONFIG.baselineMonth);
@@ -105,7 +131,7 @@ export default function ActionsPage() {
         simTelemetry: data.simTelemetry ?? [],
         asOfMonth: data.asOfMonth,
       },
-      historyData,
+      mergedHistoryData as any,
       ACTION_LIST_CONFIG,
       baselineProcessed
     );
@@ -200,12 +226,15 @@ export default function ActionsPage() {
   const atRiskRows = useMemo(() => churnRows.filter((r) => r.churn_display_group === 'AT_RISK'), [churnRows]);
   const baselineChurnedRows = useMemo(() => churnRows.filter((r) => r.churn_display_group === 'BASELINE_CHURNED'), [churnRows]);
   const churnThisMonthRows = useMemo(() => churnRows.filter((r) => r.churn_display_group === 'CHURN_THIS_MONTH'), [churnRows]);
+  const churnedRows = useMemo(
+    () => churnRows.filter((r) => r.churn_display_group === 'BASELINE_CHURNED' || r.churn_display_group === 'CHURN_THIS_MONTH'),
+    [churnRows]
+  );
 
   const churnPoints = useMemo(() => churnRows.reduce((sum, r) => sum + (r.officer_count ?? 0), 0), [churnRows]);
   const closePoints = useMemo(() => closeRows.reduce((sum, r) => sum + (r.officer_count ?? 0), 0), [closeRows]);
   const atRiskPoints = useMemo(() => atRiskRows.reduce((sum, r) => sum + (r.officer_count ?? 0), 0), [atRiskRows]);
-  const baselineChurnedPoints = useMemo(() => baselineChurnedRows.reduce((sum, r) => sum + (r.officer_count ?? 0), 0), [baselineChurnedRows]);
-  const churnThisMonthPoints = useMemo(() => churnThisMonthRows.reduce((sum, r) => sum + (r.officer_count ?? 0), 0), [churnThisMonthRows]);
+  const churnedPoints = useMemo(() => churnedRows.reduce((sum, r) => sum + (r.officer_count ?? 0), 0), [churnedRows]);
 
   const toggleLineSize = (opt: LineSizeOption) => {
     setLineSizeSelected((prev) => {
@@ -305,6 +334,23 @@ export default function ActionsPage() {
     { id: 'completions_needed_this_month', label: 'Completions Needed This Month', sortKey: 'completions_needed_this_month', align: 'right', render: (r) => formatNumber(r.completions_needed_this_month) },
     { id: 'R6', label: <TooltipHeader label="T6 Completions PP" tooltip={t6Tooltip} />, sortKey: 'R6', align: 'right', render: (r) => formatDecimal(r.R6) },
     { id: 'R12', label: <TooltipHeader label="T12 Completions PP" tooltip={t12Tooltip} />, sortKey: 'R12', align: 'right', render: (r) => formatDecimal(r.R12) },
+  ];
+
+  const churnedColumns: DataTableColumn<ActionListRow>[] = [
+    {
+      id: 'churn_type',
+      label: 'Churn type',
+      render: (r) => (
+        <span style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)' }}>
+          {r.churn_display_group === 'BASELINE_CHURNED'
+            ? '2025 churned'
+            : r.churn_display_group === 'CHURN_THIS_MONTH'
+              ? '2026 churned'
+              : REASON_LABELS[r.primary_reason]}
+        </span>
+      ),
+    },
+    ...churnColumns,
   ];
 
   const closeColumns: DataTableColumn<ActionListRow>[] = [
@@ -441,13 +487,15 @@ export default function ActionsPage() {
             />
           </div>
         )}
-        {baselineChurnedRows.length > 0 && (
+        {churnedRows.length > 0 && (
           <div style={{ marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', marginBottom: '0.75rem', color: 'var(--fg-destructive)' }}>2025 Agencies Churned ({baselineChurnedRows.length} agencies, {baselineChurnedPoints.toLocaleString()} points)</h2>
+            <h2 style={{ fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', marginBottom: '0.75rem', color: 'var(--fg-destructive)' }}>
+              Agencies Churned ({churnedRows.length} agencies, {churnedPoints.toLocaleString()} points)
+            </h2>
             <DataTable<ActionListRow>
-              columns={churnColumns}
-              rows={baselineChurnedRows}
-              getRowKey={(r) => r.agency_id}
+              columns={churnedColumns}
+              rows={churnedRows}
+              getRowKey={(r) => `${r.churn_display_group ?? ''}:${r.agency_id}`}
               sortField={sortField}
               sortDirection={sortDirection}
               onSort={handleSort}
@@ -456,24 +504,6 @@ export default function ActionsPage() {
               expandableRow={expandableChurnRow}
               showIndex
               startIndex={atRiskRows.length}
-            />
-          </div>
-        )}
-        {churnThisMonthRows.length > 0 && (
-          <div style={{ marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', marginBottom: '0.75rem', color: 'var(--fg-destructive)' }}>2026 Agencies Churned ({churnThisMonthRows.length} agencies, {churnThisMonthPoints.toLocaleString()} points)</h2>
-            <DataTable<ActionListRow>
-              columns={churnColumns}
-              rows={churnThisMonthRows}
-              getRowKey={(r) => r.agency_id}
-              sortField={sortField}
-              sortDirection={sortDirection}
-              onSort={handleSort}
-              getSortIcon={getSortIcon}
-              rowStyle={() => ({ borderLeft: '3px solid var(--fg-destructive)' })}
-              expandableRow={expandableChurnRow}
-              showIndex
-              startIndex={atRiskRows.length + baselineChurnedRows.length}
             />
           </div>
         )}

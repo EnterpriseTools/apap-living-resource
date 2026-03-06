@@ -19,7 +19,7 @@ export type BaselineData = {
   baseline_date: string; // November 2025
   agencies: Map<string, BaselineAgency>; // agency_id -> BaselineAgency
   goal_high_confidence: number; // 42%
-  goal_hard_climb: number; // 46.2%
+  goal_hard_climb: number; // 46%
   cohort_targets: Array<{
     cohort_name: string; // From column M
     target_adoption_rate: number; // From column N
@@ -261,7 +261,7 @@ function parseBaselineData(data: Uint8Array): BaselineData {
     baseline_date: '2025-11',
     agencies,
     goal_high_confidence: 42,
-    goal_hard_climb: 46.2,
+    goal_hard_climb: 46,
     cohort_targets: cohortTargets,
   };
 

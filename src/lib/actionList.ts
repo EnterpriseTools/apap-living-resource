@@ -9,6 +9,7 @@ import type { HistoricalData, HistoricalDataEntry } from './history';
 import { ACTION_LIST_CONFIG, getLineSizeFromOfficerCount, type LineSize } from '@/config/action_list_config';
 import { calculateCompletionsNeeded, calculateCompletionsNeededToStayAdopting, calculateCompletionsNeededToStayAdoptingNextQuarter } from './compute';
 import { isAdoptingFromMetrics, isEligible } from './domain';
+import { ADOPTION_R6_THRESHOLD, ADOPTION_R12_THRESHOLD } from '@/config/domain_constants';
 
 export type ActionReason =
   | 'BASELINE_ADOPTER_CHURNED'
@@ -145,6 +146,33 @@ export function buildActionList(
   } : null;
   const baselineAvailable = !!(baselineProcessed || baselineEntry?.agencyLabels);
 
+  // Deduplicate agencies by agency_id.
+  // Some uploads can include duplicate agency rows; Action List should only show one row per agency.
+  const uniqueAgenciesById = new Map<string, Agency>();
+  const scoreAgency = (a: Agency): number => {
+    let score = 0;
+    if (a.agency_name) score += 1;
+    if (a.officer_count != null) score += 1;
+    if (a.vr_licenses != null) score += 1;
+    if (a.eligibility_cohort != null) score += 1;
+    if (a.months_since_purchase != null) score += 1;
+    if (a.purchase_cohort) score += 1;
+    if (a.agency_size_band) score += 1;
+    if (a.purchase_date) score += 1;
+    return score;
+  };
+  for (const a of agencies) {
+    const id = String(a.agency_id);
+    const existing = uniqueAgenciesById.get(id);
+    if (!existing) {
+      uniqueAgenciesById.set(id, a);
+      continue;
+    }
+    // Prefer the "more complete" row; ties keep the existing row.
+    if (scoreAgency(a) > scoreAgency(existing)) uniqueAgenciesById.set(id, a);
+  }
+  const dedupedAgencies = Array.from(uniqueAgenciesById.values());
+
   const baselineEligible = new Map<string, boolean>();
   const baselineAdopting = new Map<string, boolean>();
   if (baselineProcessed) {
@@ -218,7 +246,7 @@ export function buildActionList(
   };
 
   const rows: ActionListRow[] = [];
-  const t10Agencies = agencies.filter((a) => a.cew_type === 'T10');
+  const t10Agencies = dedupedAgencies.filter((a) => a.cew_type === 'T10');
 
   for (const agency of t10Agencies) {
     const label = labels.get(agency.agency_id);
@@ -247,15 +275,14 @@ export function buildActionList(
       }
     }
 
-    // 2026 Agencies Churned: eligible in Nov 2025, NOT meeting threshold that month, have since met at least one threshold for one month, no longer meeting threshold.
+    // 2026 Agencies Churned: eligible now, NOT a baseline adopter, had at least one post-baseline month adopting (or is labeled Churned Out),
+    // and is no longer adopting. This intentionally includes agencies that became eligible after the baseline month.
     const wasBaselineAdopter = baselineAdopting.get(agency.agency_id) ?? false;
-    const wasBaselineEligibleFor2026 = baselineEligible.get(agency.agency_id) ?? false;
     const hadAdoptingPostBaselineOrChurnedOut =
       hadAdoptingPostBaseline.get(agency.agency_id) ||
       (label.label === 'Churned Out' && !wasBaselineAdopter);
     const is2026Churned =
       baselineAvailable &&
-      wasBaselineEligibleFor2026 &&
       !wasBaselineAdopter &&
       !isAdopting &&
       hadAdoptingPostBaselineOrChurnedOut;
@@ -294,22 +321,39 @@ export function buildActionList(
     const baseAdopt = baselineAvailable ? (baselineAdopting.get(agency.agency_id) ?? false) : null;
     const churnDisplayGroup = getReasonCategory(primary) === 'Churn' ? getChurnDisplayGroup(primary, tags, baseAdopt, label.label) : null;
     const lastAdoptingMonth =
-      !isAdopting && streak >= 1 && asOfMonth
-        ? format(subMonths(parseISO(asOfMonth + '-01'), streak), 'yyyy-MM')
+      !isAdopting && asOfMonth
+        ? (prevMonthKey && prevMonthAdopting.has(agency.agency_id)
+            ? prevMonthKey
+            : (streak >= 1
+                ? format(subMonths(parseISO(asOfMonth + '-01'), streak), 'yyyy-MM')
+                : null))
         : null;
     const monthChurned =
-      lastAdoptingMonth
-        ? format(addMonths(parseISO(lastAdoptingMonth + '-01'), 1), 'yyyy-MM')
+      lastAdoptingMonth && asOfMonth
+        ? (lastAdoptingMonth === prevMonthKey ? asOfMonth : format(addMonths(parseISO(lastAdoptingMonth + '-01'), 1), 'yyyy-MM'))
         : null;
     let completionsNeededThisMonth: number | null = null;
-    if (vrLicenses && label.metrics && simTelemetry.length > 0) {
-      if (isAdopting && primary === 'AT_RISK_NEXT_MONTH') {
-        completionsNeededThisMonth = calculateCompletionsNeededToStayAdopting(agency.agency_id, label.metrics, simTelemetry);
-      } else if (isAdopting && primary === 'AT_RISK_NEXT_QUARTER') {
-        completionsNeededThisMonth = calculateCompletionsNeededToStayAdoptingNextQuarter(agency.agency_id, label.metrics, simTelemetry);
+    if (vrLicenses && label.metrics) {
+      if (simTelemetry.length > 0) {
+        if (isAdopting && primary === 'AT_RISK_NEXT_MONTH') {
+          completionsNeededThisMonth = calculateCompletionsNeededToStayAdopting(agency.agency_id, label.metrics, simTelemetry);
+        } else if (isAdopting && primary === 'AT_RISK_NEXT_QUARTER') {
+          completionsNeededThisMonth = calculateCompletionsNeededToStayAdoptingNextQuarter(agency.agency_id, label.metrics, simTelemetry);
+        } else if (!isAdopting) {
+          const { t6, t12 } = calculateCompletionsNeeded(agency.agency_id, label.metrics, simTelemetry);
+          completionsNeededThisMonth = Math.min(t6, t12);
+        }
       } else if (!isAdopting) {
-        const { t6, t12 } = calculateCompletionsNeeded(agency.agency_id, label.metrics, simTelemetry);
-        completionsNeededThisMonth = Math.min(t6, t12);
+        // Fallback when we don't have month-by-month SIM telemetry (e.g., Snowflake snapshots).
+        // This doesn't model roll-off, but it restores a useful "gap to threshold" signal.
+        const L = label.metrics.L ?? 0;
+        const C6 = label.metrics.C6 ?? 0;
+        const C12 = label.metrics.C12 ?? 0;
+        if (L > 0) {
+          const t6 = Math.max(0, Math.ceil(ADOPTION_R6_THRESHOLD * L - C6));
+          const t12 = Math.max(0, Math.ceil(ADOPTION_R12_THRESHOLD * L - C12));
+          completionsNeededThisMonth = Math.min(t6, t12);
+        }
       }
     }
 
