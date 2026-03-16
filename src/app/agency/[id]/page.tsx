@@ -214,23 +214,40 @@ export default function AgencyDetailPage() {
     return new Map(data.agencyLabels).get(id) ?? null;
   }, [data, id]);
 
-  // 12-month series from simTelemetry for this agency
-  const agencyTelemetry = useMemo(() => {
-    if (!data?.simTelemetry || !data.asOfMonth) return [];
-    const asOfKey = data.asOfMonth;
-    const keys = new Set(getTrailingMonthKeys(asOfKey, 12));
-    return data.simTelemetry
-      .filter(t => t.agency_id === id && keys.has(toMonthKey(t.month)))
-      .sort((a, b) => a.month.getTime() - b.month.getTime());
-  }, [data, id]);
-
-  // Build a complete 12-month series (fill missing months with 0)
+  // 12-month series: prefer monthlyCompletions from AgencyMetrics (stored in snapshot for both
+  // Snowflake and Excel paths). Fall back to filtering raw simTelemetry when metrics aren't
+  // available (e.g. agency is missing licenses).
+  // Use asOfMonthKey (YYYY-MM) rather than asOfMonth (ISO datetime) so getTrailingMonthKeys
+  // receives a format it can parse reliably.
   const monthlyData = useMemo(() => {
-    if (!data?.asOfMonth) return [];
-    const keys = getTrailingMonthKeys(data.asOfMonth, 12);
-    const byKey = new Map(agencyTelemetry.map(t => [toMonthKey(t.month), t.completions]));
-    return keys.map(k => ({ monthKey: k, completions: byKey.get(k) ?? 0 }));
-  }, [agencyTelemetry, data?.asOfMonth]);
+    const asOfKey = (data as any)?.asOfMonthKey ?? data?.asOfMonth;
+    if (!asOfKey) return [];
+    const keys = getTrailingMonthKeys(asOfKey, 12);
+
+    // Primary: use pre-computed monthlyCompletions from AgencyMetrics
+    const stored = (labelItem?.metrics as any)?.monthlyCompletions as
+      | { monthKey: string; completions: number }[]
+      | undefined;
+    if (stored && stored.length > 0) {
+      const byKey = new Map(stored.map(r => [r.monthKey, r.completions]));
+      return keys.map(k => ({ monthKey: k, completions: byKey.get(k) ?? 0 }));
+    }
+
+    // Fallback: build from raw simTelemetry (Excel upload path without metrics)
+    if (data.simTelemetry?.length) {
+      const keySet = new Set(keys);
+      const byKey = new Map<string, number>();
+      for (const t of data.simTelemetry) {
+        if (t.agency_id !== id) continue;
+        const k = toMonthKey(t.month);
+        if (!keySet.has(k)) continue;
+        byKey.set(k, (byKey.get(k) ?? 0) + t.completions);
+      }
+      return keys.map(k => ({ monthKey: k, completions: byKey.get(k) ?? 0 }));
+    }
+
+    return keys.map(k => ({ monthKey: k, completions: 0 }));
+  }, [data, id, labelItem?.metrics]);
 
   // Signals
   const metrics = labelItem?.metrics ?? null;
@@ -364,6 +381,11 @@ export default function AgencyDetailPage() {
           <span style={{ color: 'var(--fg-alert)' }}>■</span> partial &nbsp;
           <span style={{ color: 'var(--fg-secondary)' }}>■</span> low/zero
         </div>
+        <div style={{ marginTop: '0.5rem', fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)', fontStyle: 'italic' }}>
+          Note: Monthly values are estimated by evenly distributing Snowflake T6 / T12 rolling totals across months.
+          Real per-month SIM completions are not yet available from this data source, so months within each 6-month
+          bucket will appear identical.
+        </div>
       </div>
 
       {/* Metrics + Signals row */}
@@ -482,7 +504,12 @@ export default function AgencyDetailPage() {
       {/* Monthly data table */}
       {monthlyData.length > 0 && (
         <div style={{ background: 'var(--surface-3)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-md)', border: '1px solid var(--border-color)' }}>
-          <h2 style={{ fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', color: 'var(--fg-primary)', marginBottom: '1rem' }}>Monthly Breakdown</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+            <h2 style={{ fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', color: 'var(--fg-primary)' }}>Monthly Breakdown</h2>
+            <span style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)', fontStyle: 'italic' }}>
+              Estimated from T6 / T12 rolling totals — per-month values are evenly distributed within each 6-month window
+            </span>
+          </div>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--text-body2-size)' }}>
               <thead>

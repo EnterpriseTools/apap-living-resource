@@ -13,7 +13,7 @@ export const maxDuration = 60;
 const SOURCE_TABLE = 'PRODUCT_ANALYTICS.APAP_REPORTS.ADOPTION_VR_PREVIEW';
 
 type RptAdoptionVrRow = {
-  ACTIVITY_MONTH: string; // 'YYYY-MM-01' (or date)
+  ACTIVITY_MONTH: string | Date; // Snowflake SDK may return a Date object or 'YYYY-MM-01' string
   ACCOUNT_NUMBER: string | number | null;
   CUSTOMER_NAME: string | null;
   LICENSE_QUANTITY: number | null;
@@ -40,9 +40,11 @@ type RptAdoptionVrRow = {
   IS_ENTERPRISE?: number | boolean | null;
 };
 
-function monthKeyFromActivityMonth(activityMonth: string): string {
-  // expected like "2025-11-01"
-  const d = startOfMonth(parseISO(activityMonth));
+function monthKeyFromActivityMonth(activityMonth: string | Date): string {
+  // Snowflake SDK may return a Date object or a 'YYYY-MM-01' string
+  const d = activityMonth instanceof Date
+    ? startOfMonth(activityMonth)
+    : startOfMonth(parseISO(String(activityMonth).slice(0, 10)));
   return format(d, 'yyyy-MM');
 }
 
@@ -225,7 +227,9 @@ export async function POST(req: Request) {
       if (agencyIdRaw === null || agencyIdRaw === undefined || agencyIdRaw === '') continue;
       const agency_id = String(agencyIdRaw);
       const existing = agencyLatestRow.get(agency_id);
-      if (!existing || r.ACTIVITY_MONTH > existing.ACTIVITY_MONTH) {
+      const rKey = monthKeyFromActivityMonth(r.ACTIVITY_MONTH);
+      const existingKey = existing ? monthKeyFromActivityMonth(existing.ACTIVITY_MONTH) : '';
+      if (!existing || rKey > existingKey) {
         agencyLatestRow.set(agency_id, r);
       }
     }
@@ -266,37 +270,14 @@ export async function POST(req: Request) {
       });
     }
 
-    // Build real per-month telemetry from ADOPTION_POINTS across the 12-month window.
-    // Fall back to synthetic distribution only when all months are missing for an agency.
-    const agencyMonthlyPoints = new Map<string, Map<string, number>>();
-    for (const r of rptRows) {
-      const agencyIdRaw = r.ACCOUNT_NUMBER;
-      if (agencyIdRaw === null || agencyIdRaw === undefined || agencyIdRaw === '') continue;
-      const agency_id = String(agencyIdRaw);
-      const monthKey = monthKeyFromActivityMonth(r.ACTIVITY_MONTH);
-      const points = toNumberOrNull(r.ADOPTION_POINTS) ?? 0;
-      if (!agencyMonthlyPoints.has(agency_id)) agencyMonthlyPoints.set(agency_id, new Map());
-      agencyMonthlyPoints.get(agency_id)!.set(monthKey, points);
-    }
-
-    for (const [agency_id, monthMap] of agencyMonthlyPoints) {
-      const hasRealData = Array.from(monthMap.values()).some(v => v > 0);
-      if (hasRealData) {
-        // Use real per-month ADOPTION_POINTS for each month we have data for.
-        for (const [monthKey, completions] of monthMap) {
-          const month = startOfMonth(parseISO(monthKey + '-01'));
-          telemetry.push({ month, agency_id, product: 'Simulator Training', completions });
-        }
-      } else {
-        // All months are zero — fall back to synthetic distribution from T6/T12 rollups
-        // so the pipeline still has data to work with.
-        const latestRow = agencyLatestRow.get(agency_id);
-        if (latestRow) {
-          const t6 = toNumberOrNull(latestRow.T6_SIM_EVENTS) ?? 0;
-          const t12 = toNumberOrNull(latestRow.T12_SIM_EVENTS) ?? 0;
-          telemetry.push(...buildSyntheticSimTelemetry(agency_id, asOfMonthDate, t6, t12));
-        }
-      }
+    // ADOPTION_VR_PREVIEW only exposes rolling T6/T12 totals, not true per-month SIM completions.
+    // ADOPTION_POINTS is a binary adoption weight (= ELIGIBLE_POINTS when adopting, 0 otherwise)
+    // and cannot be used as monthly completions. We distribute T6/T12 synthetically across months,
+    // using each agency's latest available row for the rolling totals.
+    for (const [agency_id, latestRow] of agencyLatestRow) {
+      const t6 = toNumberOrNull(latestRow.T6_SIM_EVENTS) ?? 0;
+      const t12 = toNumberOrNull(latestRow.T12_SIM_EVENTS) ?? 0;
+      telemetry.push(...buildSyntheticSimTelemetry(agency_id, asOfMonthDate, t6, t12));
     }
 
     const processed = processData(agencies, telemetry, monthKey);
