@@ -95,13 +95,19 @@ export function saveHistoricalData(
       ]);
     }
     
+    // Preserve an existing apap value when this is a "thin" save (no agencyLabels, no telemetry)
+    // coming from the Snowflake history API. A full per-month load (agencyLabels present) always wins.
+    const existingApap = history[asOfMonthKey]?.apap;
+    const isThinSave = !agencyLabels && simTelemetry.length === 0;
+    const resolvedApap = isThinSave && existingApap !== undefined ? existingApap : apap;
+
     history[asOfMonthKey] = {
       asOfMonth: asOfMonth.toISOString(),
       simTelemetry: [],
       cohortSummaries,
       usageRollups,
       agencyLabels: labelsToStore,
-      apap,
+      apap: resolvedApap,
       apapEligibleCount: apapCounts?.eligibleCount,
       apapEligiblePoints: apapCounts?.eligiblePoints,
       apapAdoptingCount: apapCounts?.adoptingCount,

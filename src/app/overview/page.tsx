@@ -3071,29 +3071,39 @@ function APAPTrendChart({
             });
           }
         } else {
-          // Historical month - try to get stored APAP or compute if we have labels
-          const historicalEntry = historicalData[monthKey];
-          if (historicalEntry) {
-            // If we have stored APAP, use it (but it's overall, not filtered by cohorts)
-            // For filtered cohorts, we'd need to recompute, but we don't have historical agencies
-            // So we'll use the stored overall APAP as an approximation
-            if (historicalEntry.apap !== undefined) {
-              history.push({
-                month: monthKey,
-                apap: historicalEntry.apap, // This is overall APAP, not filtered
-                label: format(monthDate, 'MMM yyyy'),
-              });
-            } else if (historicalEntry.agencyLabels) {
-              // Fallback: try to compute from historical labels (approximation)
-              const historicalLabelsMap = new Map(historicalEntry.agencyLabels);
-              const filter = Object.keys(cohortFilter).length > 0 ? cohortFilter : undefined;
-              const historicalAPAP = computeAPAP(agencies, historicalLabelsMap, filter);
-              history.push({
-                month: monthKey,
-                apap: historicalAPAP.apap,
-                label: format(monthDate, 'MMM yyyy'),
-              });
+          // Historical month — resolve APAP using the locked value for that specific month.
+          // Priority:
+          //   1. Per-month snapshot stored in localStorage (processedData_YYYY-MM) — set when
+          //      that month was explicitly loaded; contains the Snowflake-computed APAP for that month.
+          //   2. apap_historical_data entry — set by the multi-month history fetch.
+          // We intentionally do NOT fall back to recomputing with current agencies because
+          // using today's eligible denominator on historical labels produces the wrong APAP.
+          let lockedApap: number | undefined;
+
+          // 1. Per-month snapshot (most reliable — locked at load time)
+          const snapshotRaw = getProcessedData(monthKey);
+          if (snapshotRaw) {
+            try {
+              const snapshotParsed = JSON.parse(snapshotRaw);
+              const v = snapshotParsed?.apap?.apap;
+              if (typeof v === 'number' && v > 0) lockedApap = v;
+            } catch { /* ignore parse errors */ }
+          }
+
+          // 2. Historical data entry
+          if (lockedApap === undefined) {
+            const historicalEntry = historicalData[monthKey];
+            if (historicalEntry?.apap !== undefined) {
+              lockedApap = historicalEntry.apap;
             }
+          }
+
+          if (lockedApap !== undefined) {
+            history.push({
+              month: monthKey,
+              apap: lockedApap,
+              label: format(monthDate, 'MMM yyyy'),
+            });
           }
         }
       }
