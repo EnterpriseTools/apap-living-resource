@@ -102,3 +102,11 @@ export function enrichAgency(
 export function isNearEligible(agency: Agency): boolean {
   return agency.months_since_purchase === 4 || agency.months_since_purchase === 5;
 }
+
+/**
+ * Check if agency is ineligible (months_since_purchase 0–5), i.e. purchased but not yet in the
+ * 6-month eligibility window. Agencies with null months_since_purchase are excluded.
+ */
+export function isIneligible(agency: Agency): boolean {
+  return agency.months_since_purchase !== null && agency.months_since_purchase >= 0 && agency.months_since_purchase <= 5;
+}

@@ -68,6 +68,8 @@ export type ActionListRow = {
   tags: string[];
   why_bullets: string[];
   not_adopting_streak: number;
+  csm_owner: string | null;
+  region: string | null;
   agency: Agency;
   label: AgencyWithLabel;
 };
@@ -400,6 +402,8 @@ export function buildActionList(
       secondary_reasons: secondary,
       tags,
       why_bullets: whyBullets,
+      csm_owner: label.csm_owner ?? null,
+      region: label.region ?? null,
       agency,
       label,
     });

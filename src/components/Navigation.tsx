@@ -36,7 +36,7 @@ export default function Navigation() {
     { href: '/overview', label: 'Analysis', icon: TrendingUp },
     { href: '/action-list', label: 'Agency List', icon: ListChecks },
     { href: '/actions', label: 'Action List', icon: Target },
-    { href: '/near-eligible', label: 'Near Eligible', icon: Clock },
+    { href: '/near-eligible', label: 'Ineligible', icon: Clock },
     { href: '/summary', label: 'AI Summary', icon: FileText },
     { href: '/settings', label: 'Settings', icon: Settings },
   ];

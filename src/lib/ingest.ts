@@ -95,8 +95,19 @@ export function parseAgenciesFile(file: File): Promise<AgencyRow[]> {
                 } else {
                   normalizedRow.cew_type = value;
                 }
+              } else if (
+                normalizedKey === 'csm_owner' || normalizedKey === 'csmowner' ||
+                normalizedKey === 'account_manager' || normalizedKey === 'accountmanager' ||
+                normalizedKey === 'csm' || normalizedKey === 'owner'
+              ) {
+                normalizedRow.csm_owner = value != null && value !== '' ? String(value).trim() : undefined;
+              } else if (
+                normalizedKey === 'region' || normalizedKey === 'sub_region' ||
+                normalizedKey === 'subregion' || normalizedKey === 'territory'
+              ) {
+                normalizedRow.region = value != null && value !== '' ? String(value).trim() : undefined;
               } else {
-                // Keep original key for other fields (region, csm_owner, notes, etc.)
+                // Keep original key for other fields (notes, etc.)
                 normalizedRow[key] = value;
               }
             }

@@ -12,7 +12,7 @@ import { computeAsOfMonth } from './compute';
 import { enrichAgency } from './cohorts';
 import { computeLabelsForAgencies, findLastAdoptingMonth } from './labels';
 import { generateWhyBullets, getRecommendedAction } from './explain';
-import { isNearEligible } from './cohorts';
+import { isIneligible } from './cohorts';
 import { generateCohortSummaries, type CohortSummary } from './aggregate';
 import { mergeTelemetryWithHistory, getPreviousMonthCohortSummaries, getPreviousQuarterCohortSummaries } from './history';
 import { computeUsageRollups, type UsageRollups } from './usageRollups';
@@ -101,6 +101,8 @@ export function processData(
       },
       why,
       recommended_action,
+      csm_owner: agency.csm_owner ?? undefined,
+      region: agency.region ?? undefined,
       training_dates: agency.latest_cew_training_date || agency.next_cew_training_date
         ? {
             latest_cew_training_date: agency.latest_cew_training_date,
@@ -110,8 +112,8 @@ export function processData(
     });
   }
 
-  // Get near eligible agencies
-  const nearEligible = enrichedAgencies.filter(isNearEligible);
+  // Get all ineligible agencies (months_since_purchase 0–5), not just the 4–5 "near eligible" subset
+  const nearEligible = enrichedAgencies.filter(isIneligible);
 
   // Generate data quality report (from full normalized telemetry for report accuracy)
   const dataQuality = generateDataQualityReport(agencies, normalizedTelemetry);

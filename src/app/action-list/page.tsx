@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import type { AgencyWithLabel, Agency } from '@/lib/schema';
 import type { SimTelemetryMonthly } from '@/lib/schema';
 import Link from 'next/link';
-import { ListChecks, Download, AlertCircle, AlertTriangle, TrendingUp, CheckCircle2, XCircle, Clock, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { ListChecks, Download, AlertCircle, AlertTriangle, TrendingUp, CheckCircle2, XCircle, Clock, ArrowUpDown, ArrowUp, ArrowDown, User } from 'lucide-react';
 import { calculateCompletionsNeeded, computeAgencyMetrics } from '@/lib/compute';
 import { isEligible as isEligibleDomain, isAdoptingFromMetrics } from '@/lib/domain';
 import { ADOPTION_R6_THRESHOLD, ADOPTION_R12_THRESHOLD } from '@/config/domain_constants';
@@ -33,7 +33,7 @@ type ParsedLabel = Record<string, unknown> & {
   training_dates?: { latest_cew_training_date?: string; next_cew_training_date?: string };
 };
 
-type SortField = 'agency_name' | 'agency_id' | 'label' | 'agency_size_band' | 'purchase_cohort' | 'officer_count' | 'vr_licenses' | 'r6' | 'r12' | 'c6' | 'c12' | 'licenses';
+type SortField = 'agency_name' | 'agency_id' | 'label' | 'agency_size_band' | 'purchase_cohort' | 'officer_count' | 'vr_licenses' | 'r6' | 'r12' | 'c6' | 'c12' | 'licenses' | 'csm_owner';
 type SortDirection = 'asc' | 'desc' | null;
 
 export default function ActionListPage() {
@@ -41,6 +41,7 @@ export default function ActionListPage() {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterLabel, setFilterLabel] = useState<string>('all');
+  const [filterCsm, setFilterCsm] = useState<string>('all');
   const [sortField, setSortField] = useState<SortField>('officer_count');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [baseline, setBaseline] = useState<ReturnType<typeof getBaselineData> | null>(null);
@@ -123,6 +124,11 @@ export default function ActionListPage() {
     .map((agency) => labelsMap.get(agency.agency_id))
     .filter((item): item is AgencyWithLabel => item !== undefined);
 
+  // Unique CSM owners for filter dropdown
+  const csmOwners = Array.from(
+    new Set(allAgenciesWithLabels.map(item => item.csm_owner).filter((v): v is string => !!v))
+  ).sort();
+
   const isEligibleItem = (item: AgencyWithLabel): boolean => {
     const agency = data.agencies.find((a) => a.agency_id === item.agency_id);
     return agency != null && isEligibleDomain(agency.eligibility_cohort);
@@ -148,6 +154,11 @@ export default function ActionListPage() {
     filtered = filtered.filter((item) => item.label === filterLabel && isEligibleItem(item));
   } else if (filterLabel !== 'all') {
     filtered = filtered.filter((item) => item.label === filterLabel);
+  }
+  if (filterCsm !== 'all') {
+    filtered = filtered.filter((item) =>
+      filterCsm === '__unassigned__' ? !item.csm_owner : item.csm_owner === filterCsm
+    );
   }
 
   const getCompletionsNeeded = (item: AgencyWithLabel): { t6: number | null; t12: number | null } => {
@@ -203,6 +214,7 @@ export default function ActionListPage() {
         case 'r12': aVal = a.metrics?.R12 ?? -1; bVal = b.metrics?.R12 ?? -1; break;
         case 'officer_count': aVal = agencyA?.officer_count ?? -1; bVal = agencyB?.officer_count ?? -1; break;
         case 'vr_licenses': case 'licenses': aVal = a.metrics?.L ?? -1; bVal = b.metrics?.L ?? -1; break;
+        case 'csm_owner': aVal = a.csm_owner ?? ''; bVal = b.csm_owner ?? ''; break;
         default: return 0;
       }
       if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
@@ -226,6 +238,7 @@ export default function ActionListPage() {
   const handleExportCSV = () => {
     const headers = [
       'Agency ID', 'Agency Name', 'Line Size', 'Agency Size', 'VR Licenses', 'Label', 'Adopting (APAP)',
+      'CSM Owner', 'Region',
       `${t6Label} Completions`, `${t12Label} Completions`, `${t6Label} Completions PP`, `${t12Label} Completions PP`,
       'Time As Customer', `${t6Label} Completions Needed`, `${t12Label} Completions Needed`, 'Adopting in 2025 baseline',
     ];
@@ -238,6 +251,7 @@ export default function ActionListPage() {
         item.agency_id, item.agency_name, item.cohorts.agency_size_band,
         agency?.officer_count?.toLocaleString() ?? '', item.metrics?.L?.toLocaleString() ?? '',
         item.label, (isEligibleItem(item) && meetsAPAP(item)) ? 'Y' : '',
+        item.csm_owner ?? '', item.region ?? '',
         item.metrics?.C6 != null ? item.metrics.C6.toFixed(0) : '', item.metrics?.C12 != null ? item.metrics.C12.toFixed(0) : '',
         item.metrics?.R6 != null ? item.metrics.R6.toFixed(2) : '', item.metrics?.R12 != null ? item.metrics.R12.toFixed(2) : '',
         item.cohorts.purchase_cohort,
@@ -320,6 +334,15 @@ export default function ActionListPage() {
         {item.label}
       </span>
     )},
+    { id: 'csm_owner', label: <TooltipHeader label="CSM Owner" tooltip="Account manager / CSM responsible for this agency" />, sortKey: 'csm_owner', render: (item) => item.csm_owner
+      ? (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: 'var(--text-body2-size)', color: 'var(--fg-primary)' }}>
+          <User size={13} style={{ color: 'var(--fg-secondary)' }} />
+          {item.csm_owner}
+        </span>
+      )
+      : <span style={{ color: 'var(--fg-disabled)' }}>—</span>,
+    },
     ...(baseline ? [{
       id: 'baseline',
       label: 'Baseline Status',
@@ -364,6 +387,15 @@ export default function ActionListPage() {
           </div>
         ) : null;
       })()}
+      {(item.csm_owner || item.region) && (
+        <div>
+          <h3 style={{ fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', marginBottom: '0.5rem', color: 'var(--fg-primary)' }}>Account Info</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.5rem', fontSize: 'var(--text-body2-size)', color: 'var(--fg-primary)' }}>
+            {item.csm_owner && <div><strong>CSM Owner:</strong> {item.csm_owner}</div>}
+            {item.region && <div><strong>Region:</strong> {item.region}</div>}
+          </div>
+        </div>
+      )}
       {item.metrics && (
         <div>
           <h3 style={{ fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', marginBottom: '0.5rem', color: 'var(--fg-primary)' }}>Key Metrics</h3>
@@ -417,21 +449,34 @@ export default function ActionListPage() {
           searchValue={searchTerm}
           onSearchChange={setSearchTerm}
           searchPlaceholder="Search agency name or ID..."
-          filters={[{
-            label: 'Label',
-            value: filterLabel,
-            onChange: setFilterLabel,
-            options: [
-              { value: 'all', label: 'All Labels' },
-              { value: 'adopting_apap', label: 'Adopting (meeting APAP)' },
-              { value: 'At Risk (Next Month)', label: 'At Risk (Next Month)' },
-              { value: 'At Risk (Next Quarter)', label: 'At Risk (Next Quarter)' },
-              { value: 'Churned Out', label: 'Churned Out' },
-              { value: 'Top Performer', label: 'Top Performer' },
-              { value: 'Adopting', label: 'Adopting' },
-              { value: 'Not Adopting', label: 'Not Adopting' },
-            ],
-          }]}
+          filters={[
+            {
+              label: 'Label',
+              value: filterLabel,
+              onChange: setFilterLabel,
+              options: [
+                { value: 'all', label: 'All Labels' },
+                { value: 'adopting_apap', label: 'Adopting (meeting APAP)' },
+                { value: 'At Risk (Next Month)', label: 'At Risk (Next Month)' },
+                { value: 'At Risk (Next Quarter)', label: 'At Risk (Next Quarter)' },
+                { value: 'Churned Out', label: 'Churned Out' },
+                { value: 'Top Performer', label: 'Top Performer' },
+                { value: 'Adopting', label: 'Adopting' },
+                { value: 'Not Adopting', label: 'Not Adopting' },
+                { value: 'Ineligible (0–5 months)', label: 'Ineligible' },
+              ],
+            },
+            ...(csmOwners.length > 0 ? [{
+              label: 'CSM Owner',
+              value: filterCsm,
+              onChange: setFilterCsm,
+              options: [
+                { value: 'all', label: 'All CSM Owners' },
+                { value: '__unassigned__', label: 'Unassigned' },
+                ...csmOwners.map(o => ({ value: o, label: o })),
+              ],
+            }] : []),
+          ]}
         />
 
         <DataTable<AgencyWithLabel>

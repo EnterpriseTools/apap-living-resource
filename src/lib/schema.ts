@@ -109,6 +109,8 @@ export type AgencyWithLabel = {
   };
   why: string[]; // Explanation bullets
   recommended_action: string;
+  csm_owner?: string;
+  region?: string;
   training_dates?: {
     latest_cew_training_date?: Date;
     next_cew_training_date?: Date;

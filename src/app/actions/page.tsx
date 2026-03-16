@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { ListChecks, Download, AlertCircle, ArrowUp, ArrowDown } from 'lucide-react';
+import { ListChecks, Download, AlertCircle, ArrowUp, ArrowDown, User } from 'lucide-react';
 import { getProcessedData, getCurrentMonth } from '@/lib/storage';
 import { getHistoricalData } from '@/lib/history';
 import { FilterBar } from '@/components/FilterBar';
@@ -40,13 +40,14 @@ const REASON_LABELS: Record<ActionReason, string> = {
 };
 
 type LineSizeOption = 'Major' | 'T1200' | 'Direct' | 'Unknown';
-type SortField = 'primary_reason' | 'agency_name' | 'agency_id' | 'line_size_display' | 'officer_count' | 'vr_licenses' | 'eligibility_cohort' | 'last_adopting_month' | 'month_churned' | 'completions_needed_this_month' | 'R6' | 'R12' | 'not_adopting_streak';
+type SortField = 'primary_reason' | 'agency_name' | 'agency_id' | 'line_size_display' | 'officer_count' | 'vr_licenses' | 'eligibility_cohort' | 'last_adopting_month' | 'month_churned' | 'completions_needed_this_month' | 'R6' | 'R12' | 'not_adopting_streak' | 'csm_owner';
 
 export default function ActionsPage() {
   const [data, setData] = useState<StoredData | null>(null);
   const [actionResult, setActionResult] = useState<ReturnType<typeof buildActionList> | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [lineSizeSelected, setLineSizeSelected] = useState<Set<LineSizeOption>>(new Set());
+  const [filterCsm, setFilterCsm] = useState<string>('all');
   const [sortField, setSortField] = useState<SortField>('officer_count');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
@@ -151,6 +152,11 @@ export default function ActionsPage() {
     if (lineSizeSelected.size > 0) {
       rows = rows.filter((r) => lineSizeSelected.has(r.line_size_display as LineSizeOption));
     }
+    if (filterCsm !== 'all') {
+      rows = rows.filter((r) =>
+        filterCsm === '__unassigned__' ? !r.csm_owner : r.csm_owner === filterCsm
+      );
+    }
     rows.sort((a, b) => {
       if (sortField === 'primary_reason') {
         const pa = REASON_PRIORITY[a.primary_reason];
@@ -211,6 +217,10 @@ export default function ActionsPage() {
           va = a.not_adopting_streak;
           vb = b.not_adopting_streak;
           break;
+        case 'csm_owner':
+          va = a.csm_owner ?? '';
+          vb = b.csm_owner ?? '';
+          break;
         default:
           return 0;
       }
@@ -219,7 +229,7 @@ export default function ActionsPage() {
       return 0;
     });
     return rows;
-  }, [actionResult?.rows, searchTerm, lineSizeSelected, sortField, sortDirection]);
+  }, [actionResult?.rows, searchTerm, lineSizeSelected, filterCsm, sortField, sortDirection]);
 
   const churnRows = useMemo(() => filteredAndSortedRows.filter((r) => r.reason_category === 'Churn'), [filteredAndSortedRows]);
   const closeRows = useMemo(() => filteredAndSortedRows.filter((r) => r.reason_category === 'Close'), [filteredAndSortedRows]);
@@ -230,6 +240,11 @@ export default function ActionsPage() {
     () => churnRows.filter((r) => r.churn_display_group === 'BASELINE_CHURNED' || r.churn_display_group === 'CHURN_THIS_MONTH'),
     [churnRows]
   );
+
+  const csmOwners = useMemo(() => {
+    if (!actionResult?.rows) return [];
+    return Array.from(new Set(actionResult.rows.map(r => r.csm_owner).filter((v): v is string => !!v))).sort();
+  }, [actionResult?.rows]);
 
   const churnPoints = useMemo(() => churnRows.reduce((sum, r) => sum + (r.officer_count ?? 0), 0), [churnRows]);
   const closePoints = useMemo(() => closeRows.reduce((sum, r) => sum + (r.officer_count ?? 0), 0), [closeRows]);
@@ -256,6 +271,8 @@ export default function ActionsPage() {
       'Officer Count',
       'VR Licenses',
       'Eligibility Cohort',
+      'CSM Owner',
+      'Region',
       'Current Status',
       'Primary Reason',
       'Secondary Reasons',
@@ -277,6 +294,8 @@ export default function ActionsPage() {
       r.officer_count ?? '',
       r.vr_licenses ?? '',
       r.eligibility_cohort ?? '',
+      r.csm_owner ?? '',
+      r.region ?? '',
       r.current_status,
       r.primary_reason,
       r.secondary_reasons.join('; '),
@@ -320,6 +339,20 @@ export default function ActionsPage() {
     return 'var(--fg-secondary)';
   };
 
+  const csmOwnerCol: DataTableColumn<ActionListRow> = {
+    id: 'csm_owner',
+    label: <TooltipHeader label="CSM Owner" tooltip="Account manager / CSM responsible for this agency" />,
+    sortKey: 'csm_owner' as SortField,
+    render: (r) => r.csm_owner
+      ? (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: 'var(--text-body2-size)', color: 'var(--fg-primary)' }}>
+          <User size={13} style={{ color: 'var(--fg-secondary)' }} />
+          {r.csm_owner}
+        </span>
+      )
+      : <span style={{ color: 'var(--fg-disabled)' }}>—</span>,
+  };
+
   const churnColumns: DataTableColumn<ActionListRow>[] = [
     { id: 'agency_name', label: 'Name', sortKey: 'agency_name', render: (r) => <span style={{ fontWeight: 'var(--text-subtitle-weight)' }}>{r.agency_name}</span> },
     { id: 'agency_id', label: 'ID', sortKey: 'agency_id', render: (r) => <span style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)' }}>{r.agency_id}</span> },
@@ -329,6 +362,7 @@ export default function ActionsPage() {
     { id: 'officer_count', label: 'Officer count', sortKey: 'officer_count', align: 'right', render: (r) => formatNumber(r.officer_count) },
     { id: 'vr_licenses', label: 'VR licenses', sortKey: 'vr_licenses', align: 'right', render: (r) => formatNumber(r.vr_licenses) },
     { id: 'eligibility_cohort', label: 'Eligibility cohort', sortKey: 'eligibility_cohort', render: (r) => r.eligibility_cohort != null ? String(r.eligibility_cohort) : '—' },
+    csmOwnerCol,
     { id: 'last_adopting_month', label: 'Last adopting month', sortKey: 'last_adopting_month', render: (r) => formatMonthLabel(r.last_adopting_month) },
     { id: 'month_churned', label: 'Month churned', sortKey: 'month_churned', render: (r) => formatMonthLabel(r.month_churned) },
     { id: 'completions_needed_this_month', label: 'Completions Needed This Month', sortKey: 'completions_needed_this_month', align: 'right', render: (r) => formatNumber(r.completions_needed_this_month) },
@@ -362,6 +396,7 @@ export default function ActionsPage() {
     { id: 'officer_count', label: 'Officer count', sortKey: 'officer_count', align: 'right', render: (r) => formatNumber(r.officer_count) },
     { id: 'vr_licenses', label: 'VR licenses', sortKey: 'vr_licenses', align: 'right', render: (r) => formatNumber(r.vr_licenses) },
     { id: 'eligibility_cohort', label: 'Eligibility cohort', sortKey: 'eligibility_cohort', render: (r) => r.eligibility_cohort != null ? String(r.eligibility_cohort) : '—' },
+    csmOwnerCol,
     { id: 'completions_needed_this_month', label: 'Completions Needed This Month', sortKey: 'completions_needed_this_month', align: 'right', render: (r) => formatNumber(r.completions_needed_this_month) },
     { id: 'R6', label: <TooltipHeader label="T6 Completions PP" tooltip={t6Tooltip} />, sortKey: 'R6', align: 'right', render: (r) => formatDecimal(r.R6) },
     { id: 'R12', label: <TooltipHeader label="T12 Completions PP" tooltip={t12Tooltip} />, sortKey: 'R12', align: 'right', render: (r) => formatDecimal(r.R12) },
@@ -375,6 +410,15 @@ export default function ActionsPage() {
           {row.why_bullets.map((b, i) => <li key={i} style={{ marginBottom: '0.25rem' }}>{b}</li>)}
         </ul>
       </div>
+      {(row.csm_owner || row.region) && (
+        <div>
+          <h3 style={{ fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', marginBottom: '0.5rem', color: 'var(--fg-primary)' }}>Account Info</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.5rem', fontSize: 'var(--text-body2-size)', color: 'var(--fg-primary)' }}>
+            {row.csm_owner && <div><strong>CSM Owner:</strong> {row.csm_owner}</div>}
+            {row.region && <div><strong>Region:</strong> {row.region}</div>}
+          </div>
+        </div>
+      )}
       {row.label.metrics && (
         <div>
           <h3 style={{ fontSize: 'var(--text-subtitle-size)', fontWeight: 'var(--text-subtitle-weight)', marginBottom: '0.5rem', color: 'var(--fg-primary)' }}>Key metrics</h3>
@@ -457,6 +501,16 @@ export default function ActionsPage() {
           searchValue={searchTerm}
           onSearchChange={(v) => setSearchTerm(v)}
           searchPlaceholder="Search agency name or ID..."
+          filters={csmOwners.length > 0 ? [{
+            label: 'CSM Owner',
+            value: filterCsm,
+            onChange: setFilterCsm,
+            options: [
+              { value: 'all', label: 'All CSM Owners' },
+              { value: '__unassigned__', label: 'Unassigned' },
+              ...csmOwners.map(o => ({ value: o, label: o })),
+            ],
+          }] : []}
         >
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
             <span style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)' }}>Line size:</span>
