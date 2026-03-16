@@ -354,7 +354,7 @@ export default function ActionsPage() {
   };
 
   const churnColumns: DataTableColumn<ActionListRow>[] = [
-    { id: 'agency_name', label: 'Name', sortKey: 'agency_name', render: (r) => <span style={{ fontWeight: 'var(--text-subtitle-weight)' }}>{r.agency_name}</span> },
+    { id: 'agency_name', label: 'Name', sortKey: 'agency_name', render: (r) => <Link href={`/agency/${encodeURIComponent(r.agency_id)}`} style={{ fontWeight: 'var(--text-subtitle-weight)', color: 'var(--fg-action)', textDecoration: 'none' }}>{r.agency_name}</Link> },
     { id: 'agency_id', label: 'ID', sortKey: 'agency_id', render: (r) => <span style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)' }}>{r.agency_id}</span> },
     { id: 'line_size_display', label: 'Line size', sortKey: 'line_size_display', render: (r) => (
       <span style={{ display: 'inline-flex', alignItems: 'center', padding: '0.2rem 0.5rem', background: 'var(--surface-2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', fontSize: 'var(--text-caption-size)', color: getLineSizeColor(r.line_size_display), fontWeight: 'var(--text-subtitle-weight)' }}>{r.line_size_display}</span>
@@ -388,7 +388,7 @@ export default function ActionsPage() {
   ];
 
   const closeColumns: DataTableColumn<ActionListRow>[] = [
-    { id: 'agency_name', label: 'Name', sortKey: 'agency_name', render: (r) => <span style={{ fontWeight: 'var(--text-subtitle-weight)' }}>{r.agency_name}</span> },
+    { id: 'agency_name', label: 'Name', sortKey: 'agency_name', render: (r) => <Link href={`/agency/${encodeURIComponent(r.agency_id)}`} style={{ fontWeight: 'var(--text-subtitle-weight)', color: 'var(--fg-action)', textDecoration: 'none' }}>{r.agency_name}</Link> },
     { id: 'agency_id', label: 'ID', sortKey: 'agency_id', render: (r) => <span style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)' }}>{r.agency_id}</span> },
     { id: 'line_size_display', label: 'Line size', sortKey: 'line_size_display', render: (r) => (
       <span style={{ display: 'inline-flex', alignItems: 'center', padding: '0.2rem 0.5rem', background: 'var(--surface-2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', fontSize: 'var(--text-caption-size)', color: getLineSizeColor(r.line_size_display), fontWeight: 'var(--text-subtitle-weight)' }}>{r.line_size_display}</span>

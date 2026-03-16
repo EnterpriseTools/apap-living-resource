@@ -86,6 +86,11 @@ export function computeAgencyMetrics(
   const R6 = C6 > 0 && vrLicenses > 0 ? C6 / vrLicenses : 0;
   const R12 = C12 > 0 && vrLicenses > 0 ? C12 / vrLicenses : 0;
 
+  const monthlyCompletions = t12Keys.map((key) => ({
+    monthKey: key,
+    completions: getCompletionsForMonthKey(agencyId, agencySimTelemetry, key),
+  }));
+
   return {
     agency_id: agencyId,
     L: vrLicenses,
@@ -95,5 +100,6 @@ export function computeAgencyMetrics(
     R12,
     last3Months,
     as_of_month: asOf,
+    monthlyCompletions,
   };
 }

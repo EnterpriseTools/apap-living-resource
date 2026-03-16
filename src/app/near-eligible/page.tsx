@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import type { AgencyWithLabel, Agency } from '@/lib/schema';
 import type { SimTelemetryMonthly } from '@/lib/schema';
 import Link from 'next/link';
+import Link from 'next/link';
 import { Clock, Download, AlertCircle, ArrowUpDown, ArrowUp, ArrowDown, User } from 'lucide-react';
 import { calculateCompletionsNeeded } from '@/lib/compute';
 import { getProcessedData, getCurrentMonth } from '@/lib/storage';
@@ -256,7 +257,9 @@ export default function NearEligiblePage() {
         const agency = data.nearEligible.find(a => a.agency_id === item.agency_id);
         return (
           <span style={{ fontWeight: 'var(--text-subtitle-weight)' }}>
-            {item.agency_name}
+            <Link href={`/agency/${encodeURIComponent(item.agency_id)}`} style={{ color: 'var(--fg-action)', textDecoration: 'none' }} title="View agency detail">
+              {item.agency_name}
+            </Link>
             {getSegmentBadge(agency?.months_since_purchase ?? null)}
           </span>
         );

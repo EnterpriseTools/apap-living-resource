@@ -82,6 +82,8 @@ export type AgencyMetrics = {
   R12: number; // (C12 / 12) / L
   last3Months: number[]; // completions for last 3 months [oldest, middle, newest]
   as_of_month: Date;
+  /** Raw monthly completions for the trailing 12-month window, oldest → newest. */
+  monthlyCompletions: { monthKey: string; completions: number }[];
 };
 
 // Label types

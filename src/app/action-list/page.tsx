@@ -321,7 +321,11 @@ export default function ActionListPage() {
   const metricsProgressTooltip = asOfMonthKey ? `${getT6Tooltip(asOfMonthKey)} ${getT12Tooltip(asOfMonthKey)}` : 'Trailing 6/12 months (inclusive)';
 
   const columns: DataTableColumn<AgencyWithLabel>[] = [
-    { id: 'agency_name', label: 'Agency Name', sortKey: 'agency_name', render: (item) => <span style={{ fontWeight: 'var(--text-subtitle-weight)' }}>{item.agency_name}</span> },
+    { id: 'agency_name', label: 'Agency Name', sortKey: 'agency_name', render: (item) => (
+      <Link href={`/agency/${encodeURIComponent(item.agency_id)}`} style={{ fontWeight: 'var(--text-subtitle-weight)', color: 'var(--fg-action)', textDecoration: 'none' }} title="View agency detail">
+        {item.agency_name}
+      </Link>
+    )},
     { id: 'agency_id', label: 'Agency ID', sortKey: 'agency_id', render: (item) => <span style={{ fontSize: 'var(--text-caption-size)', color: 'var(--fg-secondary)' }}>{item.agency_id}</span> },
     { id: 'agency_size_band', label: 'Line size', sortKey: 'agency_size_band', render: (item) => (
       <span style={{ display: 'inline-flex', alignItems: 'center', padding: '0.2rem 0.5rem', background: 'var(--surface-2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', color: getLineSizeColor(item.cohorts.agency_size_band), fontWeight: 'var(--text-subtitle-weight)' }}>{item.cohorts.agency_size_band}</span>

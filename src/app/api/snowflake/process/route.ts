@@ -93,6 +93,7 @@ function pickOfficerCountForLineSize(
   return undefined;
 }
 
+/** Fallback: evenly distribute T6/T12 rollups across 12 months when real per-month data is unavailable. */
 function buildSyntheticSimTelemetry(
   agencyId: string,
   asOfMonthDate: Date,
@@ -109,7 +110,7 @@ function buildSyntheticSimTelemetry(
   const rows: TelemetryMonthly[] = [];
   for (let i = 11; i >= 0; i--) {
     const month = startOfMonth(subMonths(asOfMonthDate, i));
-    const isInLast6 = i <= 5; // months 0..5 are last 6 inclusive of asOfMonth
+    const isInLast6 = i <= 5;
     rows.push({
       month,
       agency_id: agencyId,
@@ -175,6 +176,9 @@ export async function POST(req: Request) {
     const adoptingCountAgg = toNumberOrNull(apapAgg[0]?.ADOPTING_COUNT) ?? 0;
     const apapPctAgg = eligiblePointsAgg > 0 ? (adoptingPointsAgg / eligiblePointsAgg) * 100 : 0;
 
+    // Query the trailing 12 months so we get real per-month ADOPTION_POINTS rather than
+    // relying on T6/T12 rollup columns and synthetic distribution.
+    const twelveMonthsAgoDate = format(startOfMonth(subMonths(asOfMonthDate, 11)), 'yyyy-MM-01');
     const rptRows = await snowflakeQuery<RptAdoptionVrRow>(
       `select
         ACTIVITY_MONTH,
@@ -203,22 +207,33 @@ export async function POST(req: Request) {
         IS_FEDERAL,
         IS_ENTERPRISE
       from ${SOURCE_TABLE}
-      where ACTIVITY_MONTH = to_date(?, 'YYYY-MM-DD')
+      where ACTIVITY_MONTH >= to_date(?, 'YYYY-MM-DD')
+        and ACTIVITY_MONTH <= to_date(?, 'YYYY-MM-DD')
         and IS_FEDERAL = 0
         and IS_ENTERPRISE = 0
         and lower(DOMAIN_STATUS) = 'active'
         and lower(PRODUCTION_TYPE) = 'live'
-        and (IS_APAP_CONSIDERED = 1 or EVER_PURCHASED = 1)`,
-      [activityMonth]
+        and (IS_APAP_CONSIDERED = 1 or EVER_PURCHASED = 1)
+      order by ACCOUNT_NUMBER, ACTIVITY_MONTH`,
+      [twelveMonthsAgoDate, activityMonth]
     );
 
-    const agencies: AgencyRow[] = [];
-    const telemetry: TelemetryMonthly[] = [];
-
+    // Group rows by agency; use the latest month's row for master data.
+    const agencyLatestRow = new Map<string, RptAdoptionVrRow>();
     for (const r of rptRows) {
       const agencyIdRaw = r.ACCOUNT_NUMBER;
       if (agencyIdRaw === null || agencyIdRaw === undefined || agencyIdRaw === '') continue;
       const agency_id = String(agencyIdRaw);
+      const existing = agencyLatestRow.get(agency_id);
+      if (!existing || r.ACTIVITY_MONTH > existing.ACTIVITY_MONTH) {
+        agencyLatestRow.set(agency_id, r);
+      }
+    }
+
+    const agencies: AgencyRow[] = [];
+    const telemetry: TelemetryMonthly[] = [];
+
+    for (const [agency_id, r] of agencyLatestRow) {
       const agency_name = r.CUSTOMER_NAME ? String(r.CUSTOMER_NAME) : agency_id;
 
       const vrLicenses = pickVrLicenses(r);
@@ -244,17 +259,44 @@ export async function POST(req: Request) {
         officer_count,
         eligibility_cohort,
         purchase_date,
-        // This app pipeline filters to T10; Snowflake report is already VR APAP (T10-context),
-        // so we mark as T10.
         cew_type: 'T10',
         region: r.SUB_REGION ?? undefined,
         csm_owner: r.ACCOUNT_MANAGER ?? undefined,
         notes: r.COUNTRY ? `Country: ${r.COUNTRY}` : undefined,
       });
+    }
 
-      const t6 = toNumberOrNull(r.T6_SIM_EVENTS) ?? 0;
-      const t12 = toNumberOrNull(r.T12_SIM_EVENTS) ?? 0;
-      telemetry.push(...buildSyntheticSimTelemetry(agency_id, asOfMonthDate, t6, t12));
+    // Build real per-month telemetry from ADOPTION_POINTS across the 12-month window.
+    // Fall back to synthetic distribution only when all months are missing for an agency.
+    const agencyMonthlyPoints = new Map<string, Map<string, number>>();
+    for (const r of rptRows) {
+      const agencyIdRaw = r.ACCOUNT_NUMBER;
+      if (agencyIdRaw === null || agencyIdRaw === undefined || agencyIdRaw === '') continue;
+      const agency_id = String(agencyIdRaw);
+      const monthKey = monthKeyFromActivityMonth(r.ACTIVITY_MONTH);
+      const points = toNumberOrNull(r.ADOPTION_POINTS) ?? 0;
+      if (!agencyMonthlyPoints.has(agency_id)) agencyMonthlyPoints.set(agency_id, new Map());
+      agencyMonthlyPoints.get(agency_id)!.set(monthKey, points);
+    }
+
+    for (const [agency_id, monthMap] of agencyMonthlyPoints) {
+      const hasRealData = Array.from(monthMap.values()).some(v => v > 0);
+      if (hasRealData) {
+        // Use real per-month ADOPTION_POINTS for each month we have data for.
+        for (const [monthKey, completions] of monthMap) {
+          const month = startOfMonth(parseISO(monthKey + '-01'));
+          telemetry.push({ month, agency_id, product: 'Simulator Training', completions });
+        }
+      } else {
+        // All months are zero — fall back to synthetic distribution from T6/T12 rollups
+        // so the pipeline still has data to work with.
+        const latestRow = agencyLatestRow.get(agency_id);
+        if (latestRow) {
+          const t6 = toNumberOrNull(latestRow.T6_SIM_EVENTS) ?? 0;
+          const t12 = toNumberOrNull(latestRow.T12_SIM_EVENTS) ?? 0;
+          telemetry.push(...buildSyntheticSimTelemetry(agency_id, asOfMonthDate, t6, t12));
+        }
+      }
     }
 
     const processed = processData(agencies, telemetry, monthKey);
