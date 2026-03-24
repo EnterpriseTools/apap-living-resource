@@ -146,6 +146,8 @@ type ProcessedData = {
   dataQuality: DataQualityReport;
   asOfMonth: string | null;
   cohortSummaries: Record<string, CohortSummary[]>;
+  /** Snowflake-source APAP aggregate, present in snapshots loaded via the Snowflake route. */
+  apap?: { apap: number; adoptingPoints?: number; eligiblePoints?: number; adoptingCount?: number; eligibleCount?: number };
 };
 
 export type GoalProgressInput = {
@@ -173,8 +175,21 @@ export function buildSummaryBundle(
   const allLabels = Array.from(labelsMap.values());
   const totalAgencies = allLabels.length;
 
-  // Compute current APAP
-  const currentAPAP = computeAPAP(data.agencies, labelsMap);
+  // Compute current APAP.
+  // Prefer the Snowflake-source aggregate (snapshot.apap.apap) which is the official APAP
+  // calculated directly from the database. Fall back to the pipeline-computed value only
+  // when the snapshot APAP isn't available (e.g. Excel-uploaded data).
+  const snowflakeApap = typeof data.apap?.apap === 'number' && data.apap.apap > 0 ? data.apap : null;
+  const pipelineAPAP = computeAPAP(data.agencies, labelsMap);
+  const currentAPAP = snowflakeApap
+    ? {
+        apap: snowflakeApap.apap,
+        adoptingPoints: snowflakeApap.adoptingPoints ?? pipelineAPAP.adoptingPoints,
+        eligiblePoints: snowflakeApap.eligiblePoints ?? pipelineAPAP.eligiblePoints,
+        adoptingCount: snowflakeApap.adoptingCount ?? pipelineAPAP.adoptingCount,
+        eligibleCount: snowflakeApap.eligibleCount ?? pipelineAPAP.eligibleCount,
+      }
+    : pipelineAPAP;
   
   // Get previous month APAP for comparison
   let previousMonthAPAP: number | null = null;

@@ -144,9 +144,16 @@ export default function SummaryPage() {
 
         const summaryBundle = buildSummaryBundle(parsed, 'trailing_12_months', goalProgressInput);
         setBundle(summaryBundle);
-        // Load saved summary for this month if any (so user doesn't have to regenerate every visit)
+        // Load saved summary for this month only if it was generated AFTER the snapshot was created.
+        // If the snapshot is newer than the saved summary the underlying data has changed and the
+        // cached summary would show stale numbers, so we discard it.
         const saved = monthKey ? getSummaryForMonth(monthKey) : null;
-        if (saved?.markdown) setMarkdown(saved.markdown);
+        const snapshotCreatedAt = parsed?.createdAt ? new Date(parsed.createdAt) : null;
+        const summaryCreatedAt = saved?.createdAt ? new Date(saved.createdAt) : null;
+        const summaryIsStale = snapshotCreatedAt && summaryCreatedAt
+          ? snapshotCreatedAt > summaryCreatedAt
+          : false;
+        if (saved?.markdown && !summaryIsStale) setMarkdown(saved.markdown);
       } catch (err) {
         console.error('Failed to parse stored data:', err);
         setError('Failed to load data. Please upload your files first.');
