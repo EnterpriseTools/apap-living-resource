@@ -186,6 +186,12 @@ function enqueueExternalBrowser<T>(fn: () => Promise<T>): Promise<T> {
   return run;
 }
 
+function isTerminatedConnectionError(err: unknown): boolean {
+  if (!err) return false;
+  const msg = err instanceof Error ? err.message : String(err);
+  return /terminated connection|connection.*terminated|connection.*closed|network error/i.test(msg);
+}
+
 export async function snowflakeQuery<T extends Record<string, unknown>>(
   sqlText: string,
   binds: unknown[] = [],
@@ -194,22 +200,40 @@ export async function snowflakeQuery<T extends Record<string, unknown>>(
   const authenticator = normAuthenticator(env.SNOWFLAKE_AUTHENTICATOR);
 
   // Special-case EXTERNALBROWSER: reuse one session to avoid opening many auth tabs.
+  // If the cached connection has been terminated by the server, clear it and reconnect once.
   if (authenticator === 'EXTERNALBROWSER') {
-    const conn = await connectExternalBrowser(env);
-    cachedExternalBrowser!.lastUsedAt = Date.now();
-    return await enqueueExternalBrowser(
-      () =>
-        new Promise<T[]>((resolve, reject) => {
-          conn.execute({
-            sqlText,
-            binds,
-            complete: (err, _stmt, rows) => {
-              if (err) reject(err);
-              else resolve((rows ?? []) as T[]);
-            },
-          });
-        })
-    );
+    const runQuery = async (): Promise<T[]> => {
+      const conn = await connectExternalBrowser(env);
+      cachedExternalBrowser!.lastUsedAt = Date.now();
+      return enqueueExternalBrowser(
+        () =>
+          new Promise<T[]>((resolve, reject) => {
+            conn.execute({
+              sqlText,
+              binds,
+              complete: (err, _stmt, rows) => {
+                if (err) reject(err);
+                else resolve((rows ?? []) as T[]);
+              },
+            });
+          })
+      );
+    };
+
+    try {
+      return await runQuery();
+    } catch (err) {
+      if (isTerminatedConnectionError(err)) {
+        // Drop the dead cached connection and retry once with a fresh one.
+        if (cachedExternalBrowser) {
+          try { cachedExternalBrowser.conn.destroy((_e) => {}); } catch { /* ignore */ }
+          cachedExternalBrowser = null;
+        }
+        externalBrowserConnectPromise = null;
+        return await runQuery();
+      }
+      throw err;
+    }
   }
 
   const connection = createSnowflakeConnection(env);
